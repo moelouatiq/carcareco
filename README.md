@@ -1,3 +1,5 @@
+**Built on CarCare:** [MechanicBuddy](https://github.com/D4M13N-D3V/MechanicBuddy) — a multi-tenant SaaS productization of this project.
+
 # CarCare
 
 **CarCare** is a modern, self-hosted workshop management system built for vehicle service centers, auto repair shops, and maintenance facilities. It helps streamline your operations from job tracking to invoicing — all in one intuitive interface.
