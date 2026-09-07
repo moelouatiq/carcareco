@@ -6,6 +6,7 @@ services:
   web:
     command: npm run dev
     environment:
+      NODE_ENV: development
       NEXT_TELEMETRY_DISABLED: "1"
     volumes:
       - ./frontend:/app

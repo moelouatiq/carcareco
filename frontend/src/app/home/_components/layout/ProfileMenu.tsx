@@ -33,6 +33,7 @@ export default function ProfileMenu({
                                        src={imageUrl}
                                        width="100"
                                        height="100"
+                                       unoptimized
                                        className="size-8 rounded-full bg-gray-50" />  
 
                                    <span className="hidden lg:flex lg:items-center">
