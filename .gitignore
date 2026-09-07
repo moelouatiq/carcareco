@@ -1,2 +1,4 @@
 backend/src/Carmasters.Http.Api/dist/
 backend/src/DbUp/dist/
+/.env
+/local-credentials.txt

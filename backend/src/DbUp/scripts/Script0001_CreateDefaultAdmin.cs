@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Npgsql;
+using Carmasters.Core.Application.Authorization;
 
 namespace DbUp.Scripts
 {
@@ -11,9 +12,10 @@ namespace DbUp.Scripts
     {
         public string ProvideScript(Func<IDbCommand> dbCommandFactory)
         {
-            // Get connection string from configuration
-            // Password hash for the default admin
-            string passwordHash = "$2a$11$zsTS62pGn5Cfca4CgqRJxebx45je/3nJj.puxIArFwtAjHew67m6i";
+            var adminUsername = GetRequiredEnvironmentVariable("CARCARE_ADMIN_USERNAME");
+            var adminPassword = GetRequiredEnvironmentVariable("CARCARE_ADMIN_PASSWORD");
+            var adminEmail = Environment.GetEnvironmentVariable("CARCARE_ADMIN_EMAIL") ?? "admin@example.invalid";
+            var passwordHash = PasswordHasher.getHash(adminPassword);
 
             // Read profile image
             byte[] profileImage;
@@ -58,9 +60,9 @@ namespace DbUp.Scripts
 
             using (command)
             {
-                command.Parameters.AddWithValue("@Username", "admin");
+                command.Parameters.AddWithValue("@Username", adminUsername);
                 command.Parameters.AddWithValue("@Password", passwordHash);
-                command.Parameters.AddWithValue("@Email", "admin@example.com");
+                command.Parameters.AddWithValue("@Email", adminEmail);
                 command.Parameters.AddWithValue("@Validated", true);
                 command.Parameters.AddWithValue("@ProfileImage", profileImage);
                 command.Parameters.AddWithValue("@EmployeeId", employeeId);
@@ -69,6 +71,17 @@ namespace DbUp.Scripts
             }
 
             return "";
+        }
+
+        private static string GetRequiredEnvironmentVariable(string name)
+        {
+            var value = Environment.GetEnvironmentVariable(name);
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidOperationException($"Required environment variable {name} is missing. Run the setup-secrets script first.");
+            }
+
+            return value;
         }
     }
 }

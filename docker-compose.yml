@@ -3,13 +3,13 @@ services:
     image: postgres:16
     restart: unless-stopped
     environment:
-      POSTGRES_USER: carcare
-      POSTGRES_PASSWORD: carcare
-      POSTGRES_DB: carcare            # template DB name seed
+      POSTGRES_USER: ${POSTGRES_USER:?Run the setup-secrets script first}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run the setup-secrets script first}
+      POSTGRES_DB: ${POSTGRES_DB:-carcare}
     volumes:
       - dbdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "carcare"]
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
       interval: 10s
       retries: 10
 
@@ -19,6 +19,10 @@ services:
     build:
       context: .
       dockerfile: backend/DbUp.Dockerfile
+    environment:
+      CARCARE_ADMIN_USERNAME: ${CARCARE_ADMIN_USERNAME:?Run the setup-secrets script first}
+      CARCARE_ADMIN_PASSWORD: ${CARCARE_ADMIN_PASSWORD:?Run the setup-secrets script first}
+      CARCARE_ADMIN_EMAIL: ${CARCARE_ADMIN_EMAIL:-admin@example.invalid}
     depends_on:
       db:
         condition: service_healthy
@@ -46,7 +50,7 @@ services:
     depends_on:
       - api
     ports:
-      - "3000:3000"
+      - "${WEB_PORT:-3000}:3000"
 
   mailhog:
     image: mailhog/mailhog

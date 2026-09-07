@@ -41,6 +41,8 @@ chmod +x scripts/setup-secrets.sh
 # edit secrets if you need to
 # backend/src/Carmasters.Http.Api/appsettings.Secrets.json
 # frontend/.env
+# Docker/PostgreSQL secrets are stored in .env and the generated local login is
+# written to local-credentials.txt. Both files are ignored by Git.
 # Important! If you want to access UI remotely, let's say docker runs on host 192.168.1.228. NEXT_PUBLIC_API_URL .env variable must be for example NEXT_PUBLIC_API_URL=http://192.168.1.226:15567 , otherwise calls from browser wont't reach backend
 
 # Start services
@@ -53,12 +55,8 @@ docker compose up --build -d
 - Mail preview: [http://localhost:8025](http://localhost:8025)
 
 ### 🔐 Default Login
-When running CarCare locally, a default user is created for convenience:
-
-```txt
-Username: admin  
-Password: carcare
-```
+The setup script generates a unique local administrator username and password.
+Read them from `local-credentials.txt`; this file is ignored by Git.
 
 ## 📸 Screenshots
 
