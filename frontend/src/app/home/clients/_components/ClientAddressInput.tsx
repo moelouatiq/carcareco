@@ -73,9 +73,7 @@ export default function ClientAddress({
           });
           resolve(options);
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(() => {});
     });
 
   

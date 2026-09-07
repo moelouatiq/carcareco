@@ -18,8 +18,9 @@ ENV ASPNETCORE_URLS=http://+:15567
 WORKDIR /app
 COPY --from=build /app/publish .
 
-RUN mkdir -p /var/carcare/pdf /opt/puppeteer
-RUN apt-get update && apt-get install -y \
+RUN install -d -m 0700 /var/carcare/pdf /var/carcare/dataprotection-keys /opt/puppeteer
+RUN sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources && \
+    apt-get -o Acquire::Retries=5 update && apt-get -o Acquire::Retries=5 install -y \
     ca-certificates \
     fonts-liberation \
     libasound2 \

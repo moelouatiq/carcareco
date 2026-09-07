@@ -1,81 +1,108 @@
 import 'server-only'
-import { cookies } from 'next/headers' 
-import { JWTPayload, SignJWT, jwtVerify } from 'jose' 
+import { cookies } from 'next/headers'
+import { EncryptJWT, JWTPayload, jwtDecrypt } from 'jose'
 
-const secretKey = process.env.SESSION_SECRET
-const sessionTimeoutInSecondsString = process.env.NEXT_PUBLIC_SESSION_TIMEOUT;
- 
-if(!secretKey) throw new Error('SESSION_SECRET env not set');
+const MAX_SESSION_SECONDS = 12 * 60 * 60
 
-const encodedKey = new TextEncoder().encode(secretKey)
-
-interface SessionPayload extends JWTPayload{
-  apiRootJwt:string
+interface SessionPayload extends JWTPayload {
+  apiRootJwt: string
+  fullName: string
 }
 
- async function encrypt(payload: SessionPayload) {
-  return new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime('7d')
-    .sign(encodedKey)
-}
- 
- async function decrypt(session: string | undefined = '') {
-  try {
-    const { payload } = await jwtVerify(session, encodedKey, {
-      algorithms: ['HS256'],
-    })
-    return payload
-  } catch (error) {
-    console.log('Failed to verify session')
-    console.log(error)
+function getSessionSecret() {
+  const secret = process.env.SESSION_SECRET
+  if (!secret || secret.length < 32 || secret.startsWith('[')) {
+    throw new Error('SESSION_SECRET must contain at least 32 non-placeholder characters')
   }
+  return secret
 }
-export async function createSession(rootJwt: string,publicJwt: string) {
-    
-  if(!sessionTimeoutInSecondsString) throw new Error('NEXT_PUBLIC_SESSION_TIMEOUT env not set');
- 
-  const expiresAt = new Date(Date.now());   
-  expiresAt.setSeconds(expiresAt.getSeconds() + parseInt(sessionTimeoutInSecondsString)); 
-  const session = await encrypt({ apiRootJwt:rootJwt, expiresAt })
-  const cookieStore = await cookies() 
-  cookieStore.set('session', session, {
-    httpOnly: true, //jwt not accessible by browser
-    secure: false,
-    expires: expiresAt,
-    sameSite: 'lax',
-    path: '/',
-  })
-  //jwt for public side resources
-  cookieStore.set('jwt',  publicJwt, {
-    httpOnly: false,
-    secure: false,
-    expires: expiresAt,
-    sameSite: 'lax',
-    path: '/',
-  })
-   //browser app has to know when session started so it can call extend session before api jwt times out
-  cookieStore.set('session_timestamp',  Date.now().toString(), {
-    httpOnly: false,
-    secure: false,
-    expires: expiresAt,
-    sameSite: 'lax',
-    path: '/',
-  })
+
+async function getEncryptionKey() {
+  return new Uint8Array(
+    await crypto.subtle.digest(
+      'SHA-256',
+      new TextEncoder().encode(getSessionSecret()),
+    ),
+  )
 }
-export async function deleteSession() {
-  const cookieStore = await cookies()
-  cookieStore.delete('session')
-  cookieStore.delete('jwt')
-  cookieStore.delete('session_timestamp')
+
+async function encrypt(payload: SessionPayload, expiresAt: Date) {
+  return new EncryptJWT(payload)
+    .setProtectedHeader({ alg: 'dir', enc: 'A256GCM' })
+    .setIssuedAt()
+    .setExpirationTime(Math.floor(expiresAt.getTime() / 1000))
+    .encrypt(await getEncryptionKey())
 }
-export async function getJwt() { 
-  const session = (await cookies()).get('session')?.value;
-  const payload = await decrypt(session)
- 
-  if (!session || !payload || !payload.apiRootJwt) {
+
+async function decrypt(session: string | undefined) {
+  if (!session) return null
+
+  try {
+    const { payload } = await jwtDecrypt<SessionPayload>(
+      session,
+      await getEncryptionKey(),
+      { keyManagementAlgorithms: ['dir'], contentEncryptionAlgorithms: ['A256GCM'] },
+    )
+    return payload
+  } catch {
     return null
   }
-  return payload.apiRootJwt;
+}
+
+function validateTimeout(timeoutSeconds: number) {
+  if (!Number.isInteger(timeoutSeconds) || timeoutSeconds < 60 || timeoutSeconds > MAX_SESSION_SECONDS) {
+    throw new Error('Session timeout must be between 60 seconds and 12 hours')
+  }
+}
+
+export async function createSession(
+  rootJwt: string,
+  fullName: string,
+  timeoutSeconds: number,
+) {
+  validateTimeout(timeoutSeconds)
+  if (!rootJwt || !fullName) throw new Error('Cannot create an incomplete session')
+
+  const expiresAt = new Date(Date.now() + timeoutSeconds * 1000)
+  const session = await encrypt({ apiRootJwt: rootJwt, fullName }, expiresAt)
+  const cookieStore = await cookies()
+  const secure = process.env.NODE_ENV === 'production'
+
+  cookieStore.set('session', session, {
+    httpOnly: true,
+    secure,
+    expires: expiresAt,
+    sameSite: 'lax',
+    path: '/',
+  })
+  cookieStore.set('session_timestamp', Date.now().toString(), {
+    httpOnly: false,
+    secure,
+    expires: expiresAt,
+    sameSite: 'lax',
+    path: '/',
+  })
+
+  // Remove the legacy browser-readable JWT cookie during rolling upgrades.
+  cookieStore.set('jwt', '', {
+    httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 0,
+  })
+}
+
+export async function getSession() {
+  return decrypt((await cookies()).get('session')?.value)
+}
+
+export async function getJwt() {
+  const payload = await getSession()
+  return typeof payload?.apiRootJwt === 'string' ? payload.apiRootJwt : null
+}
+
+export async function getSessionFullName() {
+  const payload = await getSession()
+  return typeof payload?.fullName === 'string' ? payload.fullName : null
 }

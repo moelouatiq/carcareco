@@ -58,17 +58,15 @@ export default function Home() {
       }
      
       if (!response.ok) {
-        const errorData = await response.text();
-        setError(errorData || 'Could not create demo account. Please try again later.');
+        setError('Could not create demo account. Please try again later.');
         setIsLoading(false);
         return;
       }
       
       const data = await response.json()
       setCredentials(data)
-    } catch (err: any) {// eslint-disable-line @typescript-eslint/no-explicit-any
-      setError(err.message || 'Failed to create demo account. Please try again later.')
-      console.error(err)
+    } catch {
+      setError('Failed to create demo account. Please try again later.')
     } finally {
       setIsLoading(false)
     }

@@ -24,9 +24,6 @@
 		<Content Remove="wwwroot\print.css" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Include="appsettings.Secrets.json" />
-	</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="Dapper" Version="2.1.66" />

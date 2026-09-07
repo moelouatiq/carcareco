@@ -39,7 +39,7 @@ namespace Carmasters.Core.Persistence.Postgres.NHibernate
         { 
             var connection = connectionProvider.GetConnection(); //disposed by scope
             var principal = contextAccessor.HttpContext.User;
-            if (principal == null) new Exception("Current ClaimsPrincipal is null");
+            if (principal == null) throw new Exception("Current ClaimsPrincipal is null");
 
             var tenantName = principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Spn)?.Value;
             if (string.IsNullOrWhiteSpace(tenantName))

@@ -1,10 +1,14 @@
 ﻿using Carmasters.Core.Application.Configuration;
 using System;
+using System.Text.RegularExpressions;
 
 namespace Carmasters.Core.Application.Database
 {
     public class MultiTenancyDbName
     {
+        private static readonly Regex SafeTenantName = new(
+            "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,62}$",
+            RegexOptions.CultureInvariant | RegexOptions.Compiled);
         string value;
         private readonly DbOptions options;
 
@@ -23,6 +27,10 @@ namespace Carmasters.Core.Application.Database
             if (string.IsNullOrWhiteSpace(tenantName))
             {
                 throw new ArgumentException($"'{nameof(tenantName)}' cannot be null or whitespace.", nameof(tenantName));
+            }
+            if (!SafeTenantName.IsMatch(tenantName))
+            {
+                throw new ArgumentException("Tenant name contains unsupported characters.", nameof(tenantName));
             }
             value = $"{options.Name}-{tenantName}";
         }

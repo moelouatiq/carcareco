@@ -14,8 +14,10 @@ namespace Carmasters.Core.Application.Errors
         public JsonErrorDto(Exception exception)
         {
             IsUserError = exception is UserException;
-            ExceptionMessage = exception.Message;
-            ExceptionDetails = exception.ToString();
+            ExceptionMessage = IsUserError
+                ? exception.Message
+                : "An unexpected server error occurred.";
+            ExceptionDetails = null;
             //refractor out TODO
             if (IsPosgresTryingToDeleteButRelatedDataExists(exception))
             {

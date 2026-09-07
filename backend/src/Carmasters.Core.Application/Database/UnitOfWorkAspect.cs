@@ -59,7 +59,7 @@ namespace Carmasters.Core.Application.Database
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(ex, "Errors, rolling back any changes");
+				logger.LogError("Database transaction rolled back. Type: {ExceptionType}", ex.GetType().Name);
 				transaction.Rollback();
 				throw;
 			}

@@ -108,11 +108,7 @@ export default function SearchCombobox({
                     target(data);
 
                 },
-                onFailure:({url,status,text})=>{
-                    console.log(url);
-                    console.log(status);
-                    console.log(text);
-                }
+                onFailure:()=>{}
               })   
         }}
         > 

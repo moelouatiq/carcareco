@@ -69,11 +69,7 @@ const EditableCodeCell = React.forwardRef<EditableCellHandle<string>,IEditableCo
                     target(data);
 
                 },
-                onFailure:({url,status,text})=>{
-                    console.log(url);
-                    console.log(status);
-                    console.log(text);
-                }
+                onFailure:()=>{}
               })   
         }}
         > 

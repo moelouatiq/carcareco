@@ -5,7 +5,6 @@ import { httpPost } from "./query-api";
  
 export async function extendSession() {
     //TODO fix
-    console.log('extending session'); 
     const response = await httpPost(
         {
           url:'users/extendsession' , 

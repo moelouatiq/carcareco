@@ -45,16 +45,9 @@ export default function WorkInput({
                 if (result) {
                     setClientVehicles(result);
                 }
-                else {
-                    console.log(result);
-                    return [];
-                }
+                else setClientVehicles([]);
             },
-            onFailure: ({ url, status, text }) => {
-                console.log(url);
-                console.log(text);
-                console.log(status);
-            }
+            onFailure: () => setClientVehicles([])
         });
     }
 

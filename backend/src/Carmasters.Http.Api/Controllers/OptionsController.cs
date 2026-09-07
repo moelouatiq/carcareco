@@ -41,7 +41,7 @@ namespace Carmasters.Http.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error retrieving tenant configuration");
+                logger.LogError("Error retrieving tenant configuration. Type: {ExceptionType}", ex.GetType().Name);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Failed to retrieve configuration");
             }
         }
@@ -56,7 +56,7 @@ namespace Carmasters.Http.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error saving tenant configuration");
+                logger.LogError("Error saving tenant configuration. Type: {ExceptionType}", ex.GetType().Name);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Failed to save configuration");
             }
         }

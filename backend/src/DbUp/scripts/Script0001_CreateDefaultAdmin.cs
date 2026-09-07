@@ -21,12 +21,9 @@ namespace DbUp.Scripts
             byte[] profileImage;
             string imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "default_admin.png");
 
-            Console.WriteLine($"Loading admin profile image from: {imagePath}");
-
             if (File.Exists(imagePath))
             {
                 profileImage = File.ReadAllBytes(imagePath);
-                Console.WriteLine($"Successfully loaded profile image: {profileImage.Length} bytes");
             }
             else
             {
@@ -49,7 +46,7 @@ namespace DbUp.Scripts
             {
                 command.Parameters.AddWithValue("@Id", employeeId);
                 command.ExecuteNonQuery();
-                Console.WriteLine($"Created employee record with ID: {employeeId}");
+                Console.WriteLine("Created bootstrap employee record.");
             }
             command = (NpgsqlCommand)dbCommandFactory();
             command.CommandText = @"INSERT INTO public.user (
@@ -79,6 +76,23 @@ namespace DbUp.Scripts
             if (string.IsNullOrWhiteSpace(value))
             {
                 throw new InvalidOperationException($"Required environment variable {name} is missing. Run the setup-secrets script first.");
+            }
+
+            var normalized = value.Trim().ToLowerInvariant();
+            if (name == "CARCARE_ADMIN_PASSWORD"
+                && (value.Length < 16
+                    || normalized is "admin" or "password" or "carcare" or "changeme"
+                    || normalized.Contains("change-me")
+                    || normalized.StartsWith("[")))
+            {
+                throw new InvalidOperationException(
+                    "CARCARE_ADMIN_PASSWORD must contain at least 16 non-placeholder characters.");
+            }
+
+            if (name == "CARCARE_ADMIN_USERNAME"
+                && normalized is "admin" or "root" or "administrator" or "carcare")
+            {
+                throw new InvalidOperationException("CARCARE_ADMIN_USERNAME cannot use a known default account name.");
             }
 
             return value;

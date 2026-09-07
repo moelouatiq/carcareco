@@ -73,7 +73,7 @@ namespace Carmasters.Core.Application.Printing
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Could not render the HTML because of an error");
+                _logger.LogError("Could not render HTML. Type: {ExceptionType}", ex.GetType().Name);
                 return "render error";
             }
         }

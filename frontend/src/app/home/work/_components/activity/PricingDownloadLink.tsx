@@ -25,9 +25,7 @@ const handleFileDownload = async (pricingId:string, pricingName: string,fileName
      link.click();
      document.body.removeChild(link);
 
-    } catch (error) {
-      console.log("Error", error)
-    }
+    } catch {}
   }
 
 export default function PricingDownloadLink({

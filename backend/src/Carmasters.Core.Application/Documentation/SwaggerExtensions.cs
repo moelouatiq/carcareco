@@ -18,7 +18,6 @@ namespace Carmasters.Core.Application.Documentation
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CarCare Co. API", Version = "v1" });
-                c.DocumentFilter<SecurityTrimming>();
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,

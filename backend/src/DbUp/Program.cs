@@ -28,7 +28,7 @@ var result = upgrader.PerformUpgrade();
 if (!result.Successful)
 {
     Console.ForegroundColor = ConsoleColor.Red;
-    Console.WriteLine(result.Error);
+    Console.WriteLine($"Database upgrade failed. Type: {result.Error?.GetType().Name ?? "Unknown"}");
     Console.ResetColor();
 #if DEBUG
     Console.ReadLine();
@@ -100,7 +100,7 @@ public class AppConfiguration
 builder.AddJsonFile("appsettings.Production.json", optional: true, reloadOnChange: true);
 #endif
 
-        builder.AddJsonFile("appsettings.Secrets.json", optional: false, reloadOnChange: true);
+        builder.AddJsonFile("appsettings.Secrets.json", optional: true, reloadOnChange: true);
 
 
         IConfigurationRoot configuration = builder.Build();

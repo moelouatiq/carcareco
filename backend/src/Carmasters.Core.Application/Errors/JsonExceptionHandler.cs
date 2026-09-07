@@ -34,11 +34,13 @@ namespace Carmasters.Core.Application.Errors
             if (exceptionHandlerPathFeature?.Error != null)
             {
                 error = new JsonErrorDto(exceptionHandlerPathFeature?.Error);
-                logger.LogError(exceptionHandlerPathFeature?.Error, message: null);
+                logger.LogError(
+                    "Unhandled exception. Type: {ExceptionType}",
+                    exceptionHandlerPathFeature.Error.GetType().Name);
             }
             else
             {
-                logger.LogError(exception, message: null);
+                logger.LogError("Unhandled exception. Type: {ExceptionType}", exception.GetType().Name);
             }
             var json = JsonSerializer.Serialize(error, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, WriteIndented = true });
             await httpContext.Response.WriteAsync(json);

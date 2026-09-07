@@ -28,7 +28,7 @@ namespace Carmasters.Core.Application.Errors
                 context.Result = new JsonResult(errorJson);
 
 
-                logger.LogError(exception, message: null);
+                logger.LogError("Unhandled controller exception. Type: {ExceptionType}", exception.GetType().Name);
                 context.ExceptionHandled = true;
             }
         }

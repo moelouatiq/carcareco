@@ -100,39 +100,42 @@ All authenticated user operations; decorate the whole class with [TenantRateLimi
             if (user == null || !PasswordHasher.verifyHash(
                 model.Password, user.Password))
             { 
-                logger.LogInformation("Authentication failure: {user} {message}", model.Username, "Wrong password or username");
+                logger.LogInformation("Authentication failed.");
                 await Task.Delay(TimeSpan.FromSeconds(SecondsToWaitOnFailedLogonAttempt)); // wait on failure
                 return Unauthorized();
             }
 
             var fullName = repository.GetFullName(model.Username);
             var internalUsePrincipal = ClaimsPrincipalBuilder.Build(user, fullName, false);
-            var publicUsePrincipal = ClaimsPrincipalBuilder.Build(user, fullName, true); 
 
             return Ok(new
             {
                 Jwt = AppJwtToken.Generate(jwtOptions.Value, internalUsePrincipal),
-                PublicJwt = AppJwtToken.Generate(jwtOptions.Value, publicUsePrincipal),
+                FullName = fullName,
                 Timeout = (int)jwtOptions.Value.SessionTimeout.TotalSeconds
             }); 
         }
 
-        [AllowAnonymous, LimitRequests(MaxRequests = 60, TimeWindow = 60)]
-        [HttpGet("profilepicture/{jwt?}")] 
-        public IActionResult GetProfilePicture(string jwt)
+        [TenantRateLimit]
+        [HttpGet("profilepicture")]
+        public IActionResult GetProfilePicture()
         {
             try
             {
-                var jwtToken = AppJwtToken.LoadJwt(jwtOptions.Value, jwt);
-                var tenantName = jwtToken.Claims.First(x => x.Type == ClaimTypes.Spn).Value; 
-                var empId = Guid.Parse(jwtToken.Claims.First(x => x.Type == ClaimTypes.UserData)?.Value);
+                var tenantName = User.FindFirstValue(ClaimTypes.Spn);
+                var employeeId = User.FindFirstValue(ClaimTypes.UserData);
+                if (string.IsNullOrWhiteSpace(tenantName) || !Guid.TryParse(employeeId, out var empId))
+                {
+                    return Unauthorized();
+                }
+
                 var user = repository.GetBy(new UserIdentifier(tenantName, empId)); 
                 if(user == null) return File(new byte[0], "image/jpeg");
                 return File(user.ProfileImage, "image/jpeg");
             }
-            catch (Exception ex) //need to check this if fails, right now it has crashed the app multiple times
+            catch (Exception)
             {
-                logger.LogError(ex, "Cannot resolve user picture");
+                logger.LogWarning("Cannot resolve the authenticated user's profile picture.");
                 return File(new byte[0], "image/jpeg");
             }
         }
@@ -150,16 +153,13 @@ All authenticated user operations; decorate the whole class with [TenantRateLimi
                     logger.LogWarning("Extending session failed, user not logged in");
                     return Unauthorized();
                 }
-                logger.LogInformation("Successfully extended user session for user {name}", User.Identity.Name);
-
-                 
                 var jwt = AppJwtToken.Generate(jwtOptions.Value, HttpContext.User);
                 return Ok(jwt);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                logger.LogError(ex, "Extending session failed, invalid token");
+                logger.LogWarning("Extending session failed because the authenticated token was invalid.");
                 return Unauthorized("invalid token");
             }
         }

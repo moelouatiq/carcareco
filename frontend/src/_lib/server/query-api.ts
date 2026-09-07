@@ -23,6 +23,7 @@ async function apiCall({
   };
   if(authorize) { 
     const jwt = await getJwt(); 
+    if (!jwt) redirect('/auth/login');
     requestHeaders["Authorization"] =  'Bearer ' + jwt;
   } 
   const fullUrl = process.env.API_URL +`/api/${url}`;
@@ -34,13 +35,7 @@ async function apiCall({
    
   const response = await fetch(fullUrl,request);
   if (!response.ok) {
-    debugger;
     const responseText = await response.text();
-    console.log("API response content type header: " + response.headers.get('Content-Type'));
-    console.log("API threw an exception: " + responseText);
-    console.log(method+' request to: '+fullUrl);
-    console.log('headers: '+JSON.stringify(requestHeaders));
-    console.log('body: '+request.body);
     const hasContentType = response.headers.has('Content-Type');
     let message = 'API Error occurred server side';
     let isUserError = false;
@@ -49,7 +44,6 @@ async function apiCall({
       if(contentType?.startsWith('application/json'))
       {
         const responseJson = JSON.parse(responseText);
-        debugger;
         if (responseJson.exceptionMessage) {
             message = responseJson.exceptionMessage;
         }
@@ -71,7 +65,7 @@ async function apiCall({
         }
       }
 
-     redirect(`/error?code=${response.status}&statusText=${response.statusText}&text=${message}`)
+     redirect(`/error?code=${response.status}`)
   }
   return response;
 }

@@ -13,7 +13,6 @@ export async function createOrUpdate(
     let odo = formData.get('odo');
     if(!odo) odo = '0';
 
-    debugger;
     let ownerId = formData.get('ownerId[value]');
     if(!ownerId) ownerId = null;
 
@@ -27,7 +26,6 @@ export async function createOrUpdate(
         ownerId:ownerId
     };
  
-    debugger;
     const url = "vehicles";
      
     const isUpdating = !!id;

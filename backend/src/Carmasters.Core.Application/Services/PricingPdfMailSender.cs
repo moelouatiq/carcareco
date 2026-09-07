@@ -64,7 +64,7 @@ namespace Carmasters.Core.Application.Services
                 message.Attachments.Add(new Attachment(new MemoryStream(pdfBytes), pricing.GetFileName(), "application/pdf"));
 
                 mail.Send(message);
-                logger.LogInformation("Pricing email sent {smtp}:{port} {subject}", mail.Host, mail.Port, message.Subject);
+                logger.LogInformation("Pricing email sent successfully.");
             }
         }
     }
