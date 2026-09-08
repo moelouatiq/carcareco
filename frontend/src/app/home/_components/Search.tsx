@@ -2,6 +2,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import React  from "react";
 import { httpGet } from "@/_lib/server/query-api"; 
+import { resourceEditPath, resolveResourcePageName } from "@/_lib/resource-path";
 interface DataResult {
   hasMore: boolean,
   items: Record<string, string>[]
@@ -35,7 +36,7 @@ export default async function Search(
     children?: React.ReactNode
   }) {
 
-  const resolvedPageName = pageName || resourceName;
+  const resolvedPageName = resolveResourcePageName(resourceName, pageName);
   let options = (await searchParams);
   const offset = parseInt(options.offset ?? 0);
   const limit = parseInt(options.limit ?? 30);
@@ -147,9 +148,9 @@ export default async function Search(
                         })
                       }
                       <td className="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-0">
-                        <a href={`/home/${pageName}/edit/${item[idField]}`} className="text-indigo-900 hover:text-indigo-500">
+                        <Link href={resourceEditPath(resourceName, item[idField], pageName)} className="text-indigo-900 hover:text-indigo-500">
                           Edit
-                        </a>
+                        </Link>
                       </td>
                     </tr>
                   ))}
