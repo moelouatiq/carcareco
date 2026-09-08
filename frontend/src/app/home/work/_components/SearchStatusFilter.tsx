@@ -30,11 +30,14 @@ export default function SearchStatusFilter({
             else radioAll?.click();
           }} >
         </FormSwitch>
-        <label className="block text-sm/6 font-medium text-gray-900">{(issued ? 'Completed' : 'Unfinished')}</label>
+        <label className="block text-sm/6 font-medium text-gray-900">{(issued ? 'Completed' : 'Work')}</label>
       </div>
       <div className="flex   items-center  gap-x-2 ">
         <FormRadio id="all" label="All" name="status" onChange={submitFormOnChange} defaultChecked={(!status || status === 'all')} value="all" ></FormRadio>
       </div>
+      {!issued && <div className="flex items-center gap-x-2">
+        <FormRadio id="unfinished" label="Unfinished" name="status" onChange={submitFormOnChange} defaultChecked={(status === 'unfinished')} value="unfinished" ></FormRadio>
+      </div>}
       {!issued && <div className="flex  items-center  gap-x-2 ">
         <FormRadio id="inprogress" label="In progress" name="status" onChange={submitFormOnChange} defaultChecked={(status === 'inprogress')} value="inprogress" ></FormRadio>
       </div>}

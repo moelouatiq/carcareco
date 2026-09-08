@@ -38,8 +38,8 @@ export default async function Search(
 
   const resolvedPageName = resolveResourcePageName(resourceName, pageName);
   let options = (await searchParams);
-  const offset = parseInt(options.offset ?? 0);
-  const limit = parseInt(options.limit ?? 30);
+  const offset = pageNumber(options.offset, 0, 0);
+  const limit = pageNumber(options.limit, 30, 1);
   options = {
     ...options,
     offset: offset.toString(),
@@ -48,7 +48,7 @@ export default async function Search(
   const queryString = new URLSearchParams(options).toString();
   const page = '/home/' + resolvedPageName + '?';
   const nextPage = page + new URLSearchParams({ ...options, offset: (offset + limit).toString() }).toString();
-  const prevPage = page + new URLSearchParams({ ...options, offset: (offset - limit).toString() }).toString();
+  const prevPage = page + new URLSearchParams({ ...options, offset: Math.max(0, offset - limit).toString() }).toString();
 
   const response = await httpGet(`${resourceName}/page?${queryString}`);
   const data = (await response.json() as DataResult);
@@ -185,4 +185,9 @@ export default async function Search(
        </>
 
   )
+}
+
+function pageNumber(value: string | undefined, fallback: number, minimum: number) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed >= minimum ? parsed : fallback;
 }

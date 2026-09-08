@@ -249,14 +249,16 @@ namespace Carmasters.Http.Api.Controllers
             string status,
             string issued,
             string saleable,
-             DateTime? workForm,
+            DateTime? workFrom,
             DateTime? workTo,
             DateTime? invoiceFrom, 
             DateTime? invoiceTo )
         {
-            var onlyIssued = issued == "on" ;
-            var clientId  = Request.Query["clientiId[value]"].FirstOrDefault();
-            var vehicleId = Request.Query["vehicleId[value]"].FirstOrDefault();
+            var onlyIssued = string.Equals(issued, "on", StringComparison.OrdinalIgnoreCase);
+            var normalizedStatus = status?.Trim().ToLowerInvariant();
+            var clientIdValue = Request.Query["clientId[value]"].FirstOrDefault()
+                ?? Request.Query["clientiId[value]"].FirstOrDefault();
+            var vehicleIdValue = Request.Query["vehicleId[value]"].FirstOrDefault();
             orderby = onlyIssued? "i.number": "w.changedon";
 
              
@@ -267,58 +269,59 @@ namespace Carmasters.Http.Api.Controllers
                  .PageQuery<WorkPage>(orderby, limit, offset, desc);
 
            
-            if (!onlyIssued)
+            if (!onlyIssued && normalizedStatus == "unfinished")
             {
-                query.Where("w.invoiceid is null");
-            } 
-
-            if (!string.IsNullOrWhiteSpace(status))
-            {
-                 
-                if (status == "inprogress") query.Where($" w.userstatus = '{WorkStatus.InProgress}'");
-                else if (status == "closed") query.Where($" w.userstatus = '{WorkStatus.Closed}'");
-
-                else if (status == "overdue") 
-                    query.Where(@"i.ispaid = false and (ip.issuedon + i.duedays * interval '1 day' <=  current_timestamp)");
-
+                query.Where($"w.invoiceid is null and w.userstatus <> '{WorkStatus.Closed}'");
             }
-          
-            if (clientId  != null) query.Where($"w.clientid = '{clientId }'");
-            if (vehicleId != null ) query.Where($"w.vehicleid = '{vehicleId}' ");
-            if (workForm is not null || workForm is not null)
-            { 
-                var dateRestriction = @" work.startedon {0})";
-                if (invoiceTo is null)
+            else if (!onlyIssued && normalizedStatus == "inprogress")
+            {
+                query.Where($"w.invoiceid is null and w.userstatus = '{WorkStatus.InProgress}'");
+            }
+            else if (!onlyIssued && normalizedStatus == "closed")
+            {
+                query.Where($"w.invoiceid is null and w.userstatus = '{WorkStatus.Closed}'");
+            }
+            else if (onlyIssued && normalizedStatus == "overdue")
+            {
+                query.Where(@"i.ispaid = false and (ip.issuedon + i.duedays * interval '1 day' <= current_timestamp)");
+            }
+
+            AddGuidRestriction("w.clientid", clientIdValue);
+            AddGuidRestriction("w.vehicleid", vehicleIdValue);
+            AddDateRestriction("w.startedon", workFrom, workTo);
+            if (onlyIssued)
+            {
+                AddDateRestriction("ip.issuedon", invoiceFrom, invoiceTo);
+            }
+
+            void AddGuidRestriction(string field, string value)
+            {
+                if (string.IsNullOrWhiteSpace(value)) return;
+
+                if (Guid.TryParse(value, out var id))
                 {
-                    dateRestriction = string.Format(dateRestriction, $" >= '{pgDate(invoiceFrom)}'");
-                }
-                else if (invoiceFrom is null)
-                {
-                    dateRestriction = string.Format(dateRestriction, $" < '{pgDate(invoiceTo)}'");
+                    query.Where($"{field} = '{id}'");
                 }
                 else
                 {
-                    dateRestriction = string.Format(dateRestriction, $" between '{pgDate(invoiceFrom)}' and '{pgDate(invoiceTo)}' ");
+                    query.Where("1 = 0");
                 }
-                query.Where(dateRestriction);
             }
-            if (invoiceFrom is not null || invoiceTo is not null)
+
+            void AddDateRestriction(string field, DateTime? from, DateTime? to)
             {
-               
-                var dateRestriction = @"ip.issuedon {0}";
-                if (invoiceTo is null)
+                if (from is not null && to is not null)
                 {
-                    dateRestriction = string.Format(dateRestriction, $" >= '{pgDate(invoiceFrom)}'");
+                    query.Where($"{field} between '{pgDate(from)}' and '{pgDate(to)}'");
                 }
-                else if (invoiceFrom is null)
+                else if (from is not null)
                 {
-                    dateRestriction = string.Format(dateRestriction, $" < '{pgDate(invoiceTo)}'");
+                    query.Where($"{field} >= '{pgDate(from)}'");
                 }
-                else
+                else if (to is not null)
                 {
-                    dateRestriction = string.Format(dateRestriction, $" between '{pgDate(invoiceFrom)}' and '{pgDate(invoiceTo)}' ");
+                    query.Where($"{field} < '{pgDate(to)}'");
                 }
-                query.Where(dateRestriction);
             }
             if (!string.IsNullOrWhiteSpace(saleable))
             {

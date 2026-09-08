@@ -28,10 +28,11 @@ async function apiCall({
     requestHeaders["Authorization"] =  'Bearer ' + jwt;
   } 
   const fullUrl = process.env.API_URL +`/api/${url}`;
-  const request = {
+  const request: RequestInit = {
     method,
     headers: requestHeaders,
-    body : body? JSON.stringify(body):null
+    body : body? JSON.stringify(body):null,
+    cache: method === "GET" ? "no-store" : undefined,
   };
    
   const response = await fetch(fullUrl,request);

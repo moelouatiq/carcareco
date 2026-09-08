@@ -44,7 +44,7 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
     }
 
     [Fact]
-    public async Task TamperingWithTenantClaimInvalidatesAuthentication()
+    public async Task TamperingWithTenantClaimCannotReadWorkFromAnotherTenant()
     {
         var parts = fixture.Jwt.Split('.');
         Assert.Equal(3, parts.Length);
@@ -58,7 +58,7 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
 
         using var client = new HttpClient { BaseAddress = fixture.BaseAddress };
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tamperedToken);
-        using var response = await client.GetAsync("/api/employees");
+        using var response = await client.GetAsync("/api/work/page?issued=off&status=all&limit=30&offset=0");
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -203,6 +203,97 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
         var pdf = await pdfResponse.Content.ReadAsByteArrayAsync();
         Assert.True(pdf.Length > 1_000, "Generated PDF was unexpectedly small.");
         Assert.Equal("%PDF-", Encoding.ASCII.GetString(pdf, 0, 5));
+
+        var allWork = await GetWorkPage(
+            $"issued=off&status=all&workFrom=&workTo=&searchText={Uri.EscapeDataString($"Test-{suffix} Client")}&limit=30&offset=0");
+        Assert.Contains(WorkItems(allWork), item => item.GetProperty("id").GetGuid() == workId);
+
+        var unfinishedWork = await GetWorkPage("issued=off&status=unfinished&limit=30&offset=0");
+        Assert.DoesNotContain(WorkItems(unfinishedWork), item => item.GetProperty("id").GetGuid() == workId);
+    }
+
+    [Fact]
+    public async Task WorkPageHonorsAllUnfinishedSearchIdentifiersAndEmptyDates()
+    {
+        var suffix = Guid.NewGuid().ToString("N")[..10];
+        var firstName = $"History-{suffix}";
+        const string lastName = "Client";
+        var registration = $"H-{suffix[..7]}";
+        var clientId = await PostGuid("/api/privateclients", new
+        {
+            firstName,
+            lastName,
+            address = new
+            {
+                street = "20 History Street",
+                country = "MA",
+                region = "Casablanca-Settat",
+                city = "Casablanca",
+                postalCode = "20000",
+            },
+            phone = "+212600000001",
+            emailAddresses = new[] { $"history-{suffix}@example.invalid" },
+            currentEmail = $"history-{suffix}@example.invalid",
+            isAsshole = false,
+            description = "Work history filter regression test",
+            personalCode = $"HC-{suffix}",
+            introducedAt = DateTime.UtcNow,
+        });
+        var vehicleId = await PostGuid("/api/vehicles", new
+        {
+            producer = "Renault",
+            model = "Clio",
+            regNr = registration,
+            vin = $"HISTORYVIN{suffix}",
+            odo = 200,
+            ownerId = clientId,
+            description = "Work history filter regression test",
+        });
+        var workId = await PostWork(clientId, vehicleId, "Work history filter regression test");
+
+        var noFilter = await GetWorkPage("limit=30&offset=0");
+        Assert.Contains(WorkItems(noFilter), item => item.GetProperty("id").GetGuid() == workId);
+
+        var allWithEmptyValues = await GetWorkPage(
+            "issued=off&status=all&workFrom=&workTo=&clientId%5Bvalue%5D=&vehicleId%5Bvalue%5D=&limit=30&offset=0");
+        Assert.Contains(WorkItems(allWithEmptyValues), item => item.GetProperty("id").GetGuid() == workId);
+
+        var unfinished = await GetWorkPage("issued=off&status=unfinished&limit=30&offset=0");
+        Assert.Contains(WorkItems(unfinished), item => item.GetProperty("id").GetGuid() == workId);
+        Assert.All(WorkItems(unfinished), item =>
+            Assert.True(item.GetProperty("status").GetString() is "default" or "inprogress"));
+
+        var byClient = await GetWorkPage(
+            $"issued=off&status=all&searchText={Uri.EscapeDataString($"{firstName} {lastName}")}&limit=30&offset=0");
+        Assert.Contains(WorkItems(byClient), item => item.GetProperty("id").GetGuid() == workId);
+
+        var byVehicle = await GetWorkPage(
+            $"issued=off&status=all&searchText={Uri.EscapeDataString(registration)}&limit=30&offset=0");
+        Assert.Contains(WorkItems(byVehicle), item => item.GetProperty("id").GetGuid() == workId);
+
+        var byClientId = await GetWorkPage(
+            $"issued=off&status=all&clientId%5Bvalue%5D={clientId:D}&limit=30&offset=0");
+        Assert.Contains(WorkItems(byClientId), item => item.GetProperty("id").GetGuid() == workId);
+
+        var byVehicleId = await GetWorkPage(
+            $"issued=off&status=all&vehicleId%5Bvalue%5D={vehicleId:D}&limit=30&offset=0");
+        Assert.Contains(WorkItems(byVehicleId), item => item.GetProperty("id").GetGuid() == workId);
+
+        using (var closeResponse = await fixture.AuthorizedClient.PutAsJsonAsync(
+            $"/api/work/{workId}/status/Closed", new { }))
+        {
+            Assert.Equal(HttpStatusCode.OK, closeResponse.StatusCode);
+        }
+
+        var unfinishedAfterClose = await GetWorkPage("issued=off&status=unfinished&limit=30&offset=0");
+        Assert.DoesNotContain(WorkItems(unfinishedAfterClose), item => item.GetProperty("id").GetGuid() == workId);
+
+        var allAfterClose = await GetWorkPage("issued=off&status=all&limit=30&offset=0");
+        Assert.Contains(WorkItems(allAfterClose), item => item.GetProperty("id").GetGuid() == workId);
+
+        var trulyEmpty = await GetWorkPage(
+            $"issued=off&status=all&searchText={Guid.NewGuid():N}&limit=30&offset=0");
+        Assert.Empty(WorkItems(trulyEmpty));
     }
 
     private async Task<Guid> PostGuid(string path, object body)
@@ -213,6 +304,34 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
         Assert.NotEqual(Guid.Empty, id);
         return id;
     }
+
+    private async Task<Guid> PostWork(Guid clientId, Guid vehicleId, string description)
+    {
+        using var response = await fixture.AuthorizedClient.PostAsJsonAsync("/api/work", new
+        {
+            clientId,
+            description,
+            vehicleId,
+            assignedTo = Array.Empty<Guid>(),
+            odo = 201,
+            startWithOffer = false,
+        });
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var work = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        var workId = work.GetProperty("workId").GetGuid();
+        Assert.NotEqual(Guid.Empty, workId);
+        return workId;
+    }
+
+    private async Task<JsonElement> GetWorkPage(string query)
+    {
+        using var response = await fixture.AuthorizedClient.GetAsync($"/api/work/page?{query}");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        return await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+    }
+
+    private static JsonElement[] WorkItems(JsonElement page) =>
+        page.GetProperty("items").EnumerateArray().ToArray();
 
     private static string Base64UrlDecode(string value)
     {

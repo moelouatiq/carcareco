@@ -7,6 +7,9 @@ export default function SearchParams({
 }:{
     options: any // eslint-disable-line @typescript-eslint/no-explicit-any
 }){
+    const clientValue = options['clientId[value]'] ?? options['clientiId[value]'];
+    const clientText = options['clientId[text]'] ?? options['clientiId[text]'];
+
     return (
         <div className="grid sm:grid-flow-col gap-2">
         
@@ -28,22 +31,22 @@ export default function SearchParams({
                   </div>
 
                   <div className="col-span-1  ">
-                    <FormLabel name='clientiId' label='Client'></FormLabel>
+                    <FormLabel name='clientId' label='Client'></FormLabel>
                     <ClientsCombobox
-                      name='clientiId'
-                      defaultValue={{
-                        text: options['clientiId[text]'], 
-                        value: options['clientiId[value]'],
-                      }}>
+                      name='clientId'
+                      defaultValue={clientValue ? {
+                        text: clientText,
+                        value: clientValue,
+                      } : null}>
                     </ClientsCombobox>
                   </div>
                   <div className="col-span-1 ">
                     <FormLabel name='vehicleId' label='Vehicle'></FormLabel>
                     <VehiclesCombobox name='vehicleId'
-                      defaultValue={{
+                      defaultValue={options['vehicleId[value]'] ? {
                         text: options['vehicleId[text]'],
                         value: options['vehicleId[value]'],
-                      }}>
+                      } : null}>
                     </VehiclesCombobox>
                   </div>  
         </div>
