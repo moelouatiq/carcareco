@@ -1,8 +1,9 @@
 import { downloadPricing } from "@/app/home/work/actions/downloadPricing";
-import '@/_styles/print.css'; 
+import '@/_styles/print.css';
 import PrintPage from "./Print";
 
- 
+
+
 
 export default async function Page({
     params,

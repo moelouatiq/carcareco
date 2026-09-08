@@ -6,8 +6,7 @@ import Main from "../_components/Main";
 import SimpleSearchBar from "../_components/SimpleSearchBar";
 
 
-export default async function Page(
-  { searchParams }: { searchParams: Promise<Record<string, string>> }) {
+export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
 
   return <Main header={
     <SearchCardHeader title="Find Vehicles" pageName="vehicles">
@@ -77,7 +76,4 @@ export default async function Page(
         </Search></form>
    
   </Main>
-
-
-
 }

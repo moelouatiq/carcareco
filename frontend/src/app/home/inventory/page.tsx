@@ -1,12 +1,11 @@
 import { Fragment } from "react";
-import Search from "../_components/Search"; 
-import Main from "../_components/Main"; 
+import Search from "../_components/Search";
+import Main from "../_components/Main";
 import { SearchCardHeader } from "../_components/SearchCardHeader";
 import SimpleSearchBar from "../_components/SimpleSearchBar";
 
- 
-export default async function Page(
-  { searchParams }: { searchParams: Promise<Record<string, string>> }) {
+
+export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
 
   const columns = [
     {
@@ -60,7 +59,7 @@ export default async function Page(
       headerText: 'Location'
     }
   ];
-   
+
   return (
  
       <Main  header={
@@ -72,5 +71,4 @@ export default async function Page(
           </Search></form>
       </Main> 
   )
-
-} 
+}

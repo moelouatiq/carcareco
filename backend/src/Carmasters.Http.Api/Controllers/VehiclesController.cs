@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using Carmasters.Core.Application;
 using Carmasters.Core.Domain;
 using Carmasters.Http.Api.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +26,7 @@ namespace Carmasters.Http.Api.Controllers
     {
         private readonly ISession session;
 
-        public VehiclesController(IRepository repository,ISession session, IMapper mapper) : base(repository, mapper)
+        public VehiclesController(IRepository repository,ISession session, IAppMapper mapper) : base(repository, mapper)
         {
             this.session = session;
         }

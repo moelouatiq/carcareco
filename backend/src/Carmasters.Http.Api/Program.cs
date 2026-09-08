@@ -35,7 +35,7 @@ builder.Logging.AddConsole();
 ConfigureDataProtection(builder);
 
 builder.Services
-    .AddAutoMapperToApp()
+    .AddAppMapping()
     .AddPersistanceServices(builder.Configuration)
     .AddScoped<ITemplateService, RazorViewsTemplateService>()
     .AddScoped<IPdfGenerator, PdfGenerator>()

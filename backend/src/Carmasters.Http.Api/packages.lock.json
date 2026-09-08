@@ -2,15 +2,6 @@
   "version": 1,
   "dependencies": {
     "net9.0": {
-      "AutoMapper": {
-        "type": "Direct",
-        "requested": "[13.0.1, )",
-        "resolved": "13.0.1",
-        "contentHash": "/Fx1SbJ16qS7dU4i604Sle+U9VLX+WSNVJggk6MupKVkYvvBm4XqYaeFuf67diHefHKHs50uQIS2YEDFhPCakQ==",
-        "dependencies": {
-          "Microsoft.Extensions.Options": "6.0.0"
-        }
-      },
       "BCrypt.Net-Next": {
         "type": "Direct",
         "requested": "[4.0.3, )",
@@ -1331,7 +1322,6 @@
       "carmasters.http.api.model": {
         "type": "Project",
         "dependencies": {
-          "AutoMapper": "[13.0.1, )",
           "Carmasters.Core.Domain": "[1.0.0, )"
         }
       }

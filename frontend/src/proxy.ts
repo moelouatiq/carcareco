@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from 'next/server'
 import authorizationMiddleware from './_lib/server/authorization-middleware'; 
 import searchParamsMiddleware from './_lib/server/searchparams-middleware';
  
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   
   let nextResponse = NextResponse.next(); 
   nextResponse = await searchParamsMiddleware(request,nextResponse);

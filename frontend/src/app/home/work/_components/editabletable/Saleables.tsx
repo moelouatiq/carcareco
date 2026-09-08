@@ -4,7 +4,7 @@ import clsx from "clsx";
 import {   IPriceSummary, IProduct  } from "../../model";
 import React, { useRef }  from "react";
 import { DataItemRow, DataItemRowHandle } from "./DataIItemRow"; 
-import { dragAndDrop } from "../activity/dragAndDrop"; 
+import { useDragAndDrop } from "../activity/dragAndDrop";
 
 export default function Saleables({
     edit, 
@@ -28,7 +28,7 @@ export default function Saleables({
     const dragItem = useRef<string | undefined>(null);
     const dragOverItem = useRef<string | undefined>(null);
     
-    const dnd = dragAndDrop(refreshData, tableRef,dragItem,dragOverItem);
+    const dnd = useDragAndDrop(refreshData, tableRef, dragItem, dragOverItem);
  
     return (
         <>

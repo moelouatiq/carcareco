@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using Carmasters.Core.Application;
 using Carmasters.Core.Application.Extensions;
 using Carmasters.Core.Application.RateLimiting;
 using Carmasters.Core.Application.Services;
@@ -21,7 +21,7 @@ namespace Carmasters.Http.Api.Controllers.Clients
     [ApiController]
     public class ClientsController : BaseController<ClientPageDto, Client>
     {
-        public ClientsController(IRepository repository, IMapper mapper) : base(repository, mapper)
+        public ClientsController(IRepository repository, IAppMapper mapper) : base(repository, mapper)
         {
         }
 

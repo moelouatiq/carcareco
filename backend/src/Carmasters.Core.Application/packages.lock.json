@@ -102,14 +102,6 @@
           "NETStandard.Library": "1.6.0"
         }
       },
-      "AutoMapper": {
-        "type": "Transitive",
-        "resolved": "13.0.1",
-        "contentHash": "/Fx1SbJ16qS7dU4i604Sle+U9VLX+WSNVJggk6MupKVkYvvBm4XqYaeFuf67diHefHKHs50uQIS2YEDFhPCakQ==",
-        "dependencies": {
-          "Microsoft.Extensions.Options": "6.0.0"
-        }
-      },
       "Iesi.Collections": {
         "type": "Transitive",
         "resolved": "4.0.4",
@@ -1268,7 +1260,6 @@
       "carmasters.http.api.model": {
         "type": "Project",
         "dependencies": {
-          "AutoMapper": "[13.0.1, )",
           "Carmasters.Core.Domain": "[1.0.0, )"
         }
       }

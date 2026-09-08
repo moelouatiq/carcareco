@@ -35,7 +35,7 @@ export default async function Search(
     children?: React.ReactNode
   }) {
 
-  if (!pageName) pageName = resourceName;
+  const resolvedPageName = pageName || resourceName;
   let options = (await searchParams);
   const offset = parseInt(options.offset ?? 0);
   const limit = parseInt(options.limit ?? 30);
@@ -45,7 +45,7 @@ export default async function Search(
     limit: limit.toString()
   };
   const queryString = new URLSearchParams(options).toString();
-  const page = '/home/' + pageName + '?';
+  const page = '/home/' + resolvedPageName + '?';
   const nextPage = page + new URLSearchParams({ ...options, offset: (offset + limit).toString() }).toString();
   const prevPage = page + new URLSearchParams({ ...options, offset: (offset - limit).toString() }).toString();
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using AutoMapper;
+using Carmasters.Core.Application;
 using Carmasters.Core.Application.RateLimiting;
 using Carmasters.Core.Application.Services;
 using Carmasters.Core.Repository.Postgres;
@@ -21,7 +21,7 @@ namespace Carmasters.Http.Api.Controllers
     public class StoragesController : BaseController<StorageDto, Core.Domain.Storage>
     {
 
-        public StoragesController(Core.Domain.IRepository repository, IMapper mapper) : base(repository, mapper)
+        public StoragesController(Core.Domain.IRepository repository, IAppMapper mapper) : base(repository, mapper)
         {
         }
         [HttpGet()]

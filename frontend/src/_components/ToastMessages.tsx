@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Transition } from '@headlessui/react'
 import { CheckCircleIcon } from '@heroicons/react/24/outline'
 import { XCircleIcon, XMarkIcon } from '@heroicons/react/20/solid'
@@ -13,32 +13,37 @@ const ToastMessages = () => {
 
   const getCookie = useGetCookie();
   const deleteCookie = useDeleteCookie();
-  const [show, setShow] = useState(false);
-  const [message, setMessage] = useState('');
-  const [isError, setIsError] = useState(false);
   const toast = getCookie('toast')?.toString();
+  const [dismissedToast, setDismissedToast] = useState<string>();
+  const notification = useMemo(() => {
+    if (!toast) return undefined;
+
+    try {
+      const parsed = JSON.parse(toast) as { isError?: boolean; message?: string };
+      return {
+        isError: Boolean(parsed.isError),
+        message: parsed.message ?? '',
+      };
+    } catch {
+      return { isError: true, message: 'An unexpected error occurred.' };
+    }
+  }, [toast]);
+  const show = Boolean(notification && toast !== dismissedToast);
+  const isError = notification?.isError ?? false;
+  const message = notification?.message ?? '';
 
 
   useEffect(() => {
  
-    if (toast) {
-      setShow(true);
-      const json = JSON.parse(toast);
-      setIsError(json.isError);
-      setMessage(json.message);
-      if (!json.isError) {
-        setTimeout(() => {
-          if (show) {
-            deleteCookie('toast')
-            setMessage("");
-            setShow(false);
-            setIsError(false);
-          }
-        }, 10 * 1000);
-      }
+    if (!toast || isError || !show) return;
 
-    }
-  }, [toast, show, deleteCookie]);
+    const timeout = window.setTimeout(() => {
+      deleteCookie('toast');
+      setDismissedToast(toast);
+    }, 10 * 1000);
+
+    return () => window.clearTimeout(timeout);
+  }, [toast, isError, show, deleteCookie]);
  
   return (
     <>
@@ -66,9 +71,7 @@ const ToastMessages = () => {
                       type="button"
                       onClick={() => {
                         deleteCookie('toast')
-                        setMessage("");
-                        setShow(false);
-                        setIsError(false);
+                        setDismissedToast(toast);
                       }}
                       className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
                     >

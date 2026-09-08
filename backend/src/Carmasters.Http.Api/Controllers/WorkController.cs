@@ -1,4 +1,3 @@
-﻿using AutoMapper;
 using Carmasters.Core.Application;
 using Carmasters.Core.Application.Configuration;
 using Carmasters.Core.Application.Extensions;
@@ -31,17 +30,15 @@ namespace Carmasters.Http.Api.Controllers
     public class WorkController : ControllerBase
     { 
         private readonly IRepository repository;
-        protected readonly IMapper mapper;
         private readonly ISequnceNumberProviderFactory numberProviderFactory;
         private readonly ISession session;
         private readonly IConfiguration configuration;
         private readonly IPricingSender pricingSender;
         private readonly ITenantConfigService tenantConfigService;
         static CultureInfo cultureUS = new CultureInfo("en-US");
-        public WorkController(IRepository repository, IMapper mapper, ISequnceNumberProviderFactory numberProviderFactory, ISession session, IConfiguration configuration,IPricingSender pricingSender, ITenantConfigService tenantConfigService)
+        public WorkController(IRepository repository, ISequnceNumberProviderFactory numberProviderFactory, ISession session, IConfiguration configuration,IPricingSender pricingSender, ITenantConfigService tenantConfigService)
         { 
             this.repository = repository;
-            this.mapper = mapper;
             this.numberProviderFactory = numberProviderFactory;
             this.session = session;
             this.configuration = configuration;

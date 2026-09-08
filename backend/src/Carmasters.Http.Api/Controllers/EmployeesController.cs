@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using AutoMapper;
 using Carmasters.Core.Application;
 using Carmasters.Core.Application.Authorization;
 using Carmasters.Core.Application.Database;
@@ -33,7 +32,7 @@ namespace Carmasters.Http.Api.Controllers
         private readonly IUserRepository userRepository;
         private readonly ISession session;
 
-        public EmployeesController(IUserRepository userRepository, IRepository repository, IMapper mapper, ISession session) : base(repository, mapper)
+        public EmployeesController(IUserRepository userRepository, IRepository repository, IAppMapper mapper, ISession session) : base(repository, mapper)
         {
             this.userRepository = userRepository;
             this.session = session;

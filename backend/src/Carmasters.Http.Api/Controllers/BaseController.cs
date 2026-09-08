@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
 using Carmasters.Core;
 using Carmasters.Core.Application;
 using Carmasters.Core.Domain;
@@ -24,9 +23,9 @@ namespace Carmasters.Http.Api.Controllers
     {
 
         protected readonly IRepository repository;
-        protected readonly IMapper mapper;
+        protected readonly IAppMapper mapper;
 
-        protected BaseController(IRepository repository, IMapper mapper)
+        protected BaseController(IRepository repository, IAppMapper mapper)
         {
             this.repository = repository;
             this.mapper = mapper;

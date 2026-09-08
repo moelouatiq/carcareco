@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Carmasters.Core.Application.Model;
+﻿using Carmasters.Core.Application.Model;
 using Carmasters.Core.Domain;
 using NHibernate.Bytecode;
 using System;

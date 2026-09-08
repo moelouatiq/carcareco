@@ -5,7 +5,7 @@ import ApplyDiscountsDialog from "./activity/ApplyDiscountDialog"
 import IssueOfferDialog from "./activity/IssueOfferDialog"
 import ActivityNotes from "./activity/Notes"
 import Saleables from "./editabletable/Saleables"
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useCallback, useRef } from "react"
 import { BaseDialogHandle } from "@/_components/BaseDialog"
 import { DataItemRowHandle } from "./editabletable/DataIItemRow"
 import { IActivities, IOfferIssuance, IProduct, IWorkData } from "../model"
@@ -25,23 +25,24 @@ export default function Activity({
     activities: IActivities,
     startfresh: boolean
 }) {
-
-
-    const [scrollDown,setScrollDown] = useState(false);
-
-    useEffect(()=>{
-        if(scrollDown){
+    const scrollToBottom = () => {
+        window.requestAnimationFrame(() => {
             const scrollHeight = document.body.scrollHeight;
             window.scrollTo(0, scrollHeight);
-            setScrollDown(false);
-        }
-    },[scrollDown])
+        });
+    };
 
     const applyDiscountsRef = React.useRef<BaseDialogHandle>(null);
     const issueOfferRef = React.useRef<BaseDialogHandle>(null);
     const offerAcceptedRef = React.useRef<BaseDialogHandle>(null);
      const sendOfferRef = React.useRef<BaseDialogHandle>(null);
-    const [data, setData] = React.useState<IProduct[]>(activities.current.products);
+    const [data, setData] = React.useState<IProduct[]>(() => {
+        if (startfresh && activities.current.products.length === 0) {
+            return [{ id: '-1', code: '', discount: null, name: '', price: null, quantity: 1, unit: 'tk' }];
+        }
+
+        return activities.current.products;
+    });
     const tableRef = useRef<DataItemRowHandle<IProduct>[] | null[]>([]);
     const pathCancel = `/home/work/${work.id}/${activities.current.id}`
     const pathEdit = pathCancel + '/edit#items'
@@ -49,83 +50,62 @@ export default function Activity({
     const editOptions =work.issuance?[]: [
         { name: 'Add row', onClick: () =>{
             addEmptyRow(1);
-            setScrollDown(true);
+            scrollToBottom();
         } },
         { name: 'Cancel ', href: pathCancel },
         { name: 'Save', isPrimary: true },
         { name: 'Apply discount', inMenu: true, onClick: () => applyDiscountsRef.current?.open() },
         { name: 'Add more rows', inMenu: true, onClick: () =>{
             addEmptyRow(5);
-            setScrollDown(true);
+            scrollToBottom();
         } }
     ] as IButtonOption[]
 
     const issued = !!issuance?.issuedOn;
 
-    const readOptions =work.issuance?[]: [
-        { name: 'Edit ', isPrimary: true, inMenu:issued, href: pathEdit },
-
-    
-    ] as IButtonOption[]
-    if (!work.issuance  && activityIsOffer) { //if work is not issued/completed we can do stuff with offer
-       
-        const accepted = !!issuance?.acceptedOn;
-        const sent = !!issuance?.sentOn;
-        readOptions[0].isPrimary = false; //if offer is issued, editing is not primary anymore
-        if(data.length > 0) //if there is data something to issue
-        { 
-            readOptions.push({ 
+    const accepted = !!issuance?.acceptedOn;
+    const sent = !!issuance?.sentOn;
+    const readOptions = work.issuance ? [] : [
+        { name: 'Edit ', isPrimary: !activityIsOffer, inMenu: issued, href: pathEdit },
+        ...(activityIsOffer && data.length > 0 ? [{
                 name:  (issued?'Reissue offer':'Issue offer'),
-                 inMenu:issued,
-                 isPrimary: !issued, //if not issued, issue is primary this is the next logical step
-                 onClick: () => { issueOfferRef.current?.open() } 
-                } as IButtonOption) 
-        }
-        if(issued){ //if issued, can send offer
-            readOptions.push(
-                {
-                    name: (sent?'Resend offer':'Send offer'),
-                    inMenu:sent,
-                    isPrimary: false,
-                    onClick:()=>{
-                        sendOfferRef.current?.open()
-                    }
-                }
-            );
-        } 
-        if(issued && !accepted){ //issued but but not accepted
-            readOptions.push({ 
-                name:  'Client accepted' ,
-                 isPrimary: true, 
-                 onClick: () => { offerAcceptedRef.current?.open()   } 
-                } as IButtonOption)
-        } 
-    }
+                inMenu: issued,
+                isPrimary: !issued,
+                onClick: () => { issueOfferRef.current?.open() },
+        }] : []),
+        ...(activityIsOffer && issued ? [{
+            name: (sent?'Resend offer':'Send offer'),
+            inMenu: sent,
+            isPrimary: false,
+            onClick: () => { sendOfferRef.current?.open() },
+        }] : []),
+        ...(activityIsOffer && issued && !accepted ? [{
+            name: 'Client accepted',
+            isPrimary: true,
+            onClick: () => { offerAcceptedRef.current?.open() },
+        }] : []),
+    ] as IButtonOption[];
     const addEmptyRow = useCallback((count: number) => {
-        for (let i = 1; i <= count; i++) {
-            const negValue = data.filter(x=>x.id.startsWith('-')).map(o => +o.id);
-            const nextId = (negValue.length>0 ? Math.min(...negValue) : 0)-1 
-            data.push({ id: nextId.toString(), code: '', discount: null, name: '', price: null, quantity: 1, unit: 'tk' })
-        }
-        setData([...data])
-       
-      }, [data]);
+        setData(current => {
+            const negativeIds = current.filter(item => item.id.startsWith('-')).map(item => Number(item.id));
+            const nextId = (negativeIds.length > 0 ? Math.min(...negativeIds) : 0) - 1;
+            const newRows = Array.from({ length: count }, (_, index) => ({
+                id: (nextId - index).toString(),
+                code: '',
+                discount: null,
+                name: '',
+                price: null,
+                quantity: 1,
+                unit: 'tk',
+            }));
+            return [...current, ...newRows];
+        });
+      }, []);
 
     
     const removeItem = (id: string) => {
-        const elementToRemove = data.find(x => x.id == id);
-        if (elementToRemove) {
-            data.splice(data.indexOf(elementToRemove), 1);
-            setData([...data]);
-        }
+        setData(current => current.filter(item => item.id !== id));
     }
- 
-    useEffect(() => {
-        //if empty state button was called add one row, todo
-        if (startfresh && data.length == 0) {
-            addEmptyRow(1);
-        }
-    }, [addEmptyRow, data.length,startfresh])
     return (
         <div className="">
             {activityIsOffer&&<OfferAcceptedDialog  dialogRef={offerAcceptedRef} work={work}  activities={activities}></OfferAcceptedDialog>}

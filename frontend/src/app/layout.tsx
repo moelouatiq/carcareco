@@ -6,7 +6,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 
 import '@/_styles/tailwind.css'
-  
+
 export const metadata: Metadata = {
   title: {
     template: '%s', // - B-dec
@@ -51,4 +51,3 @@ export default function DefaultLayout({
   )
 }
 
- 

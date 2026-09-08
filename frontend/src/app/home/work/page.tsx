@@ -10,13 +10,12 @@ import { EmailSentBadge, OverdueBadge } from "./_components/activity/badges/Issu
 import { SearchCardHeader } from "../_components/SearchCardHeader";
 import { Card } from "@/_components/Card";
 import SearchStatusFilter from "./_components/SearchStatusFilter";
-import SearchParams from "./_components/SearchParams"; 
+import SearchParams from "./_components/SearchParams";
 import PrimaryButton from "@/_components/PrimaryButton";
 import SearchInput from "../_components/SearchInput";
 import FormInput from "@/_components/FormInput";
 
-export default async function Page(
-  { searchParams }: { searchParams: Promise<Record<string, string>> }) {
+export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
 
   const options = (await searchParams);
 

@@ -1,11 +1,10 @@
  
 import Main from "../_components/Main";
 import Search from "../_components/Search";
-import { SearchCardHeader } from "../_components/SearchCardHeader"; 
+import { SearchCardHeader } from "../_components/SearchCardHeader";
 import SimpleSearchBar from "../_components/SimpleSearchBar";
 
-export default async function Page(
-  { searchParams }: { searchParams: Promise<Record<string, string>> }) {
+export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
 
 
   return <Main header={
@@ -37,6 +36,4 @@ export default async function Page(
     </Search></form>
 
   </Main>
-
-
 }

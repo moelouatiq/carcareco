@@ -3,7 +3,6 @@
 'use client'
 import {  IWorkData } from '../model';
 import { DocumentTextIcon,   TruckIcon, UserCircleIcon, WrenchScrewdriverIcon } from '@heroicons/react/20/solid';
-import moment from 'moment';
 import React from 'react';
 import { startAnActivity } from '../actions/startAnActivity';
 import ButtonGroup, { IButtonOption } from '@/_components/ButtonGroup';
@@ -22,6 +21,7 @@ import { createACopy } from '../actions/createACopy';
 import FormSwitch from '@/_components/FormSwitch'; 
 import { Field, Label } from '@headlessui/react';
 import { changeWorkStatus } from '../actions/changeWorkStatus';
+import LocalDateTime from '@/_components/LocalDateTime';
 
 
 export function WorkInformation({
@@ -42,17 +42,17 @@ export function WorkInformation({
     const sendInvoiceRef = React.useRef<BaseDialogHandle>(null);
     const deleteWorkRef = React.useRef<ConfirmDialogHandle>(null);
     
-    const workMenuOptions = work.issuance ? [] : [
-        { name: 'Make an offer', onClick: async () => { await startAnActivity(work.id, "offer") } },
-        { name: 'Start repair job', onClick: async () => { await startAnActivity(work.id, "repairjob") } },
-        { name: 'Edit', href: editPath },
-        { name: 'Delete', redText:true, onClick:   () => { deleteWorkRef.current?.open({
-            title:'Delete work',description:'Are you sure you want to delete it?',confirmObj:work.id
-        })  } },
+    const workMenuOptions = [
+        ...(!work.issuance ? [
+            { name: 'Make an offer', onClick: async () => { await startAnActivity(work.id, "offer") } },
+            { name: 'Start repair job', onClick: async () => { await startAnActivity(work.id, "repairjob") } },
+            { name: 'Edit', href: editPath },
+            { name: 'Delete', redText:true, onClick: () => { deleteWorkRef.current?.open({
+                title:'Delete work',description:'Are you sure you want to delete it?',confirmObj:work.id
+            }) } },
+        ] : []),
+        { name: 'Create a copy', onClick: async () => { await createACopy(work.id) } },
     ] as IButtonOption[];
-   
-    workMenuOptions.push({ name: 'Create a copy', onClick: async () => { await createACopy(work.id) } })
-        ;
 
     const issuedButtonOptions = !work.issuance? []: [
         {
@@ -73,38 +73,25 @@ export function WorkInformation({
         },
     ] as IButtonOption[];
 
-    const editButtonOptions = []  as IButtonOption[];
-
-    if(!work.issuance){
-
-      
-        if(work.status!=='closed'){
-            editButtonOptions.push({ 
+    const editButtonOptions = work.issuance ? [] : [
+        ...(work.status !== 'closed' ? [{
                 name: 'Close',
-                onClick: async() => { 
+                onClick: async () => {
                     await changeWorkStatus(work.id,'Closed');
-                }, 
-             });
-        }
-        else if(work.status==='closed'){
-            editButtonOptions.push({ 
+                },
+        }] : [{
                 name: 'Open',
                 isPrimary: true,
-                onClick: async() => { 
+                onClick: async () => {
                     await changeWorkStatus(work.id,'Default');
-                }, 
-             });
-        }
-
-        if(hasRepairJobWithProductsOrServices && work.status!=='closed' ){
-            editButtonOptions.push({
-                name: 'Issue invoice',
-                onClick:() => { createInvoiceRef.current?.open() },
-                isPrimary:true 
-            });
-        }
-       
-    }
+                },
+        }]),
+        ...(hasRepairJobWithProductsOrServices && work.status !== 'closed' ? [{
+            name: 'Issue invoice',
+            onClick: () => { createInvoiceRef.current?.open() },
+            isPrimary: true,
+        }] : []),
+    ] as IButtonOption[];
     
     return (
         <>
@@ -122,7 +109,7 @@ export function WorkInformation({
                             <WorkStatusBadge   status={work.status}></WorkStatusBadge> 
                         </dt>
                         <dd className="text-sm/6 text-gray-500">
-                            <time dateTime="2023-01-31">{moment(work.startedOn).format('LLL')}</time>
+                            <LocalDateTime value={work.startedOn} />
                         </dd>
                     </div>
                      
