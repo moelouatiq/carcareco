@@ -1,0 +1,83 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Run the setup-secrets script first}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run the setup-secrets script first}
+      POSTGRES_DB: ${POSTGRES_DB:-carcare}
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  migrate:
+    build:
+      context: .
+      dockerfile: backend/DbUp.Dockerfile
+    volumes:
+      - ./backend/src/Carmasters.Http.Api/appsettings.Secrets.json:/app/appsettings.Secrets.json:ro
+    environment:
+      CARCARE_ADMIN_USERNAME: ${CARCARE_ADMIN_USERNAME:?Run the setup-secrets script first}
+      CARCARE_ADMIN_PASSWORD: ${CARCARE_ADMIN_PASSWORD:?Run the setup-secrets script first}
+      CARCARE_ADMIN_EMAIL: ${CARCARE_ADMIN_EMAIL:-admin@example.invalid}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    volumes:
+      - ./backend/src/Carmasters.Http.Api/appsettings.Secrets.json:/app/appsettings.Secrets.json:ro
+      - test-browser-cache:/opt/puppeteer
+    tmpfs:
+      - /var/carcare/dataprotection-keys
+      - /var/carcare/pdf
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      DataProtection__KeysDirectory: /var/carcare/dataprotection-keys
+    ports:
+      - "127.0.0.1:16567:15567"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --spider http://localhost:15567/health"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  tests:
+    build:
+      context: .
+      dockerfile: backend/Tests.Dockerfile
+    env_file:
+      - frontend/.env
+    environment:
+      CARCARE_TEST_API_URL: http://api:15567
+      CARCARE_TEST_USERNAME: ${CARCARE_ADMIN_USERNAME:?Run the setup-secrets script first}
+      CARCARE_TEST_PASSWORD: ${CARCARE_ADMIN_PASSWORD:?Run the setup-secrets script first}
+    depends_on:
+      api:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    env_file:
+      - frontend/.env
+    ports:
+      - "127.0.0.1:3302:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  test-browser-cache:

@@ -66,7 +66,7 @@ legacy transitive package records:
 | `System.Text.RegularExpressions` 4.3.0, [GHSA-cmhx-cq75-c4mj](https://github.com/advisories/GHSA-cmhx-cq75-c4mj) | High | Application, PostgreSQL repository, API, DbUp | Low for this build. CarCare uses the .NET 9 shared-framework regex implementation; no package `System.Text.RegularExpressions.dll` is copied to the Release outputs. No endpoint constructs a regex from untrusted input in this dependency path. | Package 4.3.1 is fixed. The record comes from the same legacy `NETStandard.Library` dependency graph. Retain the audit visibility and address it with a separately tested NHibernate/runtime upgrade rather than forcing an old framework assembly into the application. |
 
 Exact post-upgrade project result: `Carmasters.Core.Domain` and
-`Carmasters.Http.Api.Model` have no vulnerable packages; the other four
+`Carmasters.Http.Api.Model` have no vulnerable packages; the other five
 projects report only the two transitive records above. No advisory is
 suppressed in NuGet configuration.
 
@@ -111,6 +111,9 @@ Microsoft.Extensions.Configuration 9.0.2 -> 10.0.11
 Microsoft.Extensions.Configuration.Binder 9.0.2 -> 10.0.11
 Microsoft.Extensions.Configuration.Json 9.0.2 -> 10.0.11
 Npgsql 9.0.2 -> 10.0.3
+
+Carmasters.Tests
+xunit.runner.visualstudio 3.1.5 -> 4.0.0
 ```
 
 The npm outdated inventory likewise contains non-security feature/major

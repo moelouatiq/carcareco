@@ -73,7 +73,7 @@ app.UseExceptionHandler(exceptionHandlerApp =>
 app.UseStatusCodePages();
 app.UseRouting();
 app.UseStaticFiles();
-app.MapStaticAssets();
+app.MapStaticAssets().AllowAnonymous();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
 {

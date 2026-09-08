@@ -1,4 +1,5 @@
 import { getJwt } from '@/_lib/server/session'
+import { buildBackendProxyUrl } from '@/_lib/backend-proxy-url'
 
 interface RouteContext {
   params: Promise<{ path: string[] }>
@@ -14,12 +15,12 @@ export async function GET(request: Request, context: RouteContext) {
   if (!apiUrl) throw new Error('API_URL env not set')
 
   const { path } = await context.params
-  if (!path.length || path.some((segment) => !/^[a-zA-Z0-9._~-]+$/.test(segment))) {
+  let target: URL
+  try {
+    target = buildBackendProxyUrl(apiUrl, path, request.url)
+  } catch {
     return Response.json({ message: 'Invalid API path' }, { status: 400 })
   }
-
-  const target = new URL(`/api/${path.map(encodeURIComponent).join('/')}`, apiUrl)
-  target.search = new URL(request.url).search
 
   const backendResponse = await fetch(target, {
     method: 'GET',

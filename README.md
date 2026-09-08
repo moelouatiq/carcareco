@@ -64,9 +64,13 @@ Read them from `local-credentials.txt`; this file is ignored by Git.
 |----------|------------|-------------|
 | ![](docs/screenshots/worklist.png) | ![](docs/screenshots/workdisplay.png) | ![](docs/screenshots/invoice.png) |
 
+## Testing
+
+See [docs/testing.md](docs/testing.md) for the unit, frontend, and isolated Docker integration test commands.
+
 ## 🛠 Tech Stack
 
-- **Frontend:** Next.js 15, Tailwind CSS, Headless UI
+- **Frontend:** Next.js 16, Tailwind CSS, Headless UI
 - **Backend:** ASP.NET Core (.NET 9), NHibernate ORM
 - **Database:** PostgreSQL with multitenancy support
 - **CI/CD:** Github Actions, Docker Compose

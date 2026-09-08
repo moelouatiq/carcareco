@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getJwt } from "./session"; 
 import { headers } from "next/headers";
 import { pushToast } from "./pushToast";
+import { apiErrorLocation, sanitizeApiErrorMessage } from "../safe-api-error";
 
 interface IAPICall
 {
@@ -45,7 +46,7 @@ async function apiCall({
       {
         const responseJson = JSON.parse(responseText);
         if (responseJson.exceptionMessage) {
-            message = responseJson.exceptionMessage;
+            message = sanitizeApiErrorMessage(responseJson.exceptionMessage);
         }
         if(responseJson.isUserError)
           {
@@ -65,7 +66,7 @@ async function apiCall({
         }
       }
 
-     redirect(`/error?code=${response.status}`)
+     redirect(apiErrorLocation(response.status))
   }
   return response;
 }

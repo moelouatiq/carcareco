@@ -39,12 +39,18 @@ jobs:
 
       # ---------------------------------------------------------------------
       #  Build -------------------------------------------------------------------
+      - name: Restore locked dependencies
+        run: dotnet restore src/Carmasters.sln --locked-mode
+
+      - name: Run backend unit tests
+        run: dotnet test src/Carmasters.Tests/Carmasters.Tests.csproj -c Release --no-restore --filter "Category!=Integration"
+
       - name: Build API
-        run: dotnet build -c Release -o ../../dist/carcare
+        run: dotnet build -c Release --no-restore -o ../../dist/carcare
         working-directory: backend/src/Carmasters.Http.Api
         
       - name: Build DbUp
-        run: dotnet build -c Release -o ../../dist/dbup
+        run: dotnet build -c Release --no-restore -o ../../dist/dbup
         working-directory: backend/src/DbUp
 
       # ---------------------------------------------------------------------
