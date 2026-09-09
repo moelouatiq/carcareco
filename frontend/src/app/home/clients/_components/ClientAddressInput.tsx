@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { IAddressData } from '../model'
 import TypeAheadCombobox  from '../../_components/TypeAheadCombobox'
 import Select from '@/_components/Select'
+import { labels } from "@/_lib/labels";
 
 
 interface IEhakDto {
@@ -17,8 +18,30 @@ interface IEhakDto {
   sihtnumber: string,
 }
 
-interface ICountryName{
+interface ICountry{
+  id:string,
   name:string
+}
+
+const DEFAULT_COUNTRY = 'Maroc';
+const ESTONIA = 'Estonie';
+
+/**
+ * countries-and-timezones ships English names; Intl.DisplayNames turns each ISO code into its
+ * French name so the picker matches the rest of the interface. Falls back to the English name
+ * for any code the runtime cannot translate.
+ */
+function countryNames(countries: Record<string, ICountry>) {
+  const french = new Intl.DisplayNames(['fr'], { type: 'region' });
+  return Object.values(countries)
+    .map((country) => {
+      try {
+        return french.of(country.id) ?? country.name;
+      } catch {
+        return country.name;
+      }
+    })
+    .sort((a, b) => a.localeCompare(b, 'fr'));
 }
 export default function ClientAddress({
   name,
@@ -29,12 +52,17 @@ export default function ClientAddress({
 }) {
   
   const ct = require("countries-and-timezones");  // eslint-disable-line  @typescript-eslint/no-require-imports
-  const countries = Object.values(ct.getAllCountries() as ICountryName[]).map((x) => x.name);
+  const countries = countryNames(ct.getAllCountries() as Record<string, ICountry>);
   const [selectedAddress, setSelectedAddress] = useState<IAddressData | null>(!address?null:address);
   //const [addressData, setAddressData] = useState<IAddressData[]>([]);
-  const MYCOUNTRY = 'Estonia';
-  const [country, setCountry] = useState(!address?MYCOUNTRY:address.country);
-  const useEhak = country===MYCOUNTRY;
+  // New addresses default to Morocco. An existing address keeps whatever it was saved with,
+  // including values from before the switch ("Estonia", or an ISO code) -- nothing is migrated.
+  const [country, setCountry] = useState(!address?DEFAULT_COUNTRY:address.country);
+  // The Estonian address lookup stays available, but only for an address explicitly set to Estonia.
+  const useEhak = country===ESTONIA;
+  // Keep a stored country selectable even when it is not in the French list (legacy English name,
+  // ISO code, ...), so editing a client never silently drops their address.
+  const countryOptions = country && !countries.includes(country) ? [country, ...countries] : countries;
 
     
   const queryRemoteAddressData = (inputValue: string) =>
@@ -80,7 +108,7 @@ export default function ClientAddress({
   return (
     <> 
       <div className="sm:col-span-3  sm:col-start-1"> 
-        <FormLabel name='country' label='Country'></FormLabel>
+        <FormLabel name='country' label={labels.address.country}></FormLabel>
         <div className="mt-2 grid grid-cols-1">
           <Select  
             id="country"
@@ -90,7 +118,7 @@ export default function ClientAddress({
               setCountry(e.currentTarget.value);
             }}>
               <option value=''>-</option>
-            {countries.map((country) => {
+            {countryOptions.map((country) => {
               
               return (
                 <option key={country} value={country}>{country}</option>
@@ -100,11 +128,11 @@ export default function ClientAddress({
         </div>
       </div>
       <div className="col-span-full"> 
-      <FormLabel name='street' label=' Street address'></FormLabel>
+      <FormLabel name='street' label={labels.address.street}></FormLabel>
       <TypeAheadCombobox
          name={name}
           
-         placeholder={(useEhak?'Estonian address ...':'')}
+         placeholder={(useEhak?'Adresse estonienne…':'')}
          defaultValue={selectedAddress} 
          onSearch={(event,datasourceTarget) => {
 
@@ -138,15 +166,15 @@ export default function ClientAddress({
       </div>
     
       <div className="sm:col-span-2 sm:col-start-1">
-        <FormInput name='city' label='City' defaultValue={selectedAddress?.city} ></FormInput>
+        <FormInput name='city' label={labels.address.city} defaultValue={selectedAddress?.city} ></FormInput>
       </div>
 
       <div className="sm:col-span-2">
-        <FormInput name='region' label='State / Province' defaultValue={selectedAddress?.region} ></FormInput>
+        <FormInput name='region' label={labels.address.region} defaultValue={selectedAddress?.region} ></FormInput>
       </div>
 
       <div className="sm:col-span-2">
-      <FormInput name='postal-code' label='ZIP / Postal code' defaultValue={selectedAddress?.postalCode} ></FormInput>
+      <FormInput name='postal-code' label={labels.address.postalCode} defaultValue={selectedAddress?.postalCode} ></FormInput>
       </div></>
   )
 }
