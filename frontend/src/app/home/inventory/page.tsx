@@ -4,6 +4,7 @@ import Main from "../_components/Main";
 import { SearchCardHeader } from "../_components/SearchCardHeader";
 import SimpleSearchBar from "../_components/SimpleSearchBar";
 import { formatMoney } from "@/_lib/money";
+import { formatPercent } from "@/_lib/percent";
 import { labels } from "@/_lib/labels";
 
 
@@ -51,7 +52,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       dataFormatter: ({ discount }: { discount?: number }) => {
         return (
           <Fragment>
-            {discount?.toFixed(0)} {discount&&'%'} 
+            {formatPercent(discount)}
           </Fragment>
         )
       },
