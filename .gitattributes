@@ -1,0 +1,6 @@
+# Files executed by a Linux shell must keep LF endings, whatever the checkout platform.
+# With core.autocrlf=true on Windows, Git would otherwise hand /bin/sh a script whose first
+# line reads "set -e\r", and the container fails with "set: Illegal option -".
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.Dockerfile text eol=lf
