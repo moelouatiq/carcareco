@@ -29,7 +29,7 @@ public class TenancyRepository : ITenancyRepository
         using (var connection = await GetTenancyConnection())
         {
             await connection.ExecuteAsync(dbCreateScript);
-            _logger.LogInformation("Created tenant database {DatabaseName} from template {TemplateName}", userDbName, templateDbName);
+            _logger.LogInformation("Created a tenant database from the configured template.");
         }
     } 
     public async Task<Npgsql.NpgsqlConnection> GetTenancyConnection()

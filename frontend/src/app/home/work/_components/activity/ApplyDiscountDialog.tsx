@@ -7,6 +7,7 @@ import { DataItemRowHandle } from "../editabletable/DataIItemRow";
 import { IProduct } from "../../model";
 import { useState } from "react";
 import FormLabel from "@/_components/FormLabel";
+import { labels } from "@/_lib/labels";
 
 export default function ApplyDiscountsDialog({
     dialogRef,
@@ -21,7 +22,7 @@ export default function ApplyDiscountsDialog({
         <BaseDialog ref={dialogRef}
         yesButtonText="Apply"
         center={false} 
-        title="Apply Discount" 
+        title={labels.dialogs.applyDiscount} 
         onConfirm={() => {
             if (discount)
                 tableRef.current.forEach(r => {
@@ -31,7 +32,7 @@ export default function ApplyDiscountsDialog({
         }}>
          <div className="space-y-12  ">
          <div className="border-b mt-4  border-gray-900/10 pb-12">
-          <FormLabel name='name' label='Percent'></FormLabel>
+          <FormLabel name='name' label={labels.dialogs.percent}></FormLabel>
          <FormInput
                 name='item'
                 type="number" 

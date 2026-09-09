@@ -35,7 +35,7 @@ namespace Carmasters.Core.Domain
         {
             if (sendClientEmail && string.IsNullOrWhiteSpace(clientEmail))
             {
-                throw new UserException("Cannot send an estimate, client email not provided.");
+                throw new UserException("Impossible d'envoyer le devis : aucune adresse e-mail client renseignée.");
             }
             
             if (offer.Estimate != null)   //reissuing has to create a new copy, most likely current issued version is already out there , cant have different versioins of offer with same number
@@ -55,7 +55,7 @@ namespace Carmasters.Core.Domain
         public virtual WorkStatus UserStatus { get; protected set; }
         public virtual void ChangeState(WorkStatus status)
         {
-            if (this.Invoice is not null && status == WorkStatus.Closed) throw new UserException("Cannot close, invoice issued.");
+            if (this.Invoice is not null && status == WorkStatus.Closed) throw new UserException("Impossible de clôturer : une facture a déjà été émise.");
 
             this.UserStatus = status;
         }
@@ -187,7 +187,7 @@ namespace Carmasters.Core.Domain
             var newNumber = numberProviderFactory.GetNumberProvider<Invoice>().Next();
             if(newNumber!= (this.Invoice.Number+1)) // only the last one can be deleted, invoice order thing, numbers must go in sequence.
             {
-                throw new UserException("Cannot delete an invoice, only last invoice can be deleted.");
+                throw new UserException("Impossible de supprimer cette facture : seule la dernière facture peut être supprimée.");
             }
             this.Invoice = null;
         }

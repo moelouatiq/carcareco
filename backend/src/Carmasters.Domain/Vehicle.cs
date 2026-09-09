@@ -50,7 +50,7 @@ namespace Carmasters.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(regNr)&& string.IsNullOrWhiteSpace(vin))
             {
-                throw new UserException("Vehicle registration number or VIN code is required.");
+                throw new UserException("L'immatriculation ou le code VIN du véhicule est obligatoire.");
             }
             Description = description;
             Producer = producer;

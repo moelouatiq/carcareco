@@ -1,4 +1,3 @@
-﻿using AutoMapper;
 using Carmasters.Core.Application;
 using Carmasters.Core.Application.Configuration;
 using Carmasters.Core.Application.Extensions;
@@ -31,20 +30,16 @@ namespace Carmasters.Http.Api.Controllers
     public class WorkController : ControllerBase
     { 
         private readonly IRepository repository;
-        protected readonly IMapper mapper;
         private readonly ISequnceNumberProviderFactory numberProviderFactory;
         private readonly ISession session;
-        private readonly IConfiguration configuration;
         private readonly IPricingSender pricingSender;
         private readonly ITenantConfigService tenantConfigService;
         static CultureInfo cultureUS = new CultureInfo("en-US");
-        public WorkController(IRepository repository, IMapper mapper, ISequnceNumberProviderFactory numberProviderFactory, ISession session, IConfiguration configuration,IPricingSender pricingSender, ITenantConfigService tenantConfigService)
-        { 
+        public WorkController(IRepository repository, ISequnceNumberProviderFactory numberProviderFactory, ISession session, IPricingSender pricingSender, ITenantConfigService tenantConfigService)
+        {
             this.repository = repository;
-            this.mapper = mapper;
             this.numberProviderFactory = numberProviderFactory;
             this.session = session;
-            this.configuration = configuration;
             this.pricingSender = pricingSender;
             this.tenantConfigService = tenantConfigService;
         }
@@ -63,6 +58,7 @@ namespace Carmasters.Http.Api.Controllers
                 work.Id,
                 Number =work.Number.ToString(),
                 work.StartedOn,
+                work.CompletedOn,
                 StartedBy = work.Starter?.Name,
                 Name="work",
                 IsEmpty = !(work.Jobs.Any(x=>x.Products.Any()) || work.Offers.Any(x=>x.Products.Any())), // todo optimize?
@@ -231,12 +227,12 @@ namespace Carmasters.Http.Api.Controllers
                 var dObj = repository.Get<Work>(id); 
                 if(dObj.Offers.Any(x=>x.Estimate!=null && x.Estimate.SentOn != null)) 
                 {
-                    throw new UserException("Cannot delete work, it contains an offer sent to a client.");
+                    throw new UserException("Impossible de supprimer l'intervention : elle contient un devis envoyé au client.");
                 }
                 
                 if(dObj.Invoice!=null && dObj.Invoice.SentOn != null)
                 {
-                    throw new UserException("Cannot delete work, it contains an invoice sent to a client.");
+                    throw new UserException("Impossible de supprimer l'intervention : elle contient une facture envoyée au client.");
                 }
 
                 repository.Delete(dObj);
@@ -252,14 +248,16 @@ namespace Carmasters.Http.Api.Controllers
             string status,
             string issued,
             string saleable,
-             DateTime? workForm,
+            DateTime? workFrom,
             DateTime? workTo,
             DateTime? invoiceFrom, 
             DateTime? invoiceTo )
         {
-            var onlyIssued = issued == "on" ;
-            var clientId  = Request.Query["clientiId[value]"].FirstOrDefault();
-            var vehicleId = Request.Query["vehicleId[value]"].FirstOrDefault();
+            var onlyIssued = string.Equals(issued, "on", StringComparison.OrdinalIgnoreCase);
+            var normalizedStatus = status?.Trim().ToLowerInvariant();
+            var clientIdValue = Request.Query["clientId[value]"].FirstOrDefault()
+                ?? Request.Query["clientiId[value]"].FirstOrDefault();
+            var vehicleIdValue = Request.Query["vehicleId[value]"].FirstOrDefault();
             orderby = onlyIssued? "i.number": "w.changedon";
 
              
@@ -270,58 +268,59 @@ namespace Carmasters.Http.Api.Controllers
                  .PageQuery<WorkPage>(orderby, limit, offset, desc);
 
            
-            if (!onlyIssued)
+            if (!onlyIssued && normalizedStatus == "unfinished")
             {
-                query.Where("w.invoiceid is null");
-            } 
-
-            if (!string.IsNullOrWhiteSpace(status))
-            {
-                 
-                if (status == "inprogress") query.Where($" w.userstatus = '{WorkStatus.InProgress}'");
-                else if (status == "closed") query.Where($" w.userstatus = '{WorkStatus.Closed}'");
-
-                else if (status == "overdue") 
-                    query.Where(@"i.ispaid = false and (ip.issuedon + i.duedays * interval '1 day' <=  current_timestamp)");
-
+                query.Where($"w.invoiceid is null and w.userstatus <> '{WorkStatus.Closed}'");
             }
-          
-            if (clientId  != null) query.Where($"w.clientid = '{clientId }'");
-            if (vehicleId != null ) query.Where($"w.vehicleid = '{vehicleId}' ");
-            if (workForm is not null || workForm is not null)
-            { 
-                var dateRestriction = @" work.startedon {0})";
-                if (invoiceTo is null)
+            else if (!onlyIssued && normalizedStatus == "inprogress")
+            {
+                query.Where($"w.invoiceid is null and w.userstatus = '{WorkStatus.InProgress}'");
+            }
+            else if (!onlyIssued && normalizedStatus == "closed")
+            {
+                query.Where($"w.invoiceid is null and w.userstatus = '{WorkStatus.Closed}'");
+            }
+            else if (onlyIssued && normalizedStatus == "overdue")
+            {
+                query.Where(@"i.ispaid = false and (ip.issuedon + i.duedays * interval '1 day' <= current_timestamp)");
+            }
+
+            AddGuidRestriction("w.clientid", clientIdValue);
+            AddGuidRestriction("w.vehicleid", vehicleIdValue);
+            AddDateRestriction("w.startedon", workFrom, workTo);
+            if (onlyIssued)
+            {
+                AddDateRestriction("ip.issuedon", invoiceFrom, invoiceTo);
+            }
+
+            void AddGuidRestriction(string field, string value)
+            {
+                if (string.IsNullOrWhiteSpace(value)) return;
+
+                if (Guid.TryParse(value, out var id))
                 {
-                    dateRestriction = string.Format(dateRestriction, $" >= '{pgDate(invoiceFrom)}'");
-                }
-                else if (invoiceFrom is null)
-                {
-                    dateRestriction = string.Format(dateRestriction, $" < '{pgDate(invoiceTo)}'");
+                    query.Where($"{field} = '{id}'");
                 }
                 else
                 {
-                    dateRestriction = string.Format(dateRestriction, $" between '{pgDate(invoiceFrom)}' and '{pgDate(invoiceTo)}' ");
+                    query.Where("1 = 0");
                 }
-                query.Where(dateRestriction);
             }
-            if (invoiceFrom is not null || invoiceTo is not null)
+
+            void AddDateRestriction(string field, DateTime? from, DateTime? to)
             {
-               
-                var dateRestriction = @"ip.issuedon {0}";
-                if (invoiceTo is null)
+                if (from is not null && to is not null)
                 {
-                    dateRestriction = string.Format(dateRestriction, $" >= '{pgDate(invoiceFrom)}'");
+                    query.Where($"{field} between '{pgDate(from)}' and '{pgDate(to)}'");
                 }
-                else if (invoiceFrom is null)
+                else if (from is not null)
                 {
-                    dateRestriction = string.Format(dateRestriction, $" < '{pgDate(invoiceTo)}'");
+                    query.Where($"{field} >= '{pgDate(from)}'");
                 }
-                else
+                else if (to is not null)
                 {
-                    dateRestriction = string.Format(dateRestriction, $" between '{pgDate(invoiceFrom)}' and '{pgDate(invoiceTo)}' ");
+                    query.Where($"{field} < '{pgDate(to)}'");
                 }
-                query.Where(dateRestriction);
             }
             if (!string.IsNullOrWhiteSpace(saleable))
             {
@@ -621,17 +620,7 @@ from (
             work.Changed();
             session.Update(work);
             session.Delete(invoice);
-            DeletePdf(invoice);
             return Ok();
-        }
-
-        private void DeletePdf(Pricing pricing) 
-        {
-            var pdfLocalFile = new FileInfo(Path.Combine(configuration["PdfDirectory"], pricing.GetFileName()));
-            if (pdfLocalFile.Exists) 
-            {
-                pdfLocalFile.Delete();
-            }
         }
 
         

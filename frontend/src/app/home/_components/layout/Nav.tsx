@@ -9,13 +9,14 @@ import {
   } from '@heroicons/react/24/outline'
 import clsx from "clsx"; 
 import { usePathname } from 'next/navigation'
+import { labels } from "@/_lib/labels";
  const navigationIconClass = "size-6 shrink-0";
 const navigation = [
     // { name: 'Dashboard', href: '/home', icon: <HomeIcon aria-hidden="true" className={navigationIconClass}></HomeIcon>},
-    { name: 'Work', href: '/home/work', icon: <QueueListIcon aria-hidden="true" className={navigationIconClass}></QueueListIcon> },
-    { name: 'Clients', href: '/home/clients', icon: <UsersIcon aria-hidden="true" className={navigationIconClass}></UsersIcon>  },
-    { name: 'Vehicles', href: '/home/vehicles', icon: <TruckIcon aria-hidden="true" className={navigationIconClass}></TruckIcon>  },
-    { name: 'Inventory', href: '/home/inventory', icon: <Cog6ToothIcon aria-hidden="true" className={navigationIconClass}></Cog6ToothIcon>  },
+    { name: labels.nav.work, href: '/home/work', icon: <QueueListIcon aria-hidden="true" className={navigationIconClass}></QueueListIcon> },
+    { name: labels.nav.clients, href: '/home/clients', icon: <UsersIcon aria-hidden="true" className={navigationIconClass}></UsersIcon>  },
+    { name: labels.nav.vehicles, href: '/home/vehicles', icon: <TruckIcon aria-hidden="true" className={navigationIconClass}></TruckIcon>  },
+    { name: labels.nav.inventory, href: '/home/inventory', icon: <Cog6ToothIcon aria-hidden="true" className={navigationIconClass}></Cog6ToothIcon>  },
     // { name: 'Services', href: '/home/services', icon: <WrenchScrewdriverIcon aria-hidden="true" className={navigationIconClass}></WrenchScrewdriverIcon>  },
 ]
  
@@ -63,7 +64,7 @@ export default   function Nav({
                             className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-400 hover:bg-gray-800 hover:text-white"
                         >
                             <Cog6ToothIcon aria-hidden="true" className="size-6 shrink-0" />
-                            Settings
+                            {labels.nav.settings}
                         </a>
                         <ProfileMenu  fullName={fullName} imageUrl={imageUrl} onSmallScreen={false}></ProfileMenu>
                     </li>}

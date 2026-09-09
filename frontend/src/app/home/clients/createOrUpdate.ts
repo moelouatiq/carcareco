@@ -45,7 +45,7 @@ export async function createOrUpdate(
       
     const clientId =  jsonResponse ; 
    
-    pushToast(`Client ${(isUpdating?'updated':'saved')} successfully!`)
+    pushToast(`Client ${(isUpdating ? 'modifié' : 'enregistré')} avec succès.`)
 
     redirect('/home/clients/' +clientId) 
 }

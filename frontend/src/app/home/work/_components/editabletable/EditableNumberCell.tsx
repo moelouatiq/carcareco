@@ -1,4 +1,5 @@
 import React, { useState, useImperativeHandle } from "react";
+import { formatMoney } from "@/_lib/money";
 import { EditableCellHandle, IEditableNumericCellProps, Input } from "./EditableCell";
 
 const EditableNumberCell = React.forwardRef<EditableCellHandle<number|null>, IEditableNumericCellProps<number|null>>((props, ref) => {
@@ -21,7 +22,7 @@ const EditableNumberCell = React.forwardRef<EditableCellHandle<number|null>, IEd
         if (internalValue === 0) return '';
         if (isMoney) {
             if (!internalValue) return '';
-            return new Intl.NumberFormat('et-EE', { style: 'currency', currency: 'EUR' }).format(internalValue);
+            return formatMoney(internalValue);
         }
         if (isPercentage) return internalValue + ' %';
         return internalValue;

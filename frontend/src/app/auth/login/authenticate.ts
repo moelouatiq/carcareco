@@ -19,19 +19,16 @@ export async function authenticate(prevState: { error: string }, formData: FormD
     }
   )
 
-  if (!res.ok) {
-    const responseText = await res.text();
-    console.log(responseText);
-    return { error: "Login failed", }
-  }
-
   const jsonResponse = await res.json();
 
-  if (jsonResponse.jwt && jsonResponse.publicJwt) {
-    await createSession(jsonResponse.jwt,jsonResponse.publicJwt);
+  if (jsonResponse.jwt && jsonResponse.fullName && jsonResponse.timeout) {
+    await createSession(
+      jsonResponse.jwt,
+      jsonResponse.fullName,
+      jsonResponse.timeout,
+    );
     // 5. Redirect user
     redirect('/home/work');
   }
-  console.log("jwt missing");
   return { error: "Login failed", }
-} 
+}

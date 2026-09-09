@@ -1,8 +1,9 @@
-import { downloadPricing } from "@/app/home/work/actions/downloadPricing";
-import '@/_styles/print.css'; 
+import { downloadPricingHtml } from "@/app/home/work/actions/downloadPricing";
+import '@/_styles/print.css';
 import PrintPage from "./Print";
 
- 
+
+
 
 export default async function Page({
     params,
@@ -11,7 +12,7 @@ export default async function Page({
 }) {
 
     const [pricing,id] = (await params).slug;
-    const pricingHtml = (await downloadPricing({ pricingId:id, pricingName:pricing, downloadHtml:true })) as string;
+    const pricingHtml = await downloadPricingHtml({ pricingId:id, pricingName:pricing });
    
   return (
     <PrintPage pricingHtml={pricingHtml} />

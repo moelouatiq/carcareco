@@ -2,8 +2,7 @@
 
 'use client'
 import {  IWorkData } from '../model';
-import { DocumentTextIcon,   TruckIcon, UserCircleIcon, WrenchScrewdriverIcon } from '@heroicons/react/20/solid';
-import moment from 'moment';
+import { CalendarDaysIcon, DocumentTextIcon, TruckIcon, UserCircleIcon, WrenchScrewdriverIcon } from '@heroicons/react/20/solid';
 import React from 'react';
 import { startAnActivity } from '../actions/startAnActivity';
 import ButtonGroup, { IButtonOption } from '@/_components/ButtonGroup';
@@ -22,6 +21,8 @@ import { createACopy } from '../actions/createACopy';
 import FormSwitch from '@/_components/FormSwitch'; 
 import { Field, Label } from '@headlessui/react';
 import { changeWorkStatus } from '../actions/changeWorkStatus';
+import LocalDateTime from '@/_components/LocalDateTime';
+import { labels } from "@/_lib/labels";
 
 
 export function WorkInformation({
@@ -34,7 +35,13 @@ export function WorkInformation({
 
     const editPath = '/home/work/edit/' + work.id;
  
-    const vehicleSummary = [work.vehicleProducer, work.vehicleModel, work.vehicleVin, work.vehicleRegNr].filter(x => x).join(', ');
+    const vehicleSummary = [
+        work.vehicleProducer,
+        work.vehicleModel,
+        work.vehicleVin,
+        work.vehicleRegNr,
+        work.odo === null || work.odo === undefined ? null : `${work.odo} km`,
+    ].filter(x => x).join(', ');
     const clientSummary = [work.clientName, work.clientPhone, work.clientEmail].filter(x => x).join(', ');
 
     const deleteInvoiceRef = React.useRef<BaseDialogHandle>(null);
@@ -42,17 +49,17 @@ export function WorkInformation({
     const sendInvoiceRef = React.useRef<BaseDialogHandle>(null);
     const deleteWorkRef = React.useRef<ConfirmDialogHandle>(null);
     
-    const workMenuOptions = work.issuance ? [] : [
-        { name: 'Make an offer', onClick: async () => { await startAnActivity(work.id, "offer") } },
-        { name: 'Start repair job', onClick: async () => { await startAnActivity(work.id, "repairjob") } },
-        { name: 'Edit', href: editPath },
-        { name: 'Delete', redText:true, onClick:   () => { deleteWorkRef.current?.open({
-            title:'Delete work',description:'Are you sure you want to delete it?',confirmObj:work.id
-        })  } },
+    const workMenuOptions = [
+        ...(!work.issuance ? [
+            { name: 'Make an offer', onClick: async () => { await startAnActivity(work.id, "offer") } },
+            { name: 'Start repair job', onClick: async () => { await startAnActivity(work.id, "repairjob") } },
+            { name: 'Edit', href: editPath },
+            { name: 'Delete', redText:true, onClick: () => { deleteWorkRef.current?.open({
+                title:'Delete work',description:'Are you sure you want to delete it?',confirmObj:work.id
+            }) } },
+        ] : []),
+        { name: 'Create a copy', onClick: async () => { await createACopy(work.id) } },
     ] as IButtonOption[];
-   
-    workMenuOptions.push({ name: 'Create a copy', onClick: async () => { await createACopy(work.id) } })
-        ;
 
     const issuedButtonOptions = !work.issuance? []: [
         {
@@ -73,38 +80,25 @@ export function WorkInformation({
         },
     ] as IButtonOption[];
 
-    const editButtonOptions = []  as IButtonOption[];
-
-    if(!work.issuance){
-
-      
-        if(work.status!=='closed'){
-            editButtonOptions.push({ 
+    const editButtonOptions = work.issuance ? [] : [
+        ...(work.status !== 'closed' ? [{
                 name: 'Close',
-                onClick: async() => { 
+                onClick: async () => {
                     await changeWorkStatus(work.id,'Closed');
-                }, 
-             });
-        }
-        else if(work.status==='closed'){
-            editButtonOptions.push({ 
+                },
+        }] : [{
                 name: 'Open',
                 isPrimary: true,
-                onClick: async() => { 
+                onClick: async () => {
                     await changeWorkStatus(work.id,'Default');
-                }, 
-             });
-        }
-
-        if(hasRepairJobWithProductsOrServices && work.status!=='closed' ){
-            editButtonOptions.push({
-                name: 'Issue invoice',
-                onClick:() => { createInvoiceRef.current?.open() },
-                isPrimary:true 
-            });
-        }
-       
-    }
+                },
+        }]),
+        ...(hasRepairJobWithProductsOrServices && work.status !== 'closed' ? [{
+            name: 'Issue invoice',
+            onClick: () => { createInvoiceRef.current?.open() },
+            isPrimary: true,
+        }] : []),
+    ] as IButtonOption[];
     
     return (
         <>
@@ -115,14 +109,14 @@ export function WorkInformation({
                 await deleteWork(work.id) ;
             }} ></ConfirmDialog>
             <div className="lg:col-start-3 lg:row-end-1">
-                <h2 className="sr-only">Summary</h2>
+                <h2 className="sr-only">{labels.common.summary}</h2>
                 <dl className="flex flex-wrap">
                     <div className="flex-auto xl:pt-6 xl:pl-6">
-                        <dt className="text-base font-semibold text-gray-900 mr-2">Work nr {work.number}{' '}
+                        <dt className="text-base font-semibold text-gray-900 mr-2">{labels.work.workNumber} {work.number}{' '}
                             <WorkStatusBadge   status={work.status}></WorkStatusBadge> 
                         </dt>
                         <dd className="text-sm/6 text-gray-500">
-                            <time dateTime="2023-01-31">{moment(work.startedOn).format('LLL')}</time>
+                            <LocalDateTime value={work.startedOn} />
                         </dd>
                     </div>
                      
@@ -136,7 +130,7 @@ export function WorkInformation({
                     {clientSummary &&
                         <div className="mt-4 flex w-full flex-none gap-x-4 xl:px-6">
                             <dt className="flex-none">
-                                <span className="sr-only">Client</span>
+                                <span className="sr-only">{labels.work.client}</span>
                                 <UserCircleIcon aria-hidden="true" className="h-6  w-5 text-gray-400" />
                             </dt>
                             <dd className="text-sm/6 font-medium text-gray-900">
@@ -152,10 +146,19 @@ export function WorkInformation({
                             <time dateTime="2023-01-31">{vehicleSummary}</time>
                         </dd>
                     </div>}
+                    {work.completedOn && <div className="mt-4 flex w-full flex-none gap-x-4 xl:px-6">
+                        <dt className="flex-none">
+                            <span className="sr-only">{labels.work.completedOn}</span>
+                            <CalendarDaysIcon aria-hidden="true" className="h-6 w-5 text-gray-400" />
+                        </dt>
+                        <dd className="text-sm/6 text-gray-500">
+                            Completed <LocalDateTime value={work.completedOn} />
+                        </dd>
+                    </div>}
                     {work.mechanics?.length > 0 &&
                         <div className="mt-4 flex w-full flex-none gap-x-4 xl:px-6">
                             <dt className="flex-none">
-                                <span className="sr-only">Status</span>
+                                <span className="sr-only">{labels.common.status}</span>
                                 <WrenchScrewdriverIcon aria-hidden="true" className="h-6 w-5 text-gray-400" />
                             </dt>
                             <dd className="text-sm/6 text-gray-500">{work.mechanics.map((item) => item.name).join(', ')}</dd>
@@ -163,7 +166,7 @@ export function WorkInformation({
                     }
                     {work.notes && <div className="mt-4 flex w-full flex-none gap-x-4 xl:px-6">
                         <dt className="flex-none">
-                            <span className="sr-only">Notes</span>
+                            <span className="sr-only">{labels.common.notes}</span>
                             <DocumentTextIcon aria-hidden="true" className="h-6 w-5 text-gray-400" />
                         </dt>
                         <dd className="text-sm/6 text-gray-500 whitespace-pre-line">{work.notes}</dd>
@@ -188,7 +191,7 @@ export function WorkInformation({
                                >
                                </FormSwitch>
                             <Label as="span" className="ml-3 text-sm"> 
-                                <span className="text-gray-500">Is in progress</span>
+                                <span className="text-gray-500">{labels.work.isInProgress}</span>
                             </Label>
                             </Field> } 
                         </dt>

@@ -4,7 +4,9 @@ import clsx from "clsx";
 import {   IPriceSummary, IProduct  } from "../../model";
 import React, { useRef }  from "react";
 import { DataItemRow, DataItemRowHandle } from "./DataIItemRow"; 
-import { dragAndDrop } from "../activity/dragAndDrop"; 
+import { useDragAndDrop } from "../activity/dragAndDrop";
+import { formatMoney } from "@/_lib/money";
+import { labels } from "@/_lib/labels";
 
 export default function Saleables({
     edit, 
@@ -23,12 +25,11 @@ export default function Saleables({
 }) {
 
      
-    const moneyFormatter = new Intl.NumberFormat('et-EE', { style: 'currency', currency: 'EUR' });
  
     const dragItem = useRef<string | undefined>(null);
     const dragOverItem = useRef<string | undefined>(null);
     
-    const dnd = dragAndDrop(refreshData, tableRef,dragItem,dragOverItem);
+    const dnd = useDragAndDrop(refreshData, tableRef, dragItem, dragOverItem);
  
     return (
         <>
@@ -41,22 +42,22 @@ export default function Saleables({
                                 <tr>
                                     {edit && <th></th>}
                                     <th className="py-3.5 pr-3 pl-4   text-sm font-semibold whitespace-nowrap text-gray-900 sm:pl-0"
-                                    >Code
+                                    >{labels.common.code}
                                     </th>
                                     <th className="px-2 py-3.5  text-sm font-semibold whitespace-nowrap text-gray-900">
-                                        Name
+                                        {labels.common.name}
                                     </th>
                                     <th className="px-2 py-3.5 text-end  text-sm font-semibold whitespace-nowrap text-gray-900">
-                                        Price
+                                        {labels.common.price}
                                     </th>
                                     <th className="px-2 py-3.5 text-end   text-sm font-semibold whitespace-nowrap text-gray-900">
-                                        Quantity
+                                        {labels.common.quantity}
                                     </th>
                                     <th className="px-2 py-3.5 text-end  text-sm font-semibold whitespace-nowrap text-gray-900">
-                                        Unit
+                                        {labels.common.unit}
                                     </th>
                                     <th className="px-2 py-3.5 text-end  text-sm font-semibold whitespace-nowrap text-gray-900">
-                                        Discount
+                                        {labels.common.discount}
                                     </th>
                                     {edit && <th className="px-2 py-3.5 text-end text-sm font-semibold whitespace-nowrap text-gray-900"></th>}
                                 </tr>
@@ -87,17 +88,17 @@ export default function Saleables({
                                         <div className="grid grid-rows-3 gap-0">
                                             <div className="flex flex-row-reverse " >
 
-                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0 w-25">{moneyFormatter.format(priceSummary.totalWithoutVat)}</div>
-                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Subtotal</div>
+                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0 w-25">{formatMoney(priceSummary.totalWithoutVat)}</div>
+                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">{labels.common.subtotal}</div>
                                             </div>
                                             <div className="flex flex-row-reverse " >
-                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0 w-25">{moneyFormatter.format(priceSummary.totalWithVat - priceSummary.totalWithoutVat)}</div>
-                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Tax</div>
+                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0 w-25">{formatMoney(priceSummary.totalWithVat - priceSummary.totalWithoutVat)}</div>
+                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">{labels.common.tax}</div>
                                             </div>
                                             <div className="flex flex-row-reverse  " >
 
-                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0 w-25">{moneyFormatter.format(priceSummary.totalWithVat)}</div>
-                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">Total</div>
+                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0 w-25">{formatMoney(priceSummary.totalWithVat)}</div>
+                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">{labels.common.total}</div>
                                             </div>
                                         </div>
                                     </th>

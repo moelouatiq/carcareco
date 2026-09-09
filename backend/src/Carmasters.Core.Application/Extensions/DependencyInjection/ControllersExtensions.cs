@@ -33,9 +33,14 @@ namespace Carmasters.Core.Application.Extensions.DependencyInjection
            
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("ServerSidePolicy",
-                     policy => policy.RequireRole("Root"));
-                  
+                var applicationPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireRole("Root")
+                    .Build();
+
+                options.AddPolicy("ServerSidePolicy", applicationPolicy);
+                options.DefaultPolicy = applicationPolicy;
+                options.FallbackPolicy = applicationPolicy;
             });
 
 

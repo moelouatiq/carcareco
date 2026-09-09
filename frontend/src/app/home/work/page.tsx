@@ -10,13 +10,13 @@ import { EmailSentBadge, OverdueBadge } from "./_components/activity/badges/Issu
 import { SearchCardHeader } from "../_components/SearchCardHeader";
 import { Card } from "@/_components/Card";
 import SearchStatusFilter from "./_components/SearchStatusFilter";
-import SearchParams from "./_components/SearchParams"; 
+import SearchParams from "./_components/SearchParams";
 import PrimaryButton from "@/_components/PrimaryButton";
 import SearchInput from "../_components/SearchInput";
 import FormInput from "@/_components/FormInput";
+import { labels } from "@/_lib/labels";
 
-export default async function Page(
-  { searchParams }: { searchParams: Promise<Record<string, string>> }) {
+export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
 
   const options = (await searchParams);
 
@@ -24,7 +24,7 @@ export default async function Page(
 
   const secondColumn = isInvoiceView ? {
     dataField: 'issuance',
-    headerText: 'Invoice',
+    headerText: labels.work.invoice,
 
     dataFormatter: ({ issuance, id }: { issuance: IWorkIssuance, id: string }) => {
       return (
@@ -47,7 +47,7 @@ export default async function Page(
     }
   } : {
     dataField: 'offerissuance',
-    headerText: 'Repair, Offer',
+    headerText: labels.work.activities,
 
     dataFormatter: ({ offerIssuance, hasRepairs, numberOfOffers }: { hasRepairs: boolean, offerIssuance: IOfferIssuance, numberOfOffers: number }) => {
 
@@ -81,7 +81,7 @@ export default async function Page(
   const columns = [
     {
       dataField: 'workNr',
-      headerText: 'Work',
+      headerText: labels.work.number,
 
       dataFormatter: ({ id, workNr, status }: { id: string, status: string, workNr: string }) => {
 
@@ -97,7 +97,7 @@ export default async function Page(
     secondColumn,
     {
       dataField: 'startedOn',
-      headerText: 'Started on',//  {moment(activity?.startedOn, true).format('LLL')}
+      headerText: labels.work.startedOn,//  {moment(activity?.startedOn, true).format('LLL')}
       dataFormatter: ({ startedOn }: { startedOn: Date }) => {
         return (
           moment(startedOn, true).format('LL')
@@ -107,7 +107,7 @@ export default async function Page(
 
     {
       dataField: 'clientId',
-      headerText: 'Client',
+      headerText: labels.work.client,
       dataFormatter: ({ clientName, clientId }: { clientName: string, clientId: string }) => {
         return (
           <a href={'/home/clients/' + clientId} >
@@ -118,7 +118,7 @@ export default async function Page(
     },
     {
       dataField: 'vehicleId',
-      headerText: 'Vehicle',
+      headerText: labels.work.vehicle,
       dataFormatter: ({ regNr, vehicleId }: { regNr: string, vehicleId: string }) => {
         return (
           <a href={'/home/vehicles/' + vehicleId} >
@@ -130,11 +130,11 @@ export default async function Page(
 
     {
       dataField: 'mechanicNames',
-      headerText: 'Mechanics',
+      headerText: labels.work.mechanics,
     },
     {
       dataField: 'notes',
-      headerText: 'Description',
+      headerText: labels.common.description,
       dataFormatter: ({ notes }: { notes: string }) => {
         return (
           <p title={notes} className="truncate" style={{ maxWidth: '300px', marginBottom: "-5px" }} >
@@ -155,7 +155,7 @@ export default async function Page(
 
           <Card header={
             
-            <SearchCardHeader title="Find Work" pageName="work">
+            <SearchCardHeader title={labels.work.findWork} pageName="work">
             </SearchCardHeader>}  >
 
             <Search
@@ -170,10 +170,10 @@ export default async function Page(
                  <div className="  grid grid-cols-1  md:grid-cols-12 md:grid-flow-row md:gap-x-2 3xl:grid-flow-col  3xl:grid-cols-24   p-0 3xl:gap-x-2  gap-y-2  "> 
                       <div className="3xl:col-span-6 md:col-span-7 "   >
                         <SearchStatusFilter issued={options.issued === 'on'} status={options.status}></SearchStatusFilter>
-                        <SearchInput searchParams={searchParams} placeholder="number, client, vehicle vin or reg nr." ></SearchInput> 
+                        <SearchInput searchParams={searchParams} placeholder={labels.work.searchPlaceholder} ></SearchInput> 
                       </div> 
                       <div className="3xl:col-span-4  md:col-span-5 ">
-                         <FormInput name="saleable" label="Product or service" placeholder="code or name ..." defaultValue={options.saleable}  ></FormInput>
+                         <FormInput name="saleable" label={labels.work.productOrService} placeholder={labels.work.productPlaceholder} defaultValue={options.saleable}  ></FormInput>
                       </div>
                       <div  className="3xl:col-span-14  md:col-span-12  " >
                       <SearchParams options={options}></SearchParams>
@@ -181,7 +181,7 @@ export default async function Page(
                       
                   </div> 
                   <div className="mx-2 text-right mt-8">
-                        <PrimaryButton   id="btnSubmit">Search</PrimaryButton>
+                        <PrimaryButton   id="btnSubmit">{labels.search.search}</PrimaryButton>
                    </div>
               </div>
                 

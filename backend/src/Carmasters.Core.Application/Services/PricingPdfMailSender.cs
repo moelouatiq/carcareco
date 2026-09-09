@@ -45,7 +45,7 @@ namespace Carmasters.Core.Application.Services
             using (var mail = smtp.CreateClient())
             {
                 if (string.IsNullOrWhiteSpace(pricing.Email))
-                    throw new UserException("Cannot send an email, recipient email not provided.");
+                    throw new UserException("Impossible d'envoyer l'e-mail : aucune adresse destinataire renseignée.");
 
                 var message = new MailMessage(
                     new MailAddress(requisites.Email, requisites.Name, Encoding.UTF8),
@@ -64,7 +64,7 @@ namespace Carmasters.Core.Application.Services
                 message.Attachments.Add(new Attachment(new MemoryStream(pdfBytes), pricing.GetFileName(), "application/pdf"));
 
                 mail.Send(message);
-                logger.LogInformation("Pricing email sent {smtp}:{port} {subject}", mail.Host, mail.Port, message.Subject);
+                logger.LogInformation("Pricing email sent successfully.");
             }
         }
     }

@@ -5,6 +5,7 @@ import { IWorkData } from "../../model";
 import { useState } from "react";
 import FormLabel from "@/_components/FormLabel"; 
 import FormInput from "@/_components/FormInput";import { sendPricing } from "../../actions/sendPricing";
+import { labels } from "@/_lib/labels";
  ;
 
 export default function SendPricingDialog({
@@ -41,7 +42,7 @@ export default function SendPricingDialog({
             }}>
             <div className="space-y-12  ">
                 <div className="border-b mt-4  border-gray-900/10 pb-12">
-                      <FormLabel name='name' label='Client email'></FormLabel>
+                      <FormLabel name='name' label={labels.common.clientEmail}></FormLabel>
                             <div className="mt-2   ">
                                 <FormInput
                                     name='clientEmail' 

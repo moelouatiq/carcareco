@@ -3,44 +3,43 @@ import { redirect } from "next/navigation";
 import { getJwt } from "./session"; 
 import { headers } from "next/headers";
 import { pushToast } from "./pushToast";
+import { apiErrorLocation, sanitizeApiErrorMessage } from "../safe-api-error";
 
 interface IAPICall
 {
   url:string,
   authorize? : boolean,
   body?: any | null, // eslint-disable-line @typescript-eslint/no-explicit-any
-  method: string
+  method: string,
+  redirectOnError?: boolean
 }
 
 async function apiCall({
   url,
   authorize=true,
   method,
-  body =null
+  body =null,
+  redirectOnError=true,
 }:IAPICall) { 
   const  requestHeaders:HeadersInit =   {
    "Content-Type": "application/json",
   };
   if(authorize) { 
     const jwt = await getJwt(); 
+    if (!jwt) redirect('/auth/login');
     requestHeaders["Authorization"] =  'Bearer ' + jwt;
   } 
   const fullUrl = process.env.API_URL +`/api/${url}`;
-  const request = {
+  const request: RequestInit = {
     method,
     headers: requestHeaders,
-    body : body? JSON.stringify(body):null
+    body : body? JSON.stringify(body):null,
+    cache: method === "GET" ? "no-store" : undefined,
   };
    
   const response = await fetch(fullUrl,request);
-  if (!response.ok) {
-    debugger;
+  if (!response.ok && redirectOnError) {
     const responseText = await response.text();
-    console.log("API response content type header: " + response.headers.get('Content-Type'));
-    console.log("API threw an exception: " + responseText);
-    console.log(method+' request to: '+fullUrl);
-    console.log('headers: '+JSON.stringify(requestHeaders));
-    console.log('body: '+request.body);
     const hasContentType = response.headers.has('Content-Type');
     let message = 'API Error occurred server side';
     let isUserError = false;
@@ -49,9 +48,8 @@ async function apiCall({
       if(contentType?.startsWith('application/json'))
       {
         const responseJson = JSON.parse(responseText);
-        debugger;
         if (responseJson.exceptionMessage) {
-            message = responseJson.exceptionMessage;
+            message = sanitizeApiErrorMessage(responseJson.exceptionMessage);
         }
         if(responseJson.isUserError)
           {
@@ -71,7 +69,7 @@ async function apiCall({
         }
       }
 
-     redirect(`/error?code=${response.status}&statusText=${response.statusText}&text=${message}`)
+     redirect(apiErrorLocation(response.status))
   }
   return response;
 }
@@ -130,4 +128,12 @@ export async function httpPut({
     authorize,
     body, 
   }); 
+}
+
+export async function httpGetResponse(url: string) {
+  return apiCall({
+    url,
+    method: "GET",
+    redirectOnError: false,
+  });
 }

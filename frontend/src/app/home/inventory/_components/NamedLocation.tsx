@@ -8,6 +8,7 @@ import Select from "@/_components/Select";
 import { addLocation, removeLocation } from "../addOrRemoveLocation";
 import FormInput from "@/_components/FormInput";
 import ButtonGroup, { IButtonOption } from "@/_components/ButtonGroup";
+import { labels } from "@/_lib/labels";
 
 export default function NamedLocation({
     allLocations ,
@@ -76,7 +77,7 @@ export default function NamedLocation({
                 setLocations([...locations]); 
            }}  ref={confirmRemoveLocationRef} ></ConfirmDialog>
 
-            <BaseDialog ref={newLocationDialogRef} yesButtonText="Save" title='Add new named location' 
+            <BaseDialog ref={newLocationDialogRef} yesButtonText="Save" title={labels.inventory.addLocation} 
                 onConfirm={async () => { 
                      
                     newLocationDialogRef.current?.loading(true);
@@ -97,7 +98,7 @@ export default function NamedLocation({
                         name='item'
                         defaultValue={newLocation}
                         
-                        placeholder='Enter new location name'
+                        placeholder={labels.inventory.newLocationPlaceholder}
                         onInputChange={(e) => setNewLocation(e.currentTarget.value)}
                     ></FormInput>
                 </div>

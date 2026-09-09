@@ -13,19 +13,14 @@ jobs:
     if: contains(github.event.head_commit.message, '[skip-backend]') == false
     uses: ./.github/workflows/backend-build.yml
     with:
-      db-host: localhost
-      db-password: ${{ secrets.DB_PASSWORD }}
       application-host: carcareco.app
       application-path: /opt/apps/
-      ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      jwt-secret: ${{ secrets.JWT_SECRET }}
-      consumer-secret: ${{ secrets.CONSUMER_SECRET }}
       application-host-user: debian
-      smtp-host: ${{ secrets.SMTP_HOST }}
-      smtp-port: 587
-      smtp-password: ${{ secrets.SMTP_PASSWORD }}
-      smtp-user: ${{ secrets.SMTP_USER }}
-      cors-apphost: carcareco.app
+      # Pull requests validate only. Deployment stays tied to the upstream
+      # repository, so a fork never targets infrastructure it does not own.
+      deploy: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'rene98c/carcareco' }}
+    secrets:
+      ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
   frontend:
     if: contains(github.event.head_commit.message, '[skip-frontend]') == false
@@ -35,7 +30,9 @@ jobs:
       public-api-url: https://api.carcareco.app
       application-host: carcareco.app
       application-path: /opt/apps/
+      application-host-user: debian
+      deploy: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'rene98c/carcareco' }}
+    secrets:
       ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
       consumer-secret: ${{ secrets.CONSUMER_SECRET }}
       session-secret: ${{ secrets.SESSION_SECRET }}
-      application-host-user: debian

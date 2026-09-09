@@ -32,7 +32,7 @@ export async function createOrUpdate(
 
     const jsonResponse = await response.json();
        
-    pushToast(`Work ${(isUpdating?'updated':'saved')} successfully!`)
+    pushToast(`Intervention ${(isUpdating ? 'modifiée' : 'enregistrée')} avec succès.`)
 
     if(id)
         redirect(`/home/work/${jsonResponse}`) 

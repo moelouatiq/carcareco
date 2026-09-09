@@ -3,6 +3,7 @@
 import BaseDialog, { BaseDialogHandle } from "@/_components/BaseDialog"; 
 import {   IWorkData  } from "../../model";  
 import { deleteInvoice } from "../../actions/deleteInvoice";
+import { labels } from "@/_lib/labels";
 
 export default function DeleteInvoiceDialog({
     work, 
@@ -14,7 +15,7 @@ export default function DeleteInvoiceDialog({
      
     return (
         <BaseDialog ref={dialogRef}
-                title="Delete an invoice"
+                title={labels.dialogs.deleteInvoice}
                 description="Are you sure you want to do this? Only last created invoice can be deleted, otherwise it will fail."
                 center={false}
                 yesButtonText="OK"

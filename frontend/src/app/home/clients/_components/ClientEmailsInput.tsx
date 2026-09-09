@@ -11,6 +11,7 @@ import FormList from '@/_components/FormList';
 import React from 'react'; 
 import { IClientData } from '../model';
 import BlueBadge from '@/_components/BlueBadge';
+import { labels } from "@/_lib/labels";
 
 export default function ClientEmailsInput({
     client
@@ -31,10 +32,10 @@ export default function ClientEmailsInput({
                     (e)=>{
                         setCurrentEmail(e.currentTarget.value);
                     }
-                }  label='Email address'></FormInput> 
+                }  label={labels.clients.emailAddress}></FormInput> 
             </div> 
             <div className='sm:col-span-2'> 
-                <FormLabel name='emails' label='Use multiple emails'></FormLabel>
+                <FormLabel name='emails' label={labels.clients.useMultipleEmails}></FormLabel>
                 <div className="mt-3  items-center flex">
                     <Field>
                         <FormSwitch 
@@ -49,7 +50,7 @@ export default function ClientEmailsInput({
             <><div className='sm:col-span-4'> 
                <FormInputWithButton 
                       name='selectEmail' 
-                      label='Email address(es)'
+                      label={labels.clients.someEmailAddresses}
                       defaultValue={selectedEmail}
                       onInputChange={(e) => {
                         setSelectedEmail(e.currentTarget.value);
@@ -65,7 +66,7 @@ export default function ClientEmailsInput({
                </FormInputWithButton> 
             </div>
                 <div className='sm:col-span-2'> 
-                    <FormLabel name='emails' label='Turn off multiple emails'></FormLabel>
+                    <FormLabel name='emails' label={labels.clients.turnOffMultipleEmails}></FormLabel>
                     <div className="mt-3  items-center flex">
                         <Field>
                             <FormSwitch
@@ -89,7 +90,7 @@ export default function ClientEmailsInput({
                                 <EnvelopeIcon aria-hidden="true" className="size-5 shrink-0 text-gray-400" />
                                 <div className="ml-4 flex min-w-0 flex-1 gap-2">
                                     <span className="truncate font-medium">{mail}</span>
-                                    {isPrimary && <BlueBadge text='Primary' ></BlueBadge>}  
+                                    {isPrimary && <BlueBadge text={labels.clients.primary} ></BlueBadge>}  
                                 </div>
                             </div>
                             <input type="hidden" name='emails' defaultValue={mail} ></input>

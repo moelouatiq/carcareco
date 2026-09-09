@@ -78,18 +78,18 @@ namespace Carmasters.Http.Api.Controllers
 
             if (string.IsNullOrWhiteSpace(model.NewPassword))
             {
-                throw new UserException("New password cannot be empty.");
+                throw new UserException("Le nouveau mot de passe ne peut pas être vide.");
             }
 
             if (model.NewPassword != model.ConfirmPassword)
             {
-                throw new UserException("New password does not match with confirmed password");
+                throw new UserException("Le nouveau mot de passe et sa confirmation ne correspondent pas.");
             }
 
             if (user == null || !PasswordHasher.verifyHash(
                model.CurrentPassword, user.Password))
             {
-                    throw new UserException("Current password does not match.");
+                    throw new UserException("Le mot de passe actuel est incorrect.");
             }
 
             user.ChangePassword(PasswordHasher.getHash(model.NewPassword));

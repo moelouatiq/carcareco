@@ -2,5 +2,13 @@
 **/obj
 **/.vs
 **/node_modules
+**/.next
 *.user
 *.suo
+.env
+**/.env
+**/.env.*
+!**/.env.example
+**/appsettings.Secrets.json
+local-credentials.txt
+.git

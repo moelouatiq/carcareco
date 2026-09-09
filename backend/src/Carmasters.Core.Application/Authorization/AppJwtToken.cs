@@ -57,5 +57,34 @@ namespace Carmasters.Core.Application.Authorization
             if (string.IsNullOrWhiteSpace(options.Secret)) throw new ArgumentException("Jwt secret not configured");
         }
 
+        public static void ValidateConfiguration(JwtOptions options, bool requireProductionStrength)
+        {
+            EnsureJwtSecret(options);
+
+            if (string.IsNullOrWhiteSpace(options.ConsumerSecret))
+                throw new ArgumentException("JWT consumer secret is not configured.");
+            if (options.SessionTimeout <= TimeSpan.Zero)
+                throw new ArgumentException("JWT session timeout must be positive.");
+
+            if (!requireProductionStrength) return;
+
+            if (options.Secret.Length < 64 || IsPlaceholder(options.Secret))
+                throw new ArgumentException("Production JWT secret must contain at least 64 non-placeholder characters.");
+            if (options.ConsumerSecret.Length < 32 || IsPlaceholder(options.ConsumerSecret))
+                throw new ArgumentException("Production consumer secret must contain at least 32 non-placeholder characters.");
+            if (options.SessionTimeout > TimeSpan.FromHours(12))
+                throw new ArgumentException("Production JWT session timeout cannot exceed 12 hours.");
+        }
+
+        private static bool IsPlaceholder(string value)
+        {
+            var normalized = value.Trim().ToLowerInvariant();
+            return normalized.Contains("secret")
+                || normalized.Contains("password")
+                || normalized.Contains("change-me")
+                || normalized.StartsWith("[")
+                || normalized is "default" or "admin" or "carcare";
+        }
+
     }
 }

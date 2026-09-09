@@ -6,6 +6,7 @@ import Main from '../../_components/Main';
 import { httpGet } from '@/_lib/server/query-api';
 import { ILocation } from '../model';
 import { CardHeader } from '@/_components/Card'; 
+import { labels } from "@/_lib/labels";
 
 export default async function Page() { 
     
@@ -13,7 +14,7 @@ export default async function Page() {
     const locations = await data.json() as ILocation[]; 
     
     return (
-        <Main header={<CardHeader title='Create new spare part' description='Enter details' ></CardHeader>}>
+        <Main header={<CardHeader title={labels.inventory.newSparePart} description={labels.clients.enterDetails} ></CardHeader>}>
                 <form action={createOrUpdate}>
                     <input type="hidden" name='id' ></input>
                     <InventoryInput allLocations={locations} ></InventoryInput>

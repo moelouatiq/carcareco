@@ -16,6 +16,7 @@ import FormInput from '@/_components/FormInput';
 import Select from '@/_components/Select';
 import clsx from 'clsx';
 import WorkInputMechanics from './WorkInputMechanics';
+import { labels } from "@/_lib/labels";
 
 
 export default function WorkInput({
@@ -45,16 +46,9 @@ export default function WorkInput({
                 if (result) {
                     setClientVehicles(result);
                 }
-                else {
-                    console.log(result);
-                    return [];
-                }
+                else setClientVehicles([]);
             },
-            onFailure: ({ url, status, text }) => {
-                console.log(url);
-                console.log(text);
-                console.log(status);
-            }
+            onFailure: () => setClientVehicles([])
         });
     }
 
@@ -65,7 +59,7 @@ export default function WorkInput({
 
                     <div className="grid grid grid-flow-row grid-cols-1  gap-4">
                         {!work && <div>
-                            <FormLabel name='startWith' label='Start with'></FormLabel>
+                            <FormLabel name='startWith' label={labels.work.startWith}></FormLabel>
                             <Field className="flex mt-2 items-center">
                                 <FormSwitch
                                     name='isOffer'
@@ -81,7 +75,7 @@ export default function WorkInput({
                         </div>}
 
                         <div className=" ">
-                            <FormLabel name='clientId' label='Client'>
+                            <FormLabel name='clientId' label={labels.work.client}>
                                 <span className="ml-4 float-right text-gray-500">
                                     Undisclosed{' '}
                                     <FormSwitch
@@ -109,7 +103,7 @@ export default function WorkInput({
 
                         </div>
                         <div className='  ' >
-                            <FormLabel name='vehicleId' label='Vehicle'>
+                            <FormLabel name='vehicleId' label={labels.work.vehicle}>
                                 {!clientUndisclosed && <span className="ml-2 float-right text-gray-500">
                                     Search all vehicles{' '}
                                     <FormSwitch
@@ -147,22 +141,22 @@ export default function WorkInput({
                                     </div>
                                 </div>
                                 <div className='ml-2  '>
-                                    <FormInput type='number' placeholder='Odometer value' name='odo' defaultValue={work?.odo ?? 0}></FormInput>
+                                    <FormInput type='number' placeholder={labels.work.odometerPlaceholder} name='odo' defaultValue={work?.odo ?? 0}></FormInput>
                                 </div>
                             </div>
 
                         </div>
                        <WorkInputMechanics mechanics={mechanics} work={work}></WorkInputMechanics>
                         <div className=" ">
-                            <FormTextArea name='about' rows={8} label='About' defaultValue={work?.notes}>
+                            <FormTextArea name='about' rows={8} label={labels.work.about} defaultValue={work?.notes}>
                             </FormTextArea>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="mt-6 flex items-center justify-end gap-x-6">
-                <SecondaryButton onClick={() => router.back()}>Cancel</SecondaryButton>
-                <PrimaryButton onClick={() => { }}>Save</PrimaryButton>
+                <SecondaryButton onClick={() => router.back()}>{labels.common.cancel}</SecondaryButton>
+                <PrimaryButton onClick={() => { }}>{labels.common.save}</PrimaryButton>
             </div>
         </>
     )

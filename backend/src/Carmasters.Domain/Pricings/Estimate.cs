@@ -27,11 +27,11 @@ namespace Carmasters.Core.Domain
 
         public  override string GetFileName()
         {
-            return $"estimate_nr_{Number}.pdf";
+            return $"devis_{Number}.pdf";
         }
         public override string GetDisplayName()
         {
-            return $"Estimate nr. {Number}";
+            return $"Devis n° {Number}";
         }
         public virtual string Number { get; }
         public virtual Estimate CreateFor(int purchaseTax,Offer offer, Employee issuer)

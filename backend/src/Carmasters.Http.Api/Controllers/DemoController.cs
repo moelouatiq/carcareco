@@ -27,6 +27,7 @@ namespace Carmasters.Http.Api.Controllers
         private readonly IOptions<JwtOptions> _jwtOptions;
         private readonly DbOptions _dbOptions;
         private readonly IDemoSetupService _demoSetupService;
+        private readonly IConfiguration _configuration;
 
         public DemoController(
               ILogger<DemoController> logger,
@@ -36,6 +37,7 @@ namespace Carmasters.Http.Api.Controllers
               IDemoSetupService demoSetupService)
         {
             _logger = logger; 
+            _configuration = configuration;
             _jwtOptions = jwtOptions;
             _dbOptions = dbOptions.Value;
             _demoSetupService = demoSetupService;
@@ -46,6 +48,11 @@ namespace Carmasters.Http.Api.Controllers
         [HttpPost("setup")]
         public async Task<ActionResult<DemoSetupResponse>> SetupDemo([FromBody] DemoSetupRequest request)
         {
+            if (!_configuration.GetValue<bool>("Demo:Enabled"))
+            {
+                return NotFound();
+            }
+
             if (_dbOptions.MultiTenancy?.Enabled != true)
             {
                 return BadRequest("Demo setup requires multi-tenancy to be enabled");
@@ -62,12 +69,12 @@ namespace Carmasters.Http.Api.Controllers
                     Password = password  
                 };
 
-                _logger.LogInformation("Created demo instance with tenant name {TenantName}", tenantName);
+                _logger.LogInformation("Created a demo instance.");
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Failed to create demo instance: {Error}", ex.Message);
+                _logger.LogError("Failed to create a demo instance.");
                 return StatusCode(500, "Failed to create demo instance");
             }
         }

@@ -6,6 +6,7 @@ import Main from '../../_components/Main';
 import { CardHeader } from '@/_components/Card'; 
 import { httpGet } from '@/_lib/server/query-api';
 import { IMechanic } from '../model';
+import { labels } from "@/_lib/labels";
 
 export default async function Page() {
  
@@ -13,7 +14,7 @@ export default async function Page() {
     const employees = await response.json() as IMechanic[];
     
     return (
-        <Main header={<CardHeader title='Create new work' description='Enter details' ></CardHeader>}>
+        <Main header={<CardHeader title={labels.work.newWork} description='Enter details' ></CardHeader>}>
             <form action={createOrUpdate}>
                 <input type="hidden" name='id'  ></input>
                 <WorkInput mechanics={employees}  ></WorkInput>

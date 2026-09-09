@@ -8,6 +8,7 @@ import Select from "@/_components/Select";
 import FormInput from "@/_components/FormInput";
 import { issueInvoice } from "../../actions/issueInvoice";
 import FormSwitch from "@/_components/FormSwitch";
+import { labels } from "@/_lib/labels";
 
 export default function IssueInvoiceDialog({
     work,
@@ -23,7 +24,7 @@ export default function IssueInvoiceDialog({
 
     return (
         <BaseDialog ref={dialogRef}
-            title="Complete the work and issue an Invoice"
+            title={labels.dialogs.issueInvoice}
             center={false}
             yesButtonText="OK"
             onConfirm={async () => {
@@ -47,13 +48,13 @@ export default function IssueInvoiceDialog({
                     <div className="mt-10 grid grid-cols-2 gap-x-2 gap-y-2 grid-cols-3">
 
                         <div  >
-                            <FormLabel name="dueDays" label='Due days' ></FormLabel>
+                            <FormLabel name="dueDays" label={labels.dialogs.dueDays} ></FormLabel>
                             <div className=" col-span-2 grid grid-cols-1">
                                 <FormInput name='dueDays' type="number" value={dueDays} onInputChange={(e) => setDueDays(+e.currentTarget.value)}></FormInput>
                             </div>
                         </div>
                         <div className="col-span-2" >
-                            <FormLabel name='name' label='Payment type'></FormLabel>
+                            <FormLabel name='name' label={labels.dialogs.paymentType}></FormLabel>
                             <div className="mt-2 col-span-2 grid grid-cols-1">
                                 <Select
                                     id="paymentType"
@@ -69,7 +70,7 @@ export default function IssueInvoiceDialog({
                         <div className="col-span-full">
                             <div className="flex items-end">
                                 <div className="flex-auto  ">
-                                    <FormLabel name="sendClientAnEmail" label='Send client an email' ></FormLabel>
+                                    <FormLabel name="sendClientAnEmail" label={labels.common.sendClientEmail} ></FormLabel>
                                 </div>
                                 <div className="mt-2  ">
                                     <FormSwitch name='sendClientAnEmail' checked={sendClientAnEmail} onChange={(value) => {
@@ -80,7 +81,7 @@ export default function IssueInvoiceDialog({
                             </div>
                         </div>
                         {sendClientAnEmail && <div className="col-span-full mt-4">
-                            <FormLabel name='name' label='Client email'></FormLabel>
+                            <FormLabel name='name' label={labels.common.clientEmail}></FormLabel>
                             <div className="mt-2 col-span-2 grid grid-cols-1">
                                 <FormInput
                                     name='clientEmail'

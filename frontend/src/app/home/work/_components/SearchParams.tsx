@@ -1,49 +1,53 @@
 import FormInput from "@/_components/FormInput";
 import FormLabel from "@/_components/FormLabel"; 
 import { ClientsCombobox, VehiclesCombobox } from "../../_components/SearchCombobox";
+import { labels } from "@/_lib/labels";
 
 export default function SearchParams({
     options
 }:{
     options: any // eslint-disable-line @typescript-eslint/no-explicit-any
 }){
+    const clientValue = options['clientId[value]'] ?? options['clientiId[value]'];
+    const clientText = options['clientId[text]'] ?? options['clientiId[text]'];
+
     return (
         <div className="grid sm:grid-flow-col gap-2">
         
             {options.issued === 'on' && <>
                 <div className="col-span-1  ">
-                        <FormInput name="invoiceFrom" label="Invoice from" defaultValue={options.invoiceFrom} type="date" ></FormInput>
+                        <FormInput name="invoiceFrom" label={labels.work.invoiceFrom} defaultValue={options.invoiceFrom} type="date" ></FormInput>
                       </div>
 
                       <div className="col-span-1 ">
-                        <FormInput name="invoiceTo" label="Invoice to" defaultValue={options.invoiceTo} type="date" ></FormInput>
+                        <FormInput name="invoiceTo" label={labels.work.invoiceTo} defaultValue={options.invoiceTo} type="date" ></FormInput>
                       </div>
                   </>  }
                   <div className="col-span-1  ">
-                    <FormInput name="workFrom" label="Work from" defaultValue={options.workFrom} type="date" ></FormInput>
+                    <FormInput name="workFrom" label={labels.work.workFrom} defaultValue={options.workFrom} type="date" ></FormInput>
                   </div>
 
                   <div className="col-span-1  ">
-                    <FormInput name="workTo" label="Work to" defaultValue={options.workTo} type="date" ></FormInput>
+                    <FormInput name="workTo" label={labels.work.workTo} defaultValue={options.workTo} type="date" ></FormInput>
                   </div>
 
                   <div className="col-span-1  ">
-                    <FormLabel name='clientiId' label='Client'></FormLabel>
+                    <FormLabel name='clientId' label={labels.work.client}></FormLabel>
                     <ClientsCombobox
-                      name='clientiId'
-                      defaultValue={{
-                        text: options['clientiId[text]'], 
-                        value: options['clientiId[value]'],
-                      }}>
+                      name='clientId'
+                      defaultValue={clientValue ? {
+                        text: clientText,
+                        value: clientValue,
+                      } : null}>
                     </ClientsCombobox>
                   </div>
                   <div className="col-span-1 ">
-                    <FormLabel name='vehicleId' label='Vehicle'></FormLabel>
+                    <FormLabel name='vehicleId' label={labels.work.vehicle}></FormLabel>
                     <VehiclesCombobox name='vehicleId'
-                      defaultValue={{
+                      defaultValue={options['vehicleId[value]'] ? {
                         text: options['vehicleId[text]'],
                         value: options['vehicleId[value]'],
-                      }}>
+                      } : null}>
                     </VehiclesCombobox>
                   </div>  
         </div>

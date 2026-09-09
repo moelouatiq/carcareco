@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Npgsql;
+using Carmasters.Core.Application.Authorization;
 
 namespace DbUp.Scripts
 {
@@ -11,20 +12,18 @@ namespace DbUp.Scripts
     {
         public string ProvideScript(Func<IDbCommand> dbCommandFactory)
         {
-            // Get connection string from configuration
-            // Password hash for the default admin
-            string passwordHash = "$2a$11$zsTS62pGn5Cfca4CgqRJxebx45je/3nJj.puxIArFwtAjHew67m6i";
+            var adminUsername = GetRequiredEnvironmentVariable("CARCARE_ADMIN_USERNAME");
+            var adminPassword = GetRequiredEnvironmentVariable("CARCARE_ADMIN_PASSWORD");
+            var adminEmail = Environment.GetEnvironmentVariable("CARCARE_ADMIN_EMAIL") ?? "admin@example.invalid";
+            var passwordHash = PasswordHasher.getHash(adminPassword);
 
             // Read profile image
             byte[] profileImage;
             string imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "default_admin.png");
 
-            Console.WriteLine($"Loading admin profile image from: {imagePath}");
-
             if (File.Exists(imagePath))
             {
                 profileImage = File.ReadAllBytes(imagePath);
-                Console.WriteLine($"Successfully loaded profile image: {profileImage.Length} bytes");
             }
             else
             {
@@ -47,7 +46,7 @@ namespace DbUp.Scripts
             {
                 command.Parameters.AddWithValue("@Id", employeeId);
                 command.ExecuteNonQuery();
-                Console.WriteLine($"Created employee record with ID: {employeeId}");
+                Console.WriteLine("Created bootstrap employee record.");
             }
             command = (NpgsqlCommand)dbCommandFactory();
             command.CommandText = @"INSERT INTO public.user (
@@ -58,9 +57,9 @@ namespace DbUp.Scripts
 
             using (command)
             {
-                command.Parameters.AddWithValue("@Username", "admin");
+                command.Parameters.AddWithValue("@Username", adminUsername);
                 command.Parameters.AddWithValue("@Password", passwordHash);
-                command.Parameters.AddWithValue("@Email", "admin@example.com");
+                command.Parameters.AddWithValue("@Email", adminEmail);
                 command.Parameters.AddWithValue("@Validated", true);
                 command.Parameters.AddWithValue("@ProfileImage", profileImage);
                 command.Parameters.AddWithValue("@EmployeeId", employeeId);
@@ -69,6 +68,34 @@ namespace DbUp.Scripts
             }
 
             return "";
+        }
+
+        private static string GetRequiredEnvironmentVariable(string name)
+        {
+            var value = Environment.GetEnvironmentVariable(name);
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidOperationException($"Required environment variable {name} is missing. Run the setup-secrets script first.");
+            }
+
+            var normalized = value.Trim().ToLowerInvariant();
+            if (name == "CARCARE_ADMIN_PASSWORD"
+                && (value.Length < 16
+                    || normalized is "admin" or "password" or "carcare" or "changeme"
+                    || normalized.Contains("change-me")
+                    || normalized.StartsWith("[")))
+            {
+                throw new InvalidOperationException(
+                    "CARCARE_ADMIN_PASSWORD must contain at least 16 non-placeholder characters.");
+            }
+
+            if (name == "CARCARE_ADMIN_USERNAME"
+                && normalized is "admin" or "root" or "administrator" or "carcare")
+            {
+                throw new InvalidOperationException("CARCARE_ADMIN_USERNAME cannot use a known default account name.");
+            }
+
+            return value;
         }
     }
 }

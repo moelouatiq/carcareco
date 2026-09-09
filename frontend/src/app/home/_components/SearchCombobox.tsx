@@ -93,7 +93,11 @@ export default function SearchCombobox({
         }}
         onSearch={(e,target)=>{
 
-            const inputValue =e.currentTarget.value;
+            const inputValue = e.currentTarget.value.trim();
+            if (selectedItem && inputValue !== selectedItem.text) {
+                setSelectedItem(null);
+                if (onItemChange) onItemChange(null);
+            }
             if(!inputValue) return;
             dataPage({
                 resourceName:resourceName,
@@ -108,11 +112,7 @@ export default function SearchCombobox({
                     target(data);
 
                 },
-                onFailure:({url,status,text})=>{
-                    console.log(url);
-                    console.log(status);
-                    console.log(text);
-                }
+                onFailure:()=>{}
               })   
         }}
         > 

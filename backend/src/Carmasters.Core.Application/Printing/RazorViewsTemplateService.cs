@@ -71,9 +71,9 @@ namespace Carmasters.Core.Application.Printing
                 await viewResult.View.RenderAsync(viewContext);
                 return outputWriter.ToString();
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                _logger.LogError(ex, "Could not render the HTML because of an error");
+                _logger.LogError(exception, "Could not render HTML pricing template");
                 return "render error";
             }
         }

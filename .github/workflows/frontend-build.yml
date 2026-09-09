@@ -17,16 +17,22 @@ on:
         type: string
       public-api-url:
         required: true
-        type: string 
+        type: string
+      deploy:
+        description: Whether to publish the built output to the application host.
+        required: false
+        type: boolean
+        default: false
+    secrets:
       ssh-key:
-        required: true
-        type: string
+        description: Only needed when deploy is true.
+        required: false
       consumer-secret:
-        required: true
-        type: string
+        description: Only needed when deploy is true. The production build does not need it, since every route is server-rendered on demand and the value is only read at runtime.
+        required: false
       session-secret:
-        required: true
-        type: string
+        description: Only needed when deploy is true. The production build does not need it, since every route is server-rendered on demand and the value is only read at runtime.
+        required: false
 
 jobs:
   Run-Build:
@@ -54,19 +60,33 @@ jobs:
           ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
           
     - name: Install dependencies
-      run: npm install
+      run: npm ci
+
+    - name: Run frontend tests
+      run: npm test
+
+    - name: Run lint
+      run: npm run lint
+
+    - name: Run TypeScript checks
+      run: npm run typecheck
       
     - name: 'Create env file'
+      env:
+       SERVER_SECRET: ${{ secrets.consumer-secret }}
+       SESSION_SECRET: ${{ secrets.session-secret }}
+       API_URL: ${{ inputs.api-url }}
+       NEXT_PUBLIC_API_URL: ${{ inputs.public-api-url }}
       run: |
-       touch .env
-       echo SERVER_SECRET=${{ inputs.consumer-secret }} >> .env
-       echo "SESSION_SECRET=${{ inputs.session-secret }}" >> .env
-       echo API_URL=${{ inputs.api-url }} >> .env
-       echo NEXT_PUBLIC_API_URL=${{ inputs.public-api-url }} >> .env
-       echo NEXT_PUBLIC_SESSION_TIMEOUT=604800 >> .env
-       echo NEXT_PUBLIC_SESSION_DIALOG_TIMEOUT=120 >> .env
-       echo NEXT_TELEMETRY_DISABLED=1 >> .env
-       cat .env
+       umask 077
+       printf '%s\n' \
+         "SERVER_SECRET=$SERVER_SECRET" \
+         "SESSION_SECRET=$SESSION_SECRET" \
+         "API_URL=$API_URL" \
+         "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" \
+         "NEXT_PUBLIC_SESSION_TIMEOUT=1500" \
+         "NEXT_PUBLIC_SESSION_DIALOG_TIMEOUT=120" \
+         "NEXT_TELEMETRY_DISABLED=1" > .env
        
     - name: Running build
       run: npm run build
@@ -75,6 +95,7 @@ jobs:
       run: rm -rf src
       
     - name: Deploy with rsync
+      if: ${{ inputs.deploy }}
       uses: burnett01/rsync-deployments@7.0.2
       with: 
         switches: -avzr --delete  --exclude=".git" --exclude=".github" --exclude=".vscode" --exclude="node_modules"
@@ -82,12 +103,13 @@ jobs:
         remote_path: ${{ inputs.application-path }}carcare-app/
         remote_host: ${{ inputs.application-host }}
         remote_user: ${{ inputs.application-host-user }}
-        remote_key: ${{ inputs.ssh-key }}
+        remote_key: ${{ secrets.ssh-key }}
         
     - name: Reloading carcare-app pm2 process
+      if: ${{ inputs.deploy }}
       uses: appleboy/ssh-action@v1.2.1
       with:
         host: ${{ inputs.application-host }}
         username: ${{ inputs.application-host-user }}
-        key: ${{ inputs.ssh-key }}
+        key: ${{ secrets.ssh-key }}
         script: "cd ${{ inputs.application-path }}carcare-app; pwd; npm install; pm2 reload carcare-app"

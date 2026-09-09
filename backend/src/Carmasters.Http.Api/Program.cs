@@ -1,8 +1,6 @@
 using System;
 using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Text.Json;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Carmasters.Core.Application.Database;
 using Carmasters.Core.Application.Documentation;
@@ -15,95 +13,128 @@ using Carmasters.Core.Application.Services;
 using Carmasters.Core.Domain;
 using Carmasters.Core.Repository.Postgres;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NHibernate.Engine;
-using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.
-    WebHost.
-    UseContentRoot(Directory.GetCurrentDirectory()).
-    UseWebRoot("wwwroot").
-    UseStaticWebAssets();
- 
+builder.WebHost
+    .UseContentRoot(Directory.GetCurrentDirectory())
+    .UseWebRoot("wwwroot")
+    .UseStaticWebAssets();
 
-builder.Configuration.AddJsonFile("appsettings.Secrets.json", false);
+builder.Configuration.AddJsonFile("appsettings.Secrets.json", optional: true);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
-// Add services to the container.
 
-builder.Services.
- AddAutoMapperToApp()
-.AddPersistanceServices(builder.Configuration)
-.AddScoped<ITemplateService, RazorViewsTemplateService>()
-.AddScoped<IPdfGenerator, PdfGenerator>()
-.AddScoped<PricingFooterHtmlGenerator>()
-.AddScoped<PricingBodyHtmlGenerator>()
-.AddScoped<IPricingSender, PricingPdfMailSender>()
-.AddSingleton<ISmtpClientFactory, SmtpClientFactory>()
-.AddDemoSetupServices()
-.AddCorsToApp(builder.Configuration)
-.AddControllersWithViewsToApp()
-.AddHealthChecks().Services
-.AddSwaggerToApp()
-.AddJwtAuthenticationToApp(builder.Configuration)
-.AddHttpContextAccessor()
-.AddDistributedMemoryCache()
-.AddApplicationOptions(builder.Configuration)
-.AddExceptionHandler<JsonExceptionHandler>()
-.AddTenantConfigurationServices();
+ConfigureDataProtection(builder);
+
+builder.Services
+    .AddAppMapping()
+    .AddPersistanceServices(builder.Configuration)
+    .AddScoped<ITemplateService, RazorViewsTemplateService>()
+    .AddScoped<IPdfGenerator, PdfGenerator>()
+    .AddScoped<PricingFooterHtmlGenerator>()
+    .AddScoped<PricingBodyHtmlGenerator>()
+    .AddScoped<IPricingSender, PricingPdfMailSender>()
+    .AddSingleton<ISmtpClientFactory, SmtpClientFactory>()
+    .AddDemoSetupServices()
+    .AddCorsToApp(builder.Configuration, builder.Environment)
+    .AddControllersWithViewsToApp()
+    .AddHealthChecks().Services
+    .AddSwaggerToApp()
+    .AddJwtAuthenticationToApp(builder.Configuration, builder.Environment)
+    .AddHttpContextAccessor()
+    .AddDistributedMemoryCache()
+    .AddApplicationOptions(builder.Configuration)
+    .AddExceptionHandler<JsonExceptionHandler>()
+    .AddTenantConfigurationServices();
 
 builder.Services.AddSingleton<RateLimitStrategyFactory>();
 
 var app = builder.Build();
-app.MapStaticAssets();
-app.UseAuthentication();
-app.UseExceptionHandler(exceptionHandlerApp =>
-{
-    exceptionHandlerApp.Run(async context =>
-    {
-        await Task.CompletedTask; //JsonExceptionHandler  wont run without this
-    });
-});
 
-
-app.UseNHibernate();
-app.UseCors("DefaultPolicy");
-app.UseMiddleware<DbConnectionScopeMiddleware>();
-
-/*By default, an ASP.NET Core app doesn't provide a status code page for HTTP error status codes, such as 404 - Not Found. When the app sets an HTTP 400-599 error status code that doesn't have a body, it returns the status code and an empty response body. To enable default text-only handlers for common error status codes,*/
-app.UseStatusCodePages(); 
-app.UseRouting();
-app.UseStaticFiles();
-app.UseRateLimiting();
- 
-//await app.PreparePuppeteerAsync(app.Environment.ContentRootPath); //TODO cant download browser online every startup
- 
-app.MapControllers();
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
-	ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+app.UseExceptionHandler(exceptionHandlerApp =>
 {
-	var js = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Documentation", "SwaggerJwtInetercept.js")).ReplaceLineEndings(" ");
-	c.SwaggerEndpoint("/swagger/v1/swagger.json", "CarCare API V1");
-	c.RoutePrefix = string.Empty;
-	c.EnablePersistAuthorization();
-	c.UseRequestInterceptor(js); 
+    exceptionHandlerApp.Run(async _ =>
+    {
+        await Task.CompletedTask; // JsonExceptionHandler will not run without a terminal delegate.
+    });
 });
+app.UseStatusCodePages();
+// Static files are served before routing: once an endpoint has been selected the static file
+// middleware steps aside, which left the print stylesheet behind the fallback authorization
+// policy when the app runs from sources rather than from a publish output.
+app.UseStaticFiles();
+app.UseRouting();
+app.MapStaticAssets().AllowAnonymous();
 
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        var js = File.ReadAllText(Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "Documentation",
+            "SwaggerJwtInetercept.js")).ReplaceLineEndings(" ");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "CarCare API V1");
+        c.RoutePrefix = string.Empty;
+        c.UseRequestInterceptor(js);
+    });
+}
+
+app.UseCors("DefaultPolicy");
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseNHibernate();
+app.UseMiddleware<DbConnectionScopeMiddleware>();
+app.UseRateLimiting();
+
+app.MapHealthChecks("/health").AllowAnonymous();
+app.MapControllers();
+
 app.Run();
 
- 
+static void ConfigureDataProtection(WebApplicationBuilder builder)
+{
+    var configuredPath = builder.Configuration["DataProtection:KeysDirectory"];
+    if (builder.Environment.IsProduction() && string.IsNullOrWhiteSpace(configuredPath))
+    {
+        throw new InvalidOperationException(
+            "DataProtection:KeysDirectory must point to persistent storage in production.");
+    }
+
+    var keysDirectory = configuredPath
+        ?? Path.Combine(builder.Environment.ContentRootPath, ".data-protection-keys");
+    Directory.CreateDirectory(keysDirectory);
+
+    var dataProtection = builder.Services
+        .AddDataProtection()
+        .SetApplicationName("CarCare")
+        .PersistKeysToFileSystem(new DirectoryInfo(keysDirectory));
+
+    if (!builder.Environment.IsProduction()) return;
+
+    var certificatePath = builder.Configuration["DataProtection:CertificatePath"];
+    var certificatePassword = builder.Configuration["DataProtection:CertificatePassword"];
+    if (string.IsNullOrWhiteSpace(certificatePath) || string.IsNullOrWhiteSpace(certificatePassword))
+    {
+        throw new InvalidOperationException(
+            "A Data Protection certificate path and password are required in production.");
+    }
+
+    dataProtection.ProtectKeysWithCertificate(X509CertificateLoader.LoadPkcs12FromFile(
+        certificatePath,
+        certificatePassword,
+        X509KeyStorageFlags.EphemeralKeySet));
+}

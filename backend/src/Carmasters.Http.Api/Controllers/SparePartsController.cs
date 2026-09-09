@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using AutoMapper;
+using Carmasters.Core.Application;
 using Carmasters.Core.Application.RateLimiting;
 using Carmasters.Core.Application.Services;
 using Carmasters.Core.Domain;
@@ -19,7 +19,7 @@ namespace Carmasters.Http.Api.Controllers
     public class SparePartsController : BaseController<SparePartDto, SparePart>
     {
 
-        public SparePartsController(IRepository repository, IMapper mapper) : base(repository, mapper)
+        public SparePartsController(IRepository repository, IAppMapper mapper) : base(repository, mapper)
         {
 
         }

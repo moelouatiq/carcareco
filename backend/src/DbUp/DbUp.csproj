@@ -39,9 +39,6 @@
 	  <None Include="..\Carmasters.Http.Api\appsettings.Production.json" Link="appsettings.Production.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Include="..\Carmasters.Http.Api\appsettings.Secrets.json" Link="appsettings.Secrets.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="resources\" />

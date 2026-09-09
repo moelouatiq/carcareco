@@ -6,6 +6,7 @@ import { createOrUpdate } from '../../createOrUpdate';
 import { IClientData } from '../../model';
 import Main from '@/app/home/_components/Main';
 import { CardHeader } from '@/_components/Card';
+import { labels } from "@/_lib/labels";
  
 
 export default async function Page({
@@ -21,7 +22,7 @@ export default async function Page({
   
     return (
         <Main header={
-                <CardHeader title='Client Information' description='Edit details'  >  
+                <CardHeader title={labels.clients.information} description={labels.clients.editDetails}  >  
                 </CardHeader>}>
                 <form   action={createOrUpdate}>
                   <input type="hidden" name='id' value={id}></input>

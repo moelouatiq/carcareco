@@ -5,6 +5,7 @@ import Main from "../_components/Main";
 import Link from "next/link";
 import { DescriptionItem } from "@/_components/DescriptionItem";
 import Image from 'next/image';
+import { labels } from "@/_lib/labels";
 
 export default async function Page() {
 
@@ -18,7 +19,7 @@ export default async function Page() {
         } narrow={true}>
               
             <div className=" px-0 ">
-                <h3 className="text-base/7 font-semibold text-gray-900 my-4">My information</h3> 
+                <h3 className="text-base/7 font-semibold text-gray-900 my-4">{labels.profile.myInformation}</h3> 
                {options.profileImageBase64&&<Image
                       alt={`${options.firstName} ${options.lastName}`}
                       src={decodeURIComponent(encodeURIComponent("data:image/png;base64, " + options.profileImageBase64))}
@@ -29,9 +30,9 @@ export default async function Page() {
             </div>
             <div className="mt-6 border-t border-gray-100">
             <dl className="divide-y divide-gray-100">
-                    <DescriptionItem label='Full name' value={options.firstName+` `+options.lastName}></DescriptionItem>
-                    <DescriptionItem label='User name' value={options.userName}></DescriptionItem>
-                    <DescriptionItem label='Email' value={options.email}></DescriptionItem>
+                    <DescriptionItem label={labels.profile.fullName} value={options.firstName+` `+options.lastName}></DescriptionItem>
+                    <DescriptionItem label={labels.profile.userName} value={options.userName}></DescriptionItem>
+                    <DescriptionItem label={labels.profile.email} value={options.email}></DescriptionItem>
                 </dl>
             </div> 
              <div className="mt-6 flex items-center justify-end gap-x-6">

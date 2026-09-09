@@ -77,7 +77,6 @@ export default function TypeAheadCombobox<T>({
           <div className="grid grid-cols-1">
           
           <ComboboxInput 
-            defaultValue={defaultValue}
             placeholder={placeholder}
             className={clsx(showLookingGlass&&"col-start-1 row-start-1 pl-11",className)}
             onChange={(event) => {
@@ -90,7 +89,7 @@ export default function TypeAheadCombobox<T>({
             }
             displayValue={(item) => {
               if (!item) return '';
-              return displayFormatter(item);
+              return displayFormatter(item as T);
             }}
           />
           {showLookingGlass && <MagnifyingGlassIcon

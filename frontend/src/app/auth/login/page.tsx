@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import { authenticate } from './authenticate'
 import { useActionState } from 'react'
+import { labels } from "@/_lib/labels";
 
 const initialState = {
   error: '',
@@ -21,7 +22,7 @@ export default function LoginPage() {
             <div>
               <Image alt="B-dec" width="50" height="50" className="h-10 w-auto" src="/logo.png" ></Image>
 
-              <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
+              <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-gray-900">{labels.auth.signInTitle}</h2>
               {/* <p className="mt-2 text-sm/6 text-gray-500">
                 Not a member?{' '}
                 <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
@@ -36,7 +37,7 @@ export default function LoginPage() {
                 <form action={action} className="space-y-6">
                   <div>
                     <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
-                      Username
+                      {labels.auth.username}
                     </label>
                     <div className="mt-2">
                       <input
@@ -51,7 +52,7 @@ export default function LoginPage() {
 
                   <div>
                     <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                      Password
+                      {labels.auth.password}
                     </label>
                     <div className="mt-2">
                       <input
@@ -98,13 +99,13 @@ export default function LoginPage() {
                         </div>
                       </div>
                       <label htmlFor="remember-me" className="block text-sm/6 text-gray-900">
-                        Remember me
+                        {labels.auth.rememberMe}
                       </label>
                     </div>
 
                     <div className="text-sm/6">
                       <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                        Forgot password?
+                        {labels.auth.forgotPassword}
                       </a>
                     </div>
                   </div>
@@ -114,7 +115,7 @@ export default function LoginPage() {
                       type="submit"
                       className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
-                      Sign in
+                      {labels.auth.signIn}
                     </button>
                   </div>
                 </form>
@@ -126,7 +127,7 @@ export default function LoginPage() {
                     <div className="w-full border-t border-gray-200" />
                   </div>
                   <div className="relative flex justify-center text-sm/6 font-medium">
-                    <span className="bg-white px-6 text-gray-900">Or continue with</span>
+                    <span className="bg-white px-6 text-gray-900">{labels.auth.orContinueWith}</span>
                   </div>
                 </div>
 

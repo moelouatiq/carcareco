@@ -1,6 +1,6 @@
  
 import { NextResponse, NextRequest } from 'next/server'
-import { deleteSession,getJwt } from '@/_lib/server/session'
+import { getJwt } from '@/_lib/server/session'
 export default async function authorizationMiddleware(request: NextRequest,response: NextResponse) {
   
    // 2. Check if the current route is protected or public
@@ -10,8 +10,18 @@ export default async function authorizationMiddleware(request: NextRequest,respo
    
    // logout if /home/logout is called and redirect to login page
   if (path.includes("/home/logout")) { 
-    await deleteSession();
-    return NextResponse.redirect(new URL('/auth/login', request.url))
+    const logoutResponse = NextResponse.redirect(new URL('/auth/login', request.url))
+    const secure = process.env.NODE_ENV === 'production'
+    for (const name of ['session', 'session_timestamp', 'jwt']) {
+      logoutResponse.cookies.set(name, '', {
+        httpOnly: name !== 'session_timestamp',
+        secure,
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 0,
+      })
+    }
+    return logoutResponse
   }
 
   const jwt =await getJwt();
@@ -29,4 +39,3 @@ export default async function authorizationMiddleware(request: NextRequest,respo
 
   return response
 }
- 

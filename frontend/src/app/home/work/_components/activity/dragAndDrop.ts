@@ -1,36 +1,26 @@
 import { IProduct } from "../../model";
 import { DataItemRowHandle } from "../editabletable/DataIItemRow";
+import { useCallback } from "react";
 
-export function dragAndDrop(
+export function useDragAndDrop(
      refreshData: (data: IProduct[]) => void, 
      rowRef: React.RefObject<DataItemRowHandle<IProduct>[] | null[]>,
-     dragItem: React.RefObject<string | null | undefined>,
-     dragOverItem: React.RefObject<string | null | undefined>) {
+     dragItemRef: React.RefObject<string | null | undefined>,
+     dragOverItemRef: React.RefObject<string | null | undefined>) {
 
     
-    const handleDragStart = (e: React.DragEvent<HTMLTableRowElement>) => {
-
-        dragItem.current = e.currentTarget.id;
-    }
-    const handleDragEnter = (e: React.DragEvent<HTMLTableRowElement>) => {
-
-        dragOverItem.current = e.currentTarget.id;
-        drop();
-    }
-
-    const collectValues = () => {
-        const vals = rowRef.current.map(r => {
+    const handleDragStart = useCallback((e: React.DragEvent<HTMLTableRowElement>) => {
+        dragItemRef.current = e.currentTarget.id;
+    }, [dragItemRef]);
+    const handleDragEnter = useCallback((e: React.DragEvent<HTMLTableRowElement>) => {
+        dragOverItemRef.current = e.currentTarget.id;
+        const values = rowRef.current.map(r => {
             return r?.getValue();
         }).filter(x => x !== null);
-
-        return vals as IProduct[];
-    }
-
-    const drop = () => {
-        const copyListItems = collectValues();
-        if (!dragItem.current || !dragOverItem.current) return;
-        const currentDraggedItemId = dragItem.current
-        const overItemId = dragOverItem.current
+        const copyListItems = values as IProduct[];
+        if (!dragItemRef.current || !dragOverItemRef.current) return;
+        const currentDraggedItemId = dragItemRef.current
+        const overItemId = dragOverItemRef.current
         const dragItemContent = copyListItems.find(x => x.id == currentDraggedItemId);
         if (!dragItemContent) return;
         const currentIndex = copyListItems.findIndex(x => x.id == currentDraggedItemId);
@@ -40,7 +30,7 @@ export function dragAndDrop(
         //dragItem.current = null;
         //dragOverItem.current = null; 
         refreshData(copyListItems);
-    }
+    }, [dragItemRef, dragOverItemRef, refreshData, rowRef]);
 
     return {
         handleDragStart,

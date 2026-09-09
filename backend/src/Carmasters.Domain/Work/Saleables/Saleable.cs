@@ -7,10 +7,10 @@ namespace Carmasters.Core.Domain
         protected Saleable() { }
         protected Saleable(string name, decimal? quantity, string unit, decimal price, short? discount = null, Guid? id = null)
         {
-            if (string.IsNullOrWhiteSpace(name)) throw new UserException("Name required."); 
+            if (string.IsNullOrWhiteSpace(name)) throw new UserException("La désignation est obligatoire."); 
 
             Name = name;
-            Quantity = quantity <= 0 ? throw new UserException("Quantity must be at least 1.") : quantity;
+            Quantity = quantity <= 0 ? throw new UserException("La quantité doit être d'au moins 1.") : quantity;
             Unit = unit;
             Price = price; 
             Discount = discount;

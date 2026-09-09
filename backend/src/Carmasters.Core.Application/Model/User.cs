@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Carmasters.Core.Application.Model;
+﻿using Carmasters.Core.Application.Model;
 using Carmasters.Core.Domain;
 using NHibernate.Bytecode;
 using System;
@@ -66,7 +65,7 @@ namespace Carmasters.Core.Application
             var fileSize = profileImage == null?0: profileImage.Length;
             if (fileSize > fiveMb)
             {
-                throw new UserException("Profile image is too big");
+                throw new UserException("L'image de profil est trop volumineuse.");
             }
 
             this.ProfileImage = profileImage;
