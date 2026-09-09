@@ -43,7 +43,8 @@ chmod +x scripts/setup-secrets.sh
 # frontend/.env
 # Docker/PostgreSQL secrets are stored in .env and the generated local login is
 # written to local-credentials.txt. Both files are ignored by Git.
-# Important! If you want to access UI remotely, let's say docker runs on host 192.168.1.228. NEXT_PUBLIC_API_URL .env variable must be for example NEXT_PUBLIC_API_URL=http://192.168.1.226:15567 , otherwise calls from browser wont't reach backend
+# The browser only ever talks to the Next.js server, which reaches the API over API_URL from
+# the server side, so nothing has to be reconfigured to open the UI from another machine.
 
 # Start services
 docker compose up --build -d
@@ -74,6 +75,12 @@ See [docs/testing.md](docs/testing.md) for the unit, frontend, and isolated Dock
 - **Backend:** ASP.NET Core (.NET 9), NHibernate ORM
 - **Database:** PostgreSQL with multitenancy support
 - **CI/CD:** Github Actions, Docker Compose
+
+## ☁️ Deploying on Vercel
+
+See [docs/hosting-vercel.md](docs/hosting-vercel.md) for the Vercel Services setup: the Next.js
+frontend and the ASP.NET Core backend deploy as two services of one project, the backend stays
+internal and is reached over a service binding, and the database is Supabase over verify-full TLS.
 
 ## 🚀 Deploying on Linux (Debian 12)
 
