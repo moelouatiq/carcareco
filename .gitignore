@@ -30,3 +30,12 @@ local-credentials.txt
 # by accident, and the *.key/*.pem/*.pfx/*.p12 rules above still apply everywhere.
 backend/certs/*
 !backend/certs/prod-ca-2021.crt
+
+# Added when linking the Vercel project: the linked project id, and the local credentials file the
+# CLI writes beside it. Neither is ever committed.
+.vercel
+.env*
+# .env* above is broader than the rules further up and would otherwise re-shadow their negation,
+# because the last matching pattern wins. The example files must stay addable.
+!.env.example
+!**/.env.example
