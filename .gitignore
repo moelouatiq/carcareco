@@ -24,6 +24,9 @@ local-credentials.txt
 *.pfx
 *.p12
 
-# Staged for the Vercel image build context. The Supabase root CA is a public certificate with no
-# private key, but whether it belongs in the repository is a deliberate decision, not a default.
-backend/certs/
+# The Vercel image needs Supabase's root CA in its build context: verify-full validates the server
+# against a root the public trust store does not carry. That one public certificate is versioned by
+# name. Everything else in the directory stays ignored, so a key dropped there cannot be committed
+# by accident, and the *.key/*.pem/*.pfx/*.p12 rules above still apply everywhere.
+backend/certs/*
+!backend/certs/prod-ca-2021.crt

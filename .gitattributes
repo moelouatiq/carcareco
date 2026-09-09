@@ -5,3 +5,7 @@
 Dockerfile text eol=lf
 *.Dockerfile text eol=lf
 Dockerfile.* text eol=lf
+
+# The Supabase root CA is stored byte for byte: no end-of-line rewriting on any platform, so the
+# file in a checkout is always the one whose fingerprint was verified.
+*.crt -text
