@@ -23,3 +23,7 @@ local-credentials.txt
 *.pem
 *.pfx
 *.p12
+
+# Staged for the Vercel image build context. The Supabase root CA is a public certificate with no
+# private key, but whether it belongs in the repository is a deliberate decision, not a default.
+backend/certs/

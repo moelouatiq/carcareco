@@ -1,6 +1,5 @@
-using System;
+﻿using System;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Carmasters.Core.Application.Database;
 using Carmasters.Core.Application.Documentation;
@@ -13,7 +12,6 @@ using Carmasters.Core.Application.Services;
 using Carmasters.Core.Domain;
 using Carmasters.Core.Repository.Postgres;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
@@ -32,7 +30,7 @@ builder.Configuration.AddJsonFile("appsettings.Secrets.json", optional: true);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-ConfigureDataProtection(builder);
+builder.Services.AddDataProtectionToApp(builder.Configuration, builder.Environment);
 
 builder.Services
     .AddAppMapping()
@@ -104,37 +102,3 @@ app.MapHealthChecks("/health").AllowAnonymous();
 app.MapControllers();
 
 app.Run();
-
-static void ConfigureDataProtection(WebApplicationBuilder builder)
-{
-    var configuredPath = builder.Configuration["DataProtection:KeysDirectory"];
-    if (builder.Environment.IsProduction() && string.IsNullOrWhiteSpace(configuredPath))
-    {
-        throw new InvalidOperationException(
-            "DataProtection:KeysDirectory must point to persistent storage in production.");
-    }
-
-    var keysDirectory = configuredPath
-        ?? Path.Combine(builder.Environment.ContentRootPath, ".data-protection-keys");
-    Directory.CreateDirectory(keysDirectory);
-
-    var dataProtection = builder.Services
-        .AddDataProtection()
-        .SetApplicationName("CarCare")
-        .PersistKeysToFileSystem(new DirectoryInfo(keysDirectory));
-
-    if (!builder.Environment.IsProduction()) return;
-
-    var certificatePath = builder.Configuration["DataProtection:CertificatePath"];
-    var certificatePassword = builder.Configuration["DataProtection:CertificatePassword"];
-    if (string.IsNullOrWhiteSpace(certificatePath) || string.IsNullOrWhiteSpace(certificatePassword))
-    {
-        throw new InvalidOperationException(
-            "A Data Protection certificate path and password are required in production.");
-    }
-
-    dataProtection.ProtectKeysWithCertificate(X509CertificateLoader.LoadPkcs12FromFile(
-        certificatePath,
-        certificatePassword,
-        X509KeyStorageFlags.EphemeralKeySet));
-}
