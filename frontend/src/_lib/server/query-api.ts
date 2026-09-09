@@ -10,14 +10,16 @@ interface IAPICall
   url:string,
   authorize? : boolean,
   body?: any | null, // eslint-disable-line @typescript-eslint/no-explicit-any
-  method: string
+  method: string,
+  redirectOnError?: boolean
 }
 
 async function apiCall({
   url,
   authorize=true,
   method,
-  body =null
+  body =null,
+  redirectOnError=true,
 }:IAPICall) { 
   const  requestHeaders:HeadersInit =   {
    "Content-Type": "application/json",
@@ -36,7 +38,7 @@ async function apiCall({
   };
    
   const response = await fetch(fullUrl,request);
-  if (!response.ok) {
+  if (!response.ok && redirectOnError) {
     const responseText = await response.text();
     const hasContentType = response.headers.has('Content-Type');
     let message = 'API Error occurred server side';
@@ -126,4 +128,12 @@ export async function httpPut({
     authorize,
     body, 
   }); 
+}
+
+export async function httpGetResponse(url: string) {
+  return apiCall({
+    url,
+    method: "GET",
+    redirectOnError: false,
+  });
 }

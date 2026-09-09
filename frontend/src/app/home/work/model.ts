@@ -16,6 +16,7 @@ export interface IWorkData extends IActivity{
     odo:             number;
     mechanics:       IMechanic[];
     status:          string;
+    completedOn?:    string | null;
     issuance:       IWorkIssuance;  
     
 }
@@ -112,14 +113,14 @@ export interface IActivityNames{
     completed: string,
   }
  export const activityNames = {
-    offer: 'Offer',
-    repairjob:'Repair job' 
+    offer: 'Devis',
+    repairjob:'Réparation' 
   } as IActivityNames
 
   export const statusNames = {
-    closed: 'Closed',
-    inprogress:'In Progress',
-    completed:'Completed'
+    closed: 'Terminée',
+    inprogress:'En cours',
+    completed:'Facturée'
   } as IStatusNames
     
   export interface IPaymentNames{
@@ -127,7 +128,7 @@ export interface IActivityNames{
   }
 
   export const paymentTypes ={ 
-    cash:'Cash',
-    banktransfer:'Bank transfer',
-    cardpayment:'Card payment'
+    cash:'Espèces',
+    banktransfer:'Virement bancaire',
+    cardpayment:'Carte bancaire'
   } as IPaymentNames
