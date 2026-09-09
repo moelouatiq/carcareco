@@ -5,6 +5,7 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import React from 'react';
 import { useState,  useImperativeHandle  } from 'react';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline'
+import { labels } from "@/_lib/labels";
 
  export interface IOnConfirm 
  {
@@ -87,13 +88,13 @@ export type ConfirmDialogHandle  = {
                     
                     <SecondaryButton
                       onClick={() => setIsDialogOpen(false)}
-                    >Cancel</SecondaryButton>
+                    >{labels.common.cancel}</SecondaryButton>
                      <PrimaryButton
                      className="inline-flex w-full justify-center" 
                      onClick={() => { 
                         confirm();
                      }}
-                    >Yes
+                    >{labels.common.yes}
                     </PrimaryButton>
                 </div>
             </DialogPanel>

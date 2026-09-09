@@ -7,6 +7,7 @@ import WorkInput from '../../_components/WorkInput';
 import { createOrUpdate } from '../../actions/createOrUpdate';
 import { IMechanic, IWorkData } from '../../model';
 import Main from '@/app/home/_components/Main';
+import { labels } from "@/_lib/labels";
 
 export default async function Page({
     params,
@@ -24,7 +25,7 @@ export default async function Page({
   
 
     return (
-        <Main header={<CardHeader title='Work Information' description='Edit details' ></CardHeader>}>
+        <Main header={<CardHeader title={labels.work.information} description='Edit details' ></CardHeader>}>
             <form action={createOrUpdate}>
                 <input type="hidden" name='id' value={id} ></input>
                 <WorkInput work={work} mechanics={employees}  ></WorkInput>

@@ -4,6 +4,7 @@ import SettingsTabs from "@/_components/SettingsTabs";
 import Main from "../_components/Main";
 import Link from "next/link";
 import { DescriptionItem } from "@/_components/DescriptionItem";
+import { labels } from "@/_lib/labels";
 
 export default async function Page() {
 
@@ -18,38 +19,38 @@ export default async function Page() {
         } narrow={true}>
               
             <div className="  px-0">
-                <h3 className="text-base/7 font-semibold text-gray-900  my-4">Company information</h3> 
+                <h3 className="text-base/7 font-semibold text-gray-900  my-4">{labels.settings.companyInformation}</h3> 
             </div>
             <div className="mt-6 border-t border-gray-100">
                 <dl className="divide-y divide-gray-100">
-                    <DescriptionItem label='Name' value={options.requisites.name}></DescriptionItem>
-                    <DescriptionItem label='Phone' value={options.requisites.phone}></DescriptionItem>
-                    <DescriptionItem label='Address' value={options.requisites.address}></DescriptionItem>
-                    <DescriptionItem label='Email' value={options.requisites.email}></DescriptionItem>
-                    <DescriptionItem label='Bank account' value={options.requisites.bankAccount}></DescriptionItem>
-                    <DescriptionItem label='RegNr' value={options.requisites.regNr}></DescriptionItem>
-                    <DescriptionItem label='Tax ID' value={options.requisites.kmkr}></DescriptionItem>
+                    <DescriptionItem label={labels.settings.name} value={options.requisites.name}></DescriptionItem>
+                    <DescriptionItem label={labels.settings.phone} value={options.requisites.phone}></DescriptionItem>
+                    <DescriptionItem label={labels.settings.address} value={options.requisites.address}></DescriptionItem>
+                    <DescriptionItem label={labels.settings.email} value={options.requisites.email}></DescriptionItem>
+                    <DescriptionItem label={labels.settings.bankAccount} value={options.requisites.bankAccount}></DescriptionItem>
+                    <DescriptionItem label={labels.settings.regNr} value={options.requisites.regNr}></DescriptionItem>
+                    <DescriptionItem label={labels.settings.taxId} value={options.requisites.kmkr}></DescriptionItem>
                 </dl>
             </div>
             <div className=" pt-8   px-0">
-                <h3 className="text-base/7 font-semibold text-gray-900">Invoice options</h3> 
+                <h3 className="text-base/7 font-semibold text-gray-900">{labels.settings.invoiceOptions}</h3> 
             </div>
             <div className="mt-6 border-t border-gray-100">
                 <dl className="divide-y divide-gray-100">
-                    <DescriptionItem label='VAT Rate' value={options.pricing.invoice.vatRate}></DescriptionItem>
-                    <DescriptionItem label='Surcharge' value={options.pricing.invoice.surCharge}></DescriptionItem>
-                    <DescriptionItem label='Disclaimer' className="whitespace-pre-line" value={options.pricing.invoice.disclaimer}></DescriptionItem>
-                    <DescriptionItem label='Signature line' value={(options.pricing.invoice.signatureLine?'Yes':'No')}></DescriptionItem>
-                    <DescriptionItem label='Email content'  className="whitespace-pre-line" value={options.pricing.invoice.emailContent}></DescriptionItem> 
+                    <DescriptionItem label={labels.settings.vatRate} value={options.pricing.invoice.vatRate}></DescriptionItem>
+                    <DescriptionItem label={labels.settings.surcharge} value={options.pricing.invoice.surCharge}></DescriptionItem>
+                    <DescriptionItem label={labels.settings.disclaimer} className="whitespace-pre-line" value={options.pricing.invoice.disclaimer}></DescriptionItem>
+                    <DescriptionItem label={labels.settings.signatureLine} value={(options.pricing.invoice.signatureLine?'Yes':'No')}></DescriptionItem>
+                    <DescriptionItem label={labels.settings.emailContent}  className="whitespace-pre-line" value={options.pricing.invoice.emailContent}></DescriptionItem> 
                 </dl>
             </div>
             <div className=" pt-8   px-0">
-                <h3 className="text-base/7 font-semibold text-gray-900">Offer options</h3>
-                <p className="mt-1 max-w-2xl text-sm/6 text-gray-500">Offer options</p>
+                <h3 className="text-base/7 font-semibold text-gray-900">{labels.settings.offerOptions}</h3>
+                <p className="mt-1 max-w-2xl text-sm/6 text-gray-500">{labels.settings.offerOptions}</p>
             </div>
             <div className="mt-6 border-t border-gray-100">
                 <dl className="divide-y divide-gray-100"> 
-                    <DescriptionItem label='Email content' className="whitespace-pre-line" value={options.pricing.estimate.emailContent}></DescriptionItem> 
+                    <DescriptionItem label={labels.settings.emailContent} className="whitespace-pre-line" value={options.pricing.estimate.emailContent}></DescriptionItem> 
                 </dl>
             </div>
              <div className="mt-6 flex items-center justify-end gap-x-6">

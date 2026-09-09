@@ -11,6 +11,7 @@ import BaseDialog, { BaseDialogHandle } from '@/_components/BaseDialog';
 import ButtonGroup, { IButtonOption } from '@/_components/ButtonGroup';
 import { addEmployee, removeEmployee } from '../actions/addOrRemoveEmployee';
 import FormInput from '@/_components/FormInput';
+import { labels } from "@/_lib/labels";
 
 export default function WorkInputMechanics({
     work,
@@ -54,7 +55,7 @@ export default function WorkInputMechanics({
 
     return (
         <div className='   ' >
-            <FormLabel name='mechanics' label='Mechanics'></FormLabel>
+            <FormLabel name='mechanics' label={labels.work.mechanics}></FormLabel>
 
             <div className="mt-2 mb-2  flex">
                 <div className="-mr-px grid grow grid-cols-1 focus-within:relative">
@@ -100,7 +101,7 @@ export default function WorkInputMechanics({
                 setAllMechanics([...allMechanics]);
             }} ref={confirmRemoveLocationRef} ></ConfirmDialog>
 
-            <BaseDialog ref={newLocationDialogRef} yesButtonText="Save" title='Add new mechanic'
+            <BaseDialog ref={newLocationDialogRef} yesButtonText="Save" title={labels.work.addMechanic}
                 onConfirm={async () => {
 
                     newLocationDialogRef.current?.loading(true);
@@ -121,7 +122,7 @@ export default function WorkInputMechanics({
                         name='item'
                         defaultValue={newMechanic}
 
-                        placeholder='Enter new mechanics name'
+                        placeholder={labels.work.newMechanicPlaceholder}
                         onInputChange={(e) => setNewMechanic(e.currentTarget.value)}
                     ></FormInput>
                 </div>

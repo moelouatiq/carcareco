@@ -45,7 +45,7 @@ namespace Carmasters.Core.Application.Services
             using (var mail = smtp.CreateClient())
             {
                 if (string.IsNullOrWhiteSpace(pricing.Email))
-                    throw new UserException("Cannot send an email, recipient email not provided.");
+                    throw new UserException("Impossible d'envoyer l'e-mail : aucune adresse destinataire renseignée.");
 
                 var message = new MailMessage(
                     new MailAddress(requisites.Email, requisites.Name, Encoding.UTF8),

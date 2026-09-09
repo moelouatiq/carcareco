@@ -15,7 +15,7 @@ describe("Search", () => {
     httpGet.mockReset();
   });
 
-  it("renders Nothing found for a genuinely empty API page", async () => {
+  it("renders the empty state for a genuinely empty API page", async () => {
     httpGet.mockResolvedValue(jsonResponse({ hasMore: false, items: [] }));
 
     const markup = renderToStaticMarkup(await Search({
@@ -26,7 +26,7 @@ describe("Search", () => {
     expect(httpGet).toHaveBeenCalledWith(
       "work/page?status=all&workFrom=&workTo=&offset=0&limit=30",
     );
-    expect(markup).toContain("Nothing found");
+    expect(markup).toContain("Aucun résultat");
   });
 
   it("renders an intervention returned by the API", async () => {
@@ -48,7 +48,7 @@ describe("Search", () => {
     expect(markup).toContain("Work 42");
     expect(markup).toContain("/home/work/edit/work-42");
     expect(markup).not.toContain("offset=-30");
-    expect(markup).not.toContain("Nothing found");
+    expect(markup).not.toContain("Aucun résultat");
   });
 
   it("normalizes invalid pagination instead of sending NaN", async () => {

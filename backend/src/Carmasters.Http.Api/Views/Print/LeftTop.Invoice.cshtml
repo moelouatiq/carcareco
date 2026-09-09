@@ -9,13 +9,13 @@
 }  
  
 <p class="text-sm text-gray-500">
-    Date: @pricing.IssuedOn.ToString("dd.MM.yyyy")
+    Date : @pricing.IssuedOn.ToString("dd.MM.yyyy")
 </p>
 <p class="text-sm text-gray-500">
-    Terms: @(pricing.PaymentType == PaymentType.Cash ? "cash" : "bank transfer")
+    Règlement : @(pricing.PaymentType == PaymentType.Cash ? "espèces" : "virement bancaire")
     <br />
-    Due date: @pricing.IssuedOn.AddDays(pricing.DueDays).ToString("dd.MM.yyyy")
+    Échéance : @pricing.IssuedOn.AddDays(pricing.DueDays).ToString("dd.MM.yyyy")
 </p>
 <p class="text-sm text-gray-500">
-    Late payment fee: @pricingOptions.Invoice.SurCharge
+    Pénalité de retard : @pricingOptions.Invoice.SurCharge
 </p>

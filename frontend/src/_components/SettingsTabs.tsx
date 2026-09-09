@@ -3,11 +3,12 @@ import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { BuildingOfficeIcon, UserIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import { usePathname, useRouter } from 'next/navigation'; 
+import { labels } from "@/_lib/labels";
 
 
 const tabs = [
-  { name: 'My Account', href: '/home/profile', icon: UserIcon },
-  { name: 'Invoice Options', href: '/home/settings', icon: BuildingOfficeIcon }
+  { name: labels.nav.account, href: '/home/profile', icon: UserIcon },
+  { name: labels.nav.invoiceOptions, href: '/home/settings', icon: BuildingOfficeIcon }
 ]
 
 export default function SettingsTabs() {
@@ -22,7 +23,7 @@ export default function SettingsTabs() {
         {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
         <select
           defaultValue={tabs.find((tab) => currentPath.startsWith(tab.href) )?.href}
-          aria-label="Select a tab"
+          aria-label={labels.nav.selectTab}
           className="col-start-1 row-start-1 w-full text-sm font-medium appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
           onChange={(e)=>{ 
             router.push(e.currentTarget.value)
@@ -39,7 +40,7 @@ export default function SettingsTabs() {
       </div>
       <div className="hidden sm:block">
         {/* <div className="border-b border-gray-200"> */}
-        <nav aria-label="Tabs" className="-mb-px flex space-x-8">
+        <nav aria-label="Onglets" className="-mb-px flex space-x-8">
           {tabs.map((tab) => (
             <a
               key={tab.name}

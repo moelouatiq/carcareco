@@ -13,6 +13,7 @@ import FormCheckBox from '@/_components/FormCheckbox';
 import FormSwitch from '@/_components/FormSwitch';  
 import { IClientData } from '../model';
 import BlueBadge from '@/_components/BlueBadge';
+import { labels } from "@/_lib/labels";
 
 
 export default function ClientInput({
@@ -39,7 +40,7 @@ export default function ClientInput({
             event.preventDefault();
         }
         if (!isCompany && !firstName) {
-            setFirstNameError("Firstname is required");
+            setFirstNameError("Le prénom est obligatoire");
             event.preventDefault();
         } 
     }
@@ -70,27 +71,27 @@ export default function ClientInput({
                                     inputError={companyNameRequired}
                                     onInputChange={(e) => setCompanyName(e.currentTarget.value)}
                                     defaultValue={companyName}
-                                    label='Company name'></FormInput>
+                                    label={labels.clients.companyName}></FormInput>
                             </div> : <>
                                 <div className="sm:col-span-3">
                                     <FormInput name='first-name'
                                       inputError={firstNameRequired}
                                       onInputChange={(e) => setFirstName(e.currentTarget.value)}
-                                     defaultValue={firstName} label='First name'></FormInput>
+                                     defaultValue={firstName} label={labels.clients.firstName}></FormInput>
                                 </div>
                                 <div className="sm:col-span-3">
-                                    <FormInput name='last-name' defaultValue={client?.lastName} label='Last name'></FormInput>
+                                    <FormInput name='last-name' defaultValue={client?.lastName} label={labels.clients.lastName}></FormInput>
                                 </div>
                             </>
                         }
 
                         <div className="sm:col-span-3">
-                            {isCompany ? <FormInput name='regNr' defaultValue={client?.regNr} label='Registry code'></FormInput>
-                                : <FormInput name='personal-code' defaultValue={client?.personalCode} label='Personal code'></FormInput>}
+                            {isCompany ? <FormInput name='regNr' defaultValue={client?.regNr} label={labels.clients.registryCode}></FormInput>
+                                : <FormInput name='personal-code' defaultValue={client?.personalCode} label={labels.clients.personalCode}></FormInput>}
 
                         </div>
                         <div className="sm:col-span-3">
-                            <FormInput name='phone' defaultValue={client?.phone} label='Phone'></FormInput>
+                            <FormInput name='phone' defaultValue={client?.phone} label={labels.clients.phone}></FormInput>
                         </div> 
                         <ClientEmailsInput client={client}></ClientEmailsInput>
                         <ClientAddress address={client?.address} name='street-address'></ClientAddress>
@@ -100,17 +101,17 @@ export default function ClientInput({
             <div className="border-b border-gray-900/10 pb-12">
                 <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                     <div className="col-span-full">
-                        <FormCheckBox name='complicated' label='Complicated client' defaultChecked={client?.isAsshole}></FormCheckBox>
+                        <FormCheckBox name='complicated' label={labels.clients.complicatedClient} defaultChecked={client?.isAsshole}></FormCheckBox>
                     </div>
                     <div className="col-span-full">
-                        <FormTextArea name='about' label='About'  defaultValue={client?.description}>
+                        <FormTextArea name='about' label={labels.clients.about}  defaultValue={client?.description}>
                         </FormTextArea> 
                     </div>
                 </div>
             </div>
             <div className="mt-6 flex items-center justify-end gap-x-6"> 
-                <SecondaryButton  onClick={() => router.back()}>Cancel</SecondaryButton>
-                <PrimaryButton  onClick={validate}>Save</PrimaryButton> 
+                <SecondaryButton  onClick={() => router.back()}>{labels.common.cancel}</SecondaryButton>
+                <PrimaryButton  onClick={validate}>{labels.common.save}</PrimaryButton> 
             </div> 
         </>
     )

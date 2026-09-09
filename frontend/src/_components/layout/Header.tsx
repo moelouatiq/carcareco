@@ -49,7 +49,7 @@ function MobileNavigation({ onTryDemoClick }: MobileNavigationProps) {
     <Popover>
       <PopoverButton
         className="relative z-10 flex h-8 w-8 items-center justify-center focus:not-data-focus:outline-hidden"
-        aria-label="Toggle Navigation"
+        aria-label="Ouvrir le menu"
       >
         {({ open }) => <MobileNavIcon open={open} />}
       </PopoverButton>
@@ -98,7 +98,7 @@ export function  Header({ onTryDemoClick }: HeaderProps) {
       <Container>
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
-            <Link href="#" aria-label="Home">
+            <Link href="#" aria-label="Accueil">
               <Logo width={100} height={100} className="h-10 w-auto" /> 
             </Link>
             <div className="hidden md:flex md:gap-x-6">
@@ -116,11 +116,11 @@ export function  Header({ onTryDemoClick }: HeaderProps) {
             </div>
             {onTryDemoClick ? (
               <Button href="/auth/login" color="blue">
-                <span>Log in</span>
+                <span>Connexion</span>
               </Button>
             ) : (
               <Button href="/auth/login" color="blue">
-                <span>Log in</span>
+                <span>Connexion</span>
               </Button>
             )}
             <div className="-mr-1 md:hidden">

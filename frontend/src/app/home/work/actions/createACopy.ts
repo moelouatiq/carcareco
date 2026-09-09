@@ -11,7 +11,7 @@ export async function createACopy(workId: string) {
         body: {}
     });
     const newWorkId = await response.json();
-    pushToast('New copy of a work created successfully.')
+    pushToast('Copie de l’intervention créée avec succès.')
     redirect(`/home/work/${newWorkId}`);
 }
 

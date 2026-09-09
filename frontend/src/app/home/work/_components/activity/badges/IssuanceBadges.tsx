@@ -8,6 +8,7 @@ import RedBadge from "@/_components/RedBadge"
 import BlueBadge from "@/_components/BlueBadge"
 import { IIssuance, IOfferIssuance, IWorkIssuance } from "../../../model"
 import { useHasHydrated, useLocalDateTime } from "@/_components/LocalDateTime"
+import { labels } from "@/_lib/labels";
 
 const isOverDue = (issuance: IWorkIssuance) => { 
     const dueDate = new Date(issuance.issuedOn);
@@ -33,12 +34,12 @@ export function IssuanceBadges({
 
     return (
         <> 
-           <GreenBadge text='Issued' title={'Issued on ' + issuedOn + ' by ' + issueance.issuedBy} ></GreenBadge>
-           {offerIssuance.acceptedOn && <>{' '}<GreenBadge text='Accepted' title={'Accepted on ' + acceptedOn + ' by ' + offerIssuance.acceptedBy} ></GreenBadge></>}
+           <GreenBadge text={labels.badges.issued} title={'Émis le ' + issuedOn + ' par ' + issueance.issuedBy} ></GreenBadge>
+           {offerIssuance.acceptedOn && <>{' '}<GreenBadge text={labels.badges.accepted} title={'Accepté le ' + acceptedOn + ' par ' + offerIssuance.acceptedBy} ></GreenBadge></>}
            <EmailSentBadge issueance={issueance}></EmailSentBadge>
            <OverdueBadge issueance={workIssuance}></OverdueBadge>
-           {workIssuance.invoiceNumber && workIssuance.isPaid && !overdue && <> <GreenBadge text="Paid"></GreenBadge></>}
-           {workIssuance.invoiceNumber && !workIssuance.isPaid && !overdue && <> <BlueBadge text="Unpaid"></BlueBadge></>}
+           {workIssuance.invoiceNumber && workIssuance.isPaid && !overdue && <> <GreenBadge text={labels.badges.paid}></GreenBadge></>}
+           {workIssuance.invoiceNumber && !workIssuance.isPaid && !overdue && <> <BlueBadge text={labels.badges.unpaid}></BlueBadge></>}
         </>
     )
 }
@@ -54,7 +55,7 @@ export function OverdueBadge({
     const hasHydrated = useHasHydrated();
 
     return (
-        <>{hasHydrated && issueance?.invoiceNumber && isOverDue(issueance) && <> <RedBadge text="Overdue" ></RedBadge></>}</>
+        <>{hasHydrated && issueance?.invoiceNumber && isOverDue(issueance) && <> <RedBadge text={labels.badges.overdue} ></RedBadge></>}</>
     )
 }
 
@@ -68,6 +69,6 @@ export function EmailSentBadge({
     const sentOn = useLocalDateTime(issueance?.sentOn);
 
     return (
-        <>{issueance?.sentOn && <span title={'Email sent to ' + issueance.receiverEmail + ' on ' + sentOn}><FontAwesomeIcon icon={faEnvelopeCircleCheck}  size="lg" color='Green' /></span>}</>
+        <>{issueance?.sentOn && <span title={'E-mail envoyé à ' + issueance.receiverEmail + ' le ' + sentOn}><FontAwesomeIcon icon={faEnvelopeCircleCheck}  size="lg" color='Green' /></span>}</>
     )
 }

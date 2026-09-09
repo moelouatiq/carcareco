@@ -23,7 +23,7 @@ namespace Carmasters.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
-                throw  new UserException("Firstname is required.");
+                throw  new UserException("Le prénom est obligatoire.");
             }
 
             FirstName = firstName;

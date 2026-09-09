@@ -2,6 +2,7 @@ import { EllipsisVerticalIcon } from '@heroicons/react/20/solid'
 import { IButtonOption } from "./ButtonGroup"; 
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 import Link from 'next/link';
+import { labels } from "@/_lib/labels";
 
 export default function HamburgerMenu({
     options
@@ -15,7 +16,7 @@ export default function HamburgerMenu({
     return (
          <Menu as="div" className="relative flex-none">
             <MenuButton className="-m-2.5 block pb-2.5 text-gray-500 hover:text-gray-900">
-                <span className="sr-only">Open options</span>
+                <span className="sr-only">{labels.nav.openOptions}</span>
                 <EllipsisVerticalIcon aria-hidden="true" className="size-5" />
             </MenuButton>
             <MenuItems

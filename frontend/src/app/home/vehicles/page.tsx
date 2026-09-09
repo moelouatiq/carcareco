@@ -4,12 +4,13 @@ import 'car-makes-icons/dist/style.css';
 import { SearchCardHeader } from "../_components/SearchCardHeader";
 import Main from "../_components/Main";
 import SimpleSearchBar from "../_components/SimpleSearchBar";
+import { labels } from "@/_lib/labels";
 
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
 
   return <Main header={
-    <SearchCardHeader title="Find Vehicles" pageName="vehicles">
+    <SearchCardHeader title={labels.vehicles.findVehicles} pageName="vehicles">
     </SearchCardHeader>
   } narrow={false}>
      <form method="GET" > <Search
@@ -19,7 +20,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
 
         {
           dataField: 'producer',
-          headerText: 'Producer',
+          headerText: labels.vehicles.producer,
           dataClasses: () => {
             return "pl-4 font-medium gray-900 whitespace-nowrap";
           },
@@ -35,11 +36,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         },
         {
           dataField: 'model',
-          headerText: 'Model',
+          headerText: labels.vehicles.model,
         },
         {
           dataField: 'regNr',
-          headerText: 'RegNr',
+          headerText: labels.vehicles.regNr,
           dataFormatter: ({ regNr, id }) => {
             return (
               <a href={'/home/vehicles/' + id} >
@@ -50,9 +51,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         },
         {
           dataField: 'ownerName',
-          headerText: 'Owner',
+          headerText: labels.vehicles.owner,
           dataFormatter: ({ ownerName, ownerId }) => {
-            if (!ownerName) return <p className="font-italic text-gray-400">No owner</p>;
+            if (!ownerName) return <p className="font-italic text-gray-400">{labels.vehicles.noOwner}</p>;
             return (
               <a href={'/home/clients/' + ownerId} >
                 <h5 >{ownerName}</h5>
@@ -62,7 +63,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         },
         {
           dataField: 'vin',
-          headerText: 'VIN',
+          headerText: labels.vehicles.vin,
           dataFormatter: ({ vin, id }) => {
             return (
               <a href={'/home/vehicles/' + id} >
@@ -72,7 +73,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           }
         }
       ]}>
-        <SimpleSearchBar searchParams={searchParams} placeholder="vin, reg nr., owner or make ..."></SimpleSearchBar> 
+        <SimpleSearchBar searchParams={searchParams} placeholder={labels.vehicles.searchPlaceholder}></SimpleSearchBar> 
         </Search></form>
    
   </Main>

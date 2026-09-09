@@ -15,8 +15,8 @@ namespace Carmasters.Core.Domain
 
         private void SetNameAndRegNr(string name, string regNr)
         {
-            this.name = name ?? throw new UserException("Name is required.");
-            RegNr = regNr ?? throw new UserException("Registration nr is required.");
+            this.name = name ?? throw new UserException("La raison sociale est obligatoire.");
+            RegNr = regNr ?? throw new UserException("Le numéro RC est obligatoire.");
         }
          
         public  override string Name { get => name; }

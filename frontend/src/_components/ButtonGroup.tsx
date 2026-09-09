@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import clsx from "clsx"; 
+import { labels } from "@/_lib/labels";
 
 export interface IButtonOption{
     name:string,
@@ -41,7 +42,7 @@ export default function ButtonGroup({
         {menuButtons.length>0 && 
           <Menu as="div" className="relative -ml-px block">
             <MenuButton className="relative  inline-flex items-end rounded-r-md bg-white px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-10">
-                <span className="sr-only">Open options</span>
+                <span className="sr-only">{labels.nav.openOptions}</span>
                 <ChevronDownIcon aria-hidden="true" className="size-5" />
             </MenuButton>
             <MenuItems

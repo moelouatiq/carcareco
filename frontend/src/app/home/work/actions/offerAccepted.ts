@@ -23,9 +23,9 @@ export async function offerAccepted({
     const repairJobId= await response.json();
     
     if(targetJobNumber){
-        pushToast(`Offer changed into accepted state and repair job updated.`)
+        pushToast(`Devis accepté et réparation mise à jour.`)
     }
-    else pushToast(`Offer changed into accepted state and new repair job created successfully.`)
+    else pushToast(`Devis accepté et nouvelle réparation créée avec succès.`)
  
     redirect(`/home/work/${workId}/${repairJobId}/edit`);
 } 

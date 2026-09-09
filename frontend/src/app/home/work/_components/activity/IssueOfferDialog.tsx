@@ -7,6 +7,7 @@ import {  useState } from "react";
 import { issueAnOffer } from "../../actions/issueAnOffer";
 import FormLabel from "@/_components/FormLabel";
 import FormSwitch from "@/_components/FormSwitch";
+import { labels } from "@/_lib/labels";
 
 export default function IssueOfferDialog({
     work,
@@ -25,7 +26,7 @@ export default function IssueOfferDialog({
      
     return (
         <BaseDialog ref={dialogRef}
-                title="Issue an offer"
+                title={labels.dialogs.issueOffer}
                 center={false}
                 yesButtonText="OK"
                 onConfirm={async () => {
@@ -66,7 +67,7 @@ export default function IssueOfferDialog({
                                 <div className="col-span-full">
                                 <div className="flex items-end">
                                         <div className="flex-auto  ">
-                                        <FormLabel name="sendClientAnEmail" label='Send client an email' ></FormLabel>
+                                        <FormLabel name="sendClientAnEmail" label={labels.common.sendClientEmail} ></FormLabel>
                                         </div>
                                         <div className="mt-2  ">
                                         <FormSwitch name='sendClientAnEmail' checked={sendClientAnEmail} onChange={(value) => {
@@ -77,7 +78,7 @@ export default function IssueOfferDialog({
                                     </div> 
                                 </div>
                                 {sendClientAnEmail&&<div className="col-span-full mt-4">
-                                    <FormLabel name='name' label='Client email'></FormLabel> 
+                                    <FormLabel name='name' label={labels.common.clientEmail}></FormLabel> 
                                     <div className="mt-2 col-span-2 grid grid-cols-1">
                                         <FormInput
                                             name='clientEmail'

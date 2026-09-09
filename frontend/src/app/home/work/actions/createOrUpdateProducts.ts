@@ -55,7 +55,7 @@ export async function createOrUpdateProducts(formData: FormData) {
 
     await response.text();
        
-    pushToast(`Products and services updated successfully!`)
+    pushToast(`Pièces et prestations mises à jour avec succès.`)
 
     redirect(redirectUrl)  
 }

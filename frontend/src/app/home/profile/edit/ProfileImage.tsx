@@ -27,7 +27,7 @@ export default function ProfileImage({
             const fileSize = Math.round((fsize / 1024));
             // The size of the file.
             if (fileSize >= 5120) {
-                alert("Image too big, please select a file not bigger than 5mb");
+                alert("Image trop volumineuse : choisissez un fichier de moins de 5 Mo.");
             }
             else {
                 const base64File = await toBase64(file) as string; 

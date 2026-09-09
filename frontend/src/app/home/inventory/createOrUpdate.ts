@@ -36,7 +36,7 @@ export async function createOrUpdate(
       
     const responseId = jsonResponse ; 
    
-    pushToast(`Spare part ${(isUpdating?'updated':'saved')} successfully!`)
+    pushToast(`Pièce détachée ${(isUpdating ? 'modifiée' : 'enregistrée')} avec succès.`)
 
     redirect('/home/inventory/' +responseId) 
 }

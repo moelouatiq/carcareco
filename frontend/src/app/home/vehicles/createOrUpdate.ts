@@ -35,7 +35,7 @@ export async function createOrUpdate(
       
     const vehicleId =  jsonResponse ; 
    
-    pushToast(`Vehicle ${(isUpdating?'updated':'saved')} successfully!`)
+    pushToast(`Véhicule ${(isUpdating ? 'modifié' : 'enregistré')} avec succès.`)
 
     redirect('/home/vehicles/' +vehicleId) 
 }

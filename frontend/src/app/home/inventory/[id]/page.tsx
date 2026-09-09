@@ -6,6 +6,7 @@ import Main from '../../_components/Main';
 import DisplayOptionsMenu from '@/_components/DisplayOptionsMenu'; 
 import { ISparepartData } from '../model';
 import { CardHeader } from '@/_components/Card';
+import { labels } from "@/_lib/labels";
  
 
  
@@ -22,16 +23,16 @@ export default async function Page({
 
         <Main header={
             <CardHeader  > 
-                     <h3 className="px-1 text-base font-semibold text-gray-900">Spare part information</h3> 
+                     <h3 className="px-1 text-base font-semibold text-gray-900">{labels.inventory.information}</h3> 
                     <DisplayOptionsMenu id={id} pageName='inventory'></DisplayOptionsMenu> 
             </CardHeader>}>  
             <dl className="divide-y divide-gray-100">
-                    <DescriptionItem label='Product code' value={sparepart.code}></DescriptionItem> 
-                    <DescriptionItem label='Product name' value={sparepart.name}></DescriptionItem>   
-                    <DescriptionItem label='Quantity' value={sparepart.quantity}></DescriptionItem>  
-                    <DescriptionItem label='Price' value={sparepart.price}></DescriptionItem> 
-                    <DescriptionItem label='Location' value={sparepart.storageName}></DescriptionItem> 
-                    <DescriptionItem label='About' value={sparepart.description}></DescriptionItem> 
+                    <DescriptionItem label={labels.inventory.productCode} value={sparepart.code}></DescriptionItem> 
+                    <DescriptionItem label={labels.inventory.productName} value={sparepart.name}></DescriptionItem>   
+                    <DescriptionItem label={labels.inventory.quantity} value={sparepart.quantity}></DescriptionItem>  
+                    <DescriptionItem label={labels.inventory.price} value={sparepart.price}></DescriptionItem> 
+                    <DescriptionItem label={labels.inventory.location} value={sparepart.storageName}></DescriptionItem> 
+                    <DescriptionItem label={labels.inventory.about} value={sparepart.description}></DescriptionItem> 
                 </dl>
         </Main>
     )

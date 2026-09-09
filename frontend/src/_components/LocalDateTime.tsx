@@ -1,6 +1,7 @@
 'use client'
 
 import moment from 'moment'
+import 'moment/locale/fr'
 import { useSyncExternalStore } from 'react'
 
 const subscribeToHydration = () => () => undefined
@@ -15,7 +16,7 @@ export function useLocalDateTime(value?: Date | string, format = 'LLL') {
   if (!value) return ''
 
   const date = hasHydrated ? moment(value) : moment.utc(value)
-  return date.locale('en').format(format)
+  return date.locale('fr').format(format)
 }
 
 export default function LocalDateTime({ value }: { value: Date | string }) {

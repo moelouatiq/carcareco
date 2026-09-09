@@ -5,9 +5,10 @@ import {
 } from '@heroicons/react/24/outline'
 import clsx from "clsx" 
 import Image from 'next/image' 
+import { labels } from "@/_lib/labels";
 const userNavigation = [
-    { name: 'My profile', href: '/home/profile' },
-    { name: 'Sign out', href: '/home/logout' },
+    { name: labels.nav.profile, href: '/home/profile' },
+    { name: labels.nav.signOut, href: '/home/logout' },
 ]
 
  
@@ -27,7 +28,7 @@ export default function ProfileMenu({
         <> 
           <Menu as="div" className="relative">
                                <MenuButton className={clsx(onSmallScreen&&"-m-1.5","flex items-center p-1.5")}>
-                                   <span className="sr-only">Open user menu</span>
+                                   <span className="sr-only">{labels.nav.openUserMenu}</span>
 
                                     <Image alt={fullName}   
                                        src={imageUrl}

@@ -13,7 +13,7 @@ export async function removeEmployee(
         url:"employees",
         body:body
       })
-      pushToast(`Mechanic removed.`) 
+      pushToast(`Mécanicien retiré.`) 
 }
 
 
@@ -31,7 +31,7 @@ export async function addEmployee(
 
     const newLocationId = await locationResponse.json();
 
-    pushToast(`New mechanic added successfully`) 
+    pushToast(`Nouveau mécanicien ajouté avec succès.`) 
 
     return newLocationId;
 }

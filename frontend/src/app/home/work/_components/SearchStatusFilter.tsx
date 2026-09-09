@@ -2,6 +2,7 @@
 
 import { FormRadio } from "@/_components/FormInput"
 import FormSwitch from "@/_components/FormSwitch";
+import { labels } from "@/_lib/labels";
 
 export default function SearchStatusFilter({
   status,
@@ -30,22 +31,22 @@ export default function SearchStatusFilter({
             else radioAll?.click();
           }} >
         </FormSwitch>
-        <label className="block text-sm/6 font-medium text-gray-900">{(issued ? 'Completed' : 'Work')}</label>
+        <label className="block text-sm/6 font-medium text-gray-900">{(issued ? labels.workStatus.completed : labels.workStatus.work)}</label>
       </div>
       <div className="flex   items-center  gap-x-2 ">
-        <FormRadio id="all" label="All" name="status" onChange={submitFormOnChange} defaultChecked={(!status || status === 'all')} value="all" ></FormRadio>
+        <FormRadio id="all" label={labels.workStatus.all} name="status" onChange={submitFormOnChange} defaultChecked={(!status || status === 'all')} value="all" ></FormRadio>
       </div>
       {!issued && <div className="flex items-center gap-x-2">
-        <FormRadio id="unfinished" label="Unfinished" name="status" onChange={submitFormOnChange} defaultChecked={(status === 'unfinished')} value="unfinished" ></FormRadio>
+        <FormRadio id="unfinished" label={labels.workStatus.unfinished} name="status" onChange={submitFormOnChange} defaultChecked={(status === 'unfinished')} value="unfinished" ></FormRadio>
       </div>}
       {!issued && <div className="flex  items-center  gap-x-2 ">
-        <FormRadio id="inprogress" label="In progress" name="status" onChange={submitFormOnChange} defaultChecked={(status === 'inprogress')} value="inprogress" ></FormRadio>
+        <FormRadio id="inprogress" label={labels.workStatus.inProgress} name="status" onChange={submitFormOnChange} defaultChecked={(status === 'inprogress')} value="inprogress" ></FormRadio>
       </div>}
       {!issued && <div className="flex   items-center  gap-x-2 ">
-        <FormRadio id="closed" label="Closed" name="status" onChange={submitFormOnChange} defaultChecked={(status === 'closed')} value="closed" ></FormRadio>
+        <FormRadio id="closed" label={labels.workStatus.closed} name="status" onChange={submitFormOnChange} defaultChecked={(status === 'closed')} value="closed" ></FormRadio>
       </div>}
       {issued && <div className="flex   items-center  gap-x-2 ">
-        <FormRadio id="overdue" label="Invoice overdue" name="status" onChange={submitFormOnChange} defaultChecked={(status === 'overdue')} value="overdue" ></FormRadio>
+        <FormRadio id="overdue" label={labels.workStatus.overdue} name="status" onChange={submitFormOnChange} defaultChecked={(status === 'overdue')} value="overdue" ></FormRadio>
       </div>}
     </div>
   )

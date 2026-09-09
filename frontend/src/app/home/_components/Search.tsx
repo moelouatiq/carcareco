@@ -3,6 +3,7 @@ import Link from "next/link";
 import React  from "react";
 import { httpGet } from "@/_lib/server/query-api"; 
 import { resourceEditPath, resolveResourcePageName } from "@/_lib/resource-path";
+import { labels } from "@/_lib/labels";
 interface DataResult {
   hasMore: boolean,
   items: Record<string, string>[]
@@ -117,7 +118,7 @@ export default async function Search(
       <div className="-mx-4 sm:mx-0 mt-4 flow-root">
         {data.items.length===0? 
          <div className="text-center"> 
-           <h3 className="mt-2 pb-6 text-sm font-semibold text-gray-900">Nothing found</h3> 
+           <h3 className="mt-2 pb-6 text-sm font-semibold text-gray-900">{labels.search.empty}</h3> 
         </div>:
           <div className="overflow-hidden">
           <div className=" overflow-x-auto  ">
@@ -132,7 +133,7 @@ export default async function Search(
                       })
                     }
                     <th scope="col" className="relative py-3.5 pr-4 pl-3 sm:pr-0">
-                      <span className="sr-only">Edit</span>
+                      <span className="sr-only">{labels.actions.edit}</span>
                     </th>
                   </tr>
                 </thead>
@@ -159,22 +160,22 @@ export default async function Search(
             </div>
           </div>
           <nav
-            aria-label="Pagination"
+            aria-label={labels.search.pagination}
             className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
           >
             <div className="hidden sm:block">
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{offset + 1}</span> to <span className="font-medium">{offset + limit}</span>
+                {labels.search.showing} <span className="font-medium">{offset + 1}</span> {labels.search.to} <span className="font-medium">{offset + limit}</span>
                 {/* of{' '} <span className="font-medium">{limit}</span> results */}
               </p>
             </div>
             <div className="flex flex-1 justify-between sm:justify-end">
               <Link href={prevPage}
                 className={
-                  clsx(offset <= 0 ? "pointer-events-none text-gray-400" : "text-gray-900", "relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus-visible:outline-offset-0")} >Previous</Link>
+                  clsx(offset <= 0 ? "pointer-events-none text-gray-400" : "text-gray-900", "relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus-visible:outline-offset-0")} >{labels.search.previous}</Link>
               <Link href={nextPage}
                 className={
-                  clsx(!data.hasMore ? "pointer-events-none text-gray-400" : "text-gray-900", " relative ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus-visible:outline-offset-0")}>Next</Link>
+                  clsx(!data.hasMore ? "pointer-events-none text-gray-400" : "text-gray-900", " relative ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus-visible:outline-offset-0")}>{labels.search.next}</Link>
             </div>
           </nav>
         </div>

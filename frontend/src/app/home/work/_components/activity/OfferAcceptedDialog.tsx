@@ -9,6 +9,7 @@ import { offerAccepted } from "../../actions/offerAccepted";
 import Select from "@/_components/Select";
 import FormTextArea from "@/_components/FormTextArea";
 import { getActivityDisplayName } from "./getActivityDisplayName";
+import { labels } from "@/_lib/labels";
 
 export default function OfferAcceptedDialog({
     work,
@@ -30,7 +31,7 @@ export default function OfferAcceptedDialog({
 
     return (
         <BaseDialog ref={dialogRef}
-            title="Offer was accepted by client"
+            title={labels.dialogs.offerAccepted}
 
             center={false}
             yesButtonText="OK"
@@ -66,7 +67,7 @@ export default function OfferAcceptedDialog({
                         {repairJobs.length > 0 && <>  <div className="sm:col-span-full">
                             <div className="sm:flex sm:items-end">
                                 <div className="sm:flex-auto  ">
-                                    <FormLabel name="startNewRepairJob" label='Start a new repair job' ></FormLabel>
+                                    <FormLabel name="startNewRepairJob" label={labels.dialogs.startNewRepairJob} ></FormLabel>
                                 </div>
                                 <div className="mt-2  ">
                                     <FormSwitch name='startNewRepairJob' checked={startNewRepairJob} onChange={(value) => setStartNewRepairJob(value)}></FormSwitch>
@@ -74,7 +75,7 @@ export default function OfferAcceptedDialog({
                             </div>
                         </div>
                             {!startNewRepairJob && <div className="sm:col-span-full">
-                                <FormLabel name='name' label='Repair job to add services/products'></FormLabel>
+                                <FormLabel name='name' label={labels.dialogs.repairJobTarget}></FormLabel>
                                 <div className="mt-6 sm:col-span-2 grid grid-cols-1">
                                     <Select
                                         id="selectedRepairJob"

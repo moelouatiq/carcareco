@@ -8,6 +8,7 @@ import clsx from "clsx";
 import { IProduct } from "../../model";
 import { Bars3Icon } from "@heroicons/react/20/solid";
 import { EditableCodeCell } from "./EditableCodeCell";
+import { labels } from "@/_lib/labels";
 
 export type DataItemRowHandle<T> = {
     
@@ -94,7 +95,7 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
         <td className={clsx("min-w-50 w-50",tdStyle)} >
           
             <EditableCodeCell //todo auto complete 
-                placeholder="code ..."
+                placeholder={labels.common.codePlaceholder}
                 defaultValue={item.code}
                 isEditing={isEditing}
                 ref={codeRef}
@@ -113,7 +114,7 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
                     className={nameStyle}
                     required={true}
                     ref={nameRef}
-                    placeholder="(no value)"
+                    placeholder={labels.common.noValue}
                     defaultValue={item.name}
                     isEditing={isEditing}
                 >
@@ -148,7 +149,7 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
             <EditableTextCell  
                     id={item.id}
                     name='unit'
-                        placeholder="(no value)"
+                        placeholder={labels.common.noValue}
                         ref={unitRef}
                         className={clsx("w-15",pricePropsClass)}
                         defaultValue={item.unit} isEditing={isEditing}></EditableTextCell>

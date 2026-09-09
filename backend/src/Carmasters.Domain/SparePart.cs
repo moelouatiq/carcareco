@@ -49,7 +49,7 @@ namespace Carmasters.Core.Domain
         
         private void SetValues(string code, string name, decimal price, decimal quantity, short? discount, string description)
         {
-            if (string.IsNullOrWhiteSpace(code) && string.IsNullOrWhiteSpace(name)) throw new UserException("Either name or code is required.");
+            if (string.IsNullOrWhiteSpace(code) && string.IsNullOrWhiteSpace(name)) throw new UserException("La désignation ou la référence est obligatoire.");
             this.Description = description;
             this.code = code;
             this.name = name;

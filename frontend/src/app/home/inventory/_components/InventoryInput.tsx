@@ -8,6 +8,7 @@ import { ILocation, ISparepartData } from '../model';
 import FormLabel from '@/_components/FormLabel'; 
 import { useRouter } from 'next/navigation'; 
 import React from 'react';import NamedLocation from './NamedLocation';
+import { labels } from "@/_lib/labels";
  ; 
 
  
@@ -28,12 +29,12 @@ export default function InventoryInput({
                 <div className="border-b border-gray-900/10 pb-12">
                    
                     <div className=" grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                        <div className="sm:col-span-2"> <FormInput name='code' defaultValue={sparepart?.code} label='Product code'></FormInput></div>
-                        <div className="sm:col-span-2"> <FormInput name='name' defaultValue={sparepart?.name} label='Product name'></FormInput></div> 
-                        <div className="sm:col-span-2"> <FormInput name='price' type='number' step='any'   defaultValue={sparepart?.price} label='Price'></FormInput></div>
-                        <div className="sm:col-span-2"> <FormInput name='quantity' type='number' step='any'  defaultValue={sparepart?.quantity} label='Quantity'></FormInput></div>
+                        <div className="sm:col-span-2"> <FormInput name='code' defaultValue={sparepart?.code} label={labels.inventory.productCode}></FormInput></div>
+                        <div className="sm:col-span-2"> <FormInput name='name' defaultValue={sparepart?.name} label={labels.inventory.productName}></FormInput></div> 
+                        <div className="sm:col-span-2"> <FormInput name='price' type='number' step='any'   defaultValue={sparepart?.price} label={labels.inventory.price}></FormInput></div>
+                        <div className="sm:col-span-2"> <FormInput name='quantity' type='number' step='any'  defaultValue={sparepart?.quantity} label={labels.inventory.quantity}></FormInput></div>
                         <div className="lg:col-span-4 sm:col-span-full">
-                            <FormLabel name='location' label='Location'></FormLabel>
+                            <FormLabel name='location' label={labels.inventory.location}></FormLabel>
                             <NamedLocation sparepartLocationId={sparepart?.storageId} allLocations={allLocations}></NamedLocation>
                         </div>
                     </div> 
@@ -43,14 +44,14 @@ export default function InventoryInput({
                 <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
                     <div className="col-span-full">
-                        <FormTextArea name='about' label='About' defaultValue={sparepart?.description}>
+                        <FormTextArea name='about' label={labels.inventory.about} defaultValue={sparepart?.description}>
                         </FormTextArea>
                     </div>
                 </div>
             </div>
             <div className="mt-6 flex items-center justify-end gap-x-6">
-                <SecondaryButton onClick={() => router.back()}>Cancel</SecondaryButton>
-                <PrimaryButton   onClick={() => { }}>Save</PrimaryButton>
+                <SecondaryButton onClick={() => router.back()}>{labels.common.cancel}</SecondaryButton>
+                <PrimaryButton   onClick={() => { }}>{labels.common.save}</PrimaryButton>
             </div>
         </>
     )

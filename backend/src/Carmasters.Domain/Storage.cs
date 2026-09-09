@@ -15,7 +15,7 @@ namespace Carmasters.Core.Domain
         protected Storage() { }
         public Storage( System.String name, System.String address,string description,DateTime introducedAt)
         {
-            if (string.IsNullOrWhiteSpace(name)) throw new UserException("Name is required.");
+            if (string.IsNullOrWhiteSpace(name)) throw new UserException("Le nom est obligatoire.");
             this.Id = Guid.Empty;
             this.name = name;
             this.address = address;

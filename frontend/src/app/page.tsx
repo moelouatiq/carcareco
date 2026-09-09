@@ -35,7 +35,7 @@ export default function Home() {
     if (e) e.preventDefault()
     
     if (!companyName.trim()) {
-      setError('Company name is required')
+      setError('Le nom de la société est obligatoire')
       return
     }
     
@@ -54,13 +54,13 @@ export default function Home() {
       // Handle rate limit error specifically
       if (response.status === 429) {
         const errorData = await response.json();
-        setError(errorData.message || 'Rate limit exceeded. Please try again later.');
+        setError(errorData.message || 'Trop de tentatives. Merci de réessayer plus tard.');
         setIsLoading(false);
         return;
       }
      
       if (!response.ok) {
-        setError('Could not create demo account. Please try again later.');
+        setError('Impossible de créer le compte de démonstration. Merci de réessayer plus tard.');
         setIsLoading(false);
         return;
       }
@@ -68,7 +68,7 @@ export default function Home() {
       const data = await response.json()
       setCredentials(data)
     } catch {
-      setError('Failed to create demo account. Please try again later.')
+      setError('Échec de la création du compte de démonstration. Merci de réessayer plus tard.')
     } finally {
       setIsLoading(false)
     }
@@ -81,7 +81,7 @@ export default function Home() {
         {/* Hero Section - Reduced vertical padding */}
         <Container className="pt-6 pb-10 text-center lg:pt-10">
           <h1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-            Modern repair shop 
+            Un atelier moderne mérite un vrai 
             <span className="relative whitespace-nowrap text-blue-600">
               <svg
                 aria-hidden="true"
@@ -91,27 +91,26 @@ export default function Home() {
               >
                 <path d="M203.371.916c-26.013-2.078-76.686 1.963-124.73 9.946L67.3 12.749C35.421 18.062 18.2 21.766 6.004 25.934 1.244 27.561.828 27.778.874 28.61c.07 1.214.828 1.121 9.595-1.176 9.072-2.377 17.15-3.92 39.246-7.496C123.565 7.986 157.869 4.492 195.942 5.046c7.461.108 19.25 1.696 19.17 2.582-.107 1.183-7.874 4.31-25.75 10.366-21.992 7.45-35.43 12.534-36.701 13.884-2.173 2.308-.202 4.407 4.442 4.734 2.654.187 3.263.157 15.593-.78 35.401-2.686 57.944-3.488 88.365-3.143 46.327.526 75.721 2.23 130.788 7.584 19.787 1.924 20.814 1.98 24.557 1.332l.066-.011c1.201-.203 1.53-1.825.399-2.335-2.911-1.31-4.893-1.604-22.048-3.261-57.509-5.556-87.871-7.36-132.059-7.842-23.239-.254-33.617-.116-50.627.674-11.629.54-42.371 2.494-46.696 2.967-2.359.259 8.133-3.625 26.504-9.81 23.239-7.825 27.934-10.149 28.304-14.005.417-4.348-3.529-6-16.878-7.066Z" />
               </svg>
-              <span className="relative"> software.</span>
+              <span className="relative"> logiciel.</span>
             </span>{' '}
-            Self-hosted. Free.
+            Auto-hébergé. Gratuit.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base tracking-tight text-slate-700">
-            CarCare helps you manage repairs, vehicles, clients, parts, 
-            and invoices — all in one clean interface. Built by a coder 
-            who loves cars and clean systems.
+            CarCare vous aide à gérer vos réparations, vos véhicules, vos clients,
+            vos pièces et vos factures — dans une seule interface claire.
           </p>
           <div className="mt-6 flex justify-center gap-x-6">
             <button
               onClick={handleOpenDialog}
               className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
-              Try the demo
+              Essayer la démo
             </button>
             <Button
               href="https://github.com/rene98c/carcareco"
               variant="outline"
             >
-              View on GitHub
+              Voir sur GitHub
             </Button>
           </div>
         </Container>
@@ -123,27 +122,27 @@ export default function Home() {
               <div className="flex justify-center">
                 <WrenchScrewdriverIcon className="h-16 w-16 text-blue-600 mx-auto mb-3" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Repair Jobs Made Simple</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Des réparations enfin simples</h3>
               <p className="mt-2 text-gray-600">
-                Track job progress, parts, and labor. One-click invoicing.
+                Suivez l’avancement, les pièces et la main-d’œuvre. Facturation en un clic.
               </p>
             </div>
             <div className="text-center">
               <div className="flex justify-center">
                 <UsersIcon className="h-16 w-16 text-blue-600 mx-auto mb-3" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">All Your Clients & Vehicles</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Tous vos clients et véhicules</h3>
               <p className="mt-2 text-gray-600">
-                See full customer and car history instantly.
+                Consultez immédiatement l’historique complet d’un client ou d’un véhicule.
               </p>
             </div>
             <div className="text-center">
               <div className="flex justify-center">
                 <ArchiveBoxIcon className="h-16 w-16 text-blue-600 mx-auto mb-3" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Inventory and Parts</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Stock et pièces détachées</h3>
               <p className="mt-2 text-gray-600">
-                Add, discount, and link parts to work orders. No spreadsheets needed.
+                Ajoutez vos pièces, appliquez des remises et rattachez-les aux interventions. Fini les tableurs.
               </p>
             </div>
           </div>
@@ -152,16 +151,16 @@ export default function Home() {
         {/* Why CarCare Section - Reduced vertical padding */}
         <div className="bg-slate-50 py-12">
           <Container>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 text-center">Why CarCare?</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 text-center">Pourquoi CarCare ?</h2>
             <div className="mt-4 max-w-3xl mx-auto">
               <p className="text-base text-slate-700 mb-3">
-                I&apos;ve owned many BMWs and/visited the same garage for years. Their 
-                system was... let&apos;s say, vintage. I helped fix it a few times. Then I thought—
-                why not build something better?
+                Après des années à fréquenter le même garage, le constat était simple :
+                leur outil de gestion était, disons, d’époque. Après l’avoir dépanné plusieurs
+                fois, l’idée s’est imposée — autant construire quelque chose de mieux.
               </p>
               <p className="text-base text-slate-700">
-                CarCare started as a hobby, turned into a side project, and now it&apos;s open 
-                source. Use it, fork it, or just take ideas. It&apos;s here for you.
+                CarCare a commencé comme un loisir, est devenu un projet parallèle, et il est
+                aujourd’hui open source. Utilisez-le, forkez-le, ou inspirez-vous-en librement.
               </p>
             </div>
             <div className="mt-8 flex flex-col items-center justify-center">
@@ -170,12 +169,12 @@ export default function Home() {
                   <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
                   </svg>
-                  Star on GitHub
+                  Mettre une étoile sur GitHub
                 </Link>
                 <span className="text-slate-400">•</span>
                 <Link href="/docs" className="text-slate-700 hover:text-slate-900">Documentation</Link>
                 <span className="text-slate-400">•</span>
-                <Link href="/auth/login" className="text-slate-700 hover:text-slate-900">Login</Link>
+                <Link href="/auth/login" className="text-slate-700 hover:text-slate-900">Connexion</Link>
               </div>
               <p className="text-sm text-slate-500">
                 AGPL 3.0 Licensed. Free and open source software.
@@ -197,7 +196,7 @@ export default function Home() {
           <div className="flex min-h-full items-center justify-center p-4">
             <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
               <DialogTitle as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                {credentials ? "Demo Account Created" : "Create a Demo Account"}
+                {credentials ? "Compte de démonstration créé" : "Créer un compte de démonstration"}
               </DialogTitle>
               
               {credentials ? (
@@ -209,16 +208,16 @@ export default function Home() {
                   </div>
                   
                   <p className="mt-4 text-sm text-gray-500">
-                    Your demo account has been created. Please use the following credentials to log in:
+                    Votre compte de démonstration est prêt. Utilisez les identifiants suivants pour vous connecter :
                   </p>
                   
                   <div className="mt-4 rounded-md bg-gray-50 p-4 border border-gray-200">
                     <div className="flex items-center justify-between border-b border-gray-200 pb-3">
-                      <span className="text-sm font-medium text-gray-500">Username:</span>
+                      <span className="text-sm font-medium text-gray-500">Identifiant :</span>
                       <span className="font-mono text-sm font-bold text-gray-900 bg-gray-100 py-1 px-2 rounded select-all">{credentials.username}</span>
                     </div>
                     <div className="flex items-center justify-between pt-3">
-                      <span className="text-sm font-medium text-gray-500">Password:</span>
+                      <span className="text-sm font-medium text-gray-500">Mot de passe :</span>
                       <span className="font-mono text-sm font-bold text-gray-900 bg-gray-100 py-1 px-2 rounded select-all">{credentials.password}</span>
                     </div>
                   </div>
@@ -233,28 +232,28 @@ export default function Home() {
                       className="w-full inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                       onClick={() => router.push('/auth/login')}
                     >
-                      Go to Login
+                      Aller à la connexion
                     </button>
                     <button
                       type="button"
                       className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                       onClick={() => setIsDialogOpen(false)}
                     >
-                      Close
+                      Fermer
                     </button>
                   </div>
                 </div>
               ) : (
                 <div className="mt-4">
                   <p className="text-sm text-gray-500">
-                    Enter your company name to create a custom demo environment
+                    Indiquez le nom de votre société pour créer un environnement de démonstration dédié
                   </p>
                   
                   <form onSubmit={handleCreateDemo} className="mt-4">
                     <FormInput
                       name="companyName"
-                      label="Company Name"
-                      placeholder="Enter your company name"
+                      label="Nom de la société"
+                      placeholder="Nom de votre société"
                       defaultValue={companyName}
                       onInputChange={(e) => setCompanyName(e.target.value)}
                       inputError={error}
@@ -266,7 +265,7 @@ export default function Home() {
                         className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         onClick={() => setIsDialogOpen(false)}
                       >
-                        Cancel
+                        Annuler
                       </button>
                       <button
                         type="submit"
@@ -279,7 +278,7 @@ export default function Home() {
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            Creating...
+                            Création…
                           </span>
                         ) : "Create Demo"}
                       </button>

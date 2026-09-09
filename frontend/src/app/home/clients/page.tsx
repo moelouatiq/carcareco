@@ -3,12 +3,13 @@ import Main from "../_components/Main";
 import Search from "../_components/Search";
 import { SearchCardHeader } from "../_components/SearchCardHeader";
 import SimpleSearchBar from "../_components/SimpleSearchBar";
+import { labels } from "@/_lib/labels";
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
 
 
   return <Main header={
-    <SearchCardHeader title="Find Clients" pageName="clients">
+    <SearchCardHeader title={labels.clients.findClients} pageName="clients">
     </SearchCardHeader>
   } narrow={false}>
     <form method="GET" > <Search
@@ -32,7 +33,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         dataField: "address",
       }]}>
 
-      <SimpleSearchBar searchParams={searchParams} placeholder="name, address or phone ..."></SimpleSearchBar>
+      <SimpleSearchBar searchParams={searchParams} placeholder={labels.clients.searchPlaceholder}></SimpleSearchBar>
     </Search></form>
 
   </Main>

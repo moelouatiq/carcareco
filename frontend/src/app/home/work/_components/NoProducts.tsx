@@ -1,6 +1,7 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { IWorkData } from "../model";
+import { labels } from "@/_lib/labels";
 
 export default function NoProducts({
     work, 
@@ -12,7 +13,7 @@ export default function NoProducts({
     const editUrl = `/home/work/${work.id}/${activityId}/edit/startfresh`;
     return ( <div className="text-center">
                             
-        <h3 className="mt-2 text-sm font-semibold text-gray-900">No products or services yet</h3> 
+        <h3 className="mt-2 text-sm font-semibold text-gray-900">{labels.work.noProducts}</h3> 
        {!work.issuance&& <div className="my-6">
           <Link href={editUrl}
             type="button"

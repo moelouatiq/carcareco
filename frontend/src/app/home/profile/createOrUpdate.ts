@@ -21,7 +21,7 @@ export async function createOrUpdate(
 
     await response.text();
         
-    pushToast(`Profile updated successfully!`)
+    pushToast(`Profil mis à jour avec succès.`)
 
     redirect('/home/profile') 
 }
@@ -36,7 +36,7 @@ export async function changePassword(
 
   await response.text();
 
-  pushToast(`Password updated successfully!`)
+  pushToast(`Mot de passe mis à jour avec succès.`)
 
   redirect('/home/profile')
 }

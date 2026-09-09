@@ -32,7 +32,7 @@ namespace Carmasters.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
-                throw new UserException("First name cannot be empty");
+                throw new UserException("Le prénom ne peut pas être vide.");
             }
 
             FirstName = firstName;

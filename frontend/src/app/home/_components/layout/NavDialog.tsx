@@ -4,6 +4,7 @@ import { Dialog, DialogBackdrop, DialogPanel, TransitionChild } from "@headlessu
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"; 
 import Nav from './Nav';
 import ProfileMenu from './ProfileMenu';
+import { labels } from "@/_lib/labels";
 
 export default function NavDialog({
   
@@ -31,7 +32,7 @@ export default function NavDialog({
                         <TransitionChild>
                           <div className="absolute top-0 left-full flex w-16 justify-center pt-5 duration-300 ease-in-out data-closed:opacity-0">
                             <button type="button" onClick={() => setSidebarOpen(false)} className="-m-2.5 p-2.5">
-                              <span className="sr-only">Close sidebar</span>
+                              <span className="sr-only">{labels.nav.closeSidebar}</span>
                               <XMarkIcon aria-hidden="true" className="size-6 text-white" />
                             </button>
                           </div>
@@ -45,7 +46,7 @@ export default function NavDialog({
                   </Dialog>
                   <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-4 shadow-xs sm:px-6 lg:hidden">
           <button type="button" onClick={() => setSidebarOpen(true)} className="-m-2.5 p-2.5 text-gray-400 lg:hidden">
-            <span className="sr-only">Open sidebar</span>
+            <span className="sr-only">{labels.nav.openSidebar}</span>
             <Bars3Icon aria-hidden="true" className="size-6" />
           </button>
           <div className="flex-1 text-sm/6 font-semibold text-white"></div>
