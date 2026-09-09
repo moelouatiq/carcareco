@@ -32,16 +32,14 @@ namespace Carmasters.Http.Api.Controllers
         private readonly IRepository repository;
         private readonly ISequnceNumberProviderFactory numberProviderFactory;
         private readonly ISession session;
-        private readonly IConfiguration configuration;
         private readonly IPricingSender pricingSender;
         private readonly ITenantConfigService tenantConfigService;
         static CultureInfo cultureUS = new CultureInfo("en-US");
-        public WorkController(IRepository repository, ISequnceNumberProviderFactory numberProviderFactory, ISession session, IConfiguration configuration,IPricingSender pricingSender, ITenantConfigService tenantConfigService)
-        { 
+        public WorkController(IRepository repository, ISequnceNumberProviderFactory numberProviderFactory, ISession session, IPricingSender pricingSender, ITenantConfigService tenantConfigService)
+        {
             this.repository = repository;
             this.numberProviderFactory = numberProviderFactory;
             this.session = session;
-            this.configuration = configuration;
             this.pricingSender = pricingSender;
             this.tenantConfigService = tenantConfigService;
         }
@@ -60,6 +58,7 @@ namespace Carmasters.Http.Api.Controllers
                 work.Id,
                 Number =work.Number.ToString(),
                 work.StartedOn,
+                work.CompletedOn,
                 StartedBy = work.Starter?.Name,
                 Name="work",
                 IsEmpty = !(work.Jobs.Any(x=>x.Products.Any()) || work.Offers.Any(x=>x.Products.Any())), // todo optimize?
@@ -228,12 +227,12 @@ namespace Carmasters.Http.Api.Controllers
                 var dObj = repository.Get<Work>(id); 
                 if(dObj.Offers.Any(x=>x.Estimate!=null && x.Estimate.SentOn != null)) 
                 {
-                    throw new UserException("Cannot delete work, it contains an offer sent to a client.");
+                    throw new UserException("Impossible de supprimer l'intervention : elle contient un devis envoyé au client.");
                 }
                 
                 if(dObj.Invoice!=null && dObj.Invoice.SentOn != null)
                 {
-                    throw new UserException("Cannot delete work, it contains an invoice sent to a client.");
+                    throw new UserException("Impossible de supprimer l'intervention : elle contient une facture envoyée au client.");
                 }
 
                 repository.Delete(dObj);
@@ -621,17 +620,7 @@ from (
             work.Changed();
             session.Update(work);
             session.Delete(invoice);
-            DeletePdf(invoice);
             return Ok();
-        }
-
-        private void DeletePdf(Pricing pricing) 
-        {
-            var pdfLocalFile = new FileInfo(Path.Combine(configuration["PdfDirectory"], pricing.GetFileName()));
-            if (pdfLocalFile.Exists) 
-            {
-                pdfLocalFile.Delete();
-            }
         }
 
         

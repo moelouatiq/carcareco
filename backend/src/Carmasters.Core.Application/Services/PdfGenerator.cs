@@ -138,15 +138,10 @@ namespace Carmasters.Core.Application.Services
 
         public async Task<byte[]> Generate(Pricing pricing ) 
         {  
-            var stream = default(MemoryStream);
-            var pdfLocalFile = new FileInfo(Path.Combine(configuration["PdfDirectory"], pricing.GetFileName()));
-            stream = await Print(pricing);
+            var stream = await Print(pricing);
             using (stream)
             {
-                var pdfBytes = stream.ToArray();
-                if (pdfLocalFile.Exists) pdfLocalFile.Delete();
-                File.WriteAllBytes(pdfLocalFile.FullName, pdfBytes);
-                return pdfBytes;
+                return stream.ToArray();
             }
         }
 

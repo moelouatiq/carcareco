@@ -10,6 +10,7 @@ using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NHibernate;
 using static System.Collections.Specialized.BitVector32;
 
@@ -25,11 +26,16 @@ namespace Carmasters.Http.Api.Controllers
     {
         private readonly NHibernate.ISession repository;
         private readonly IPdfGenerator pdfGenerator;
+        private readonly ILogger<PricingsController> logger;
 
-        public PricingsController(NHibernate.ISession repository, IPdfGenerator pdfGenerator)
+        public PricingsController(
+            NHibernate.ISession repository,
+            IPdfGenerator pdfGenerator,
+            ILogger<PricingsController> logger)
         {
             this.repository = repository;
             this.pdfGenerator = pdfGenerator;
+            this.logger = logger;
         }
 
         [HttpGet("offers/{workId}")]
@@ -58,19 +64,20 @@ namespace Carmasters.Http.Api.Controllers
         [HttpGet("invoice/{workId}/{type}")]
         public async Task<IActionResult> PrintInvoice(Guid workId,string type)
         {
-            var invoiceId = repository.QueryOver<Work>()
-                .Where(x => x.Id == workId)
-                .Select(x => x.Invoice.Id)
-                .SingleOrDefault<Guid>();
-
-            var invoice = repository.Get<Invoice>(invoiceId);
+            var invoice = FindInvoiceForWork(workId);
 
             if(type == "pdf")
             {
-                return await PdfResult(invoice);
+                return await PdfResult(invoice, false);
             }
             return await HtmlResult(invoice);
 
+        }
+
+        [HttpGet("invoice/{workId}/pdf/download")]
+        public async Task<IActionResult> DownloadInvoice(Guid workId)
+        {
+            return await PdfResult(FindInvoiceForWork(workId), true);
         }
 
         [HttpGet("offer/{offerId}/{type}")]
@@ -82,7 +89,7 @@ namespace Carmasters.Http.Api.Controllers
 
             if (type == "pdf")
             {
-                return await PdfResult(estimate);
+                return await PdfResult(estimate, false);
             }
             return await HtmlResult(estimate);
         }
@@ -99,13 +106,42 @@ namespace Carmasters.Http.Api.Controllers
                 ContentType = "text/html",
             };
         }
-        private async Task<IActionResult> PdfResult(Pricing pricing)
+        private Invoice FindInvoiceForWork(Guid workId)
+        {
+            // Project the id instead of loading the work: reading work.Invoice hands back a lazy
+            // NHibernate proxy whose type name is "InvoiceProxy", and the print template dispatches
+            // its partials on pricing.GetType().Name. Get<Invoice> returns the real entity.
+            var invoiceId = repository.QueryOver<Work>()
+                .Where(x => x.Id == workId)
+                .Select(x => x.Invoice.Id)
+                .SingleOrDefault<Guid?>();
+
+            return invoiceId.HasValue ? repository.Get<Invoice>(invoiceId.Value) : null;
+        }
+
+        private async Task<IActionResult> PdfResult(Pricing pricing, bool download)
         {
             if (pricing == null) return NotFound();
 
-             Response.Headers.Append("content-disposition", "inline;filename=" + pricing.GetFileName());
-            var pdfBytes = await pdfGenerator.Generate(pricing);
-            return File(pdfBytes, "application/pdf");
+            // Single source of truth: the domain names the document (facture_7.pdf / devis_3.pdf),
+            // so download, inline view and email attachment always agree.
+            var fileName = pricing.GetFileName();
+
+            try
+            {
+                var pdfBytes = await pdfGenerator.Generate(pricing);
+                var disposition = download ? "attachment" : "inline";
+                Response.Headers.Append("Content-Disposition", $"{disposition}; filename=\"{fileName}\"");
+                return File(pdfBytes, "application/pdf");
+            }
+            catch (Exception exception)
+            {
+                logger.LogError(exception, "Unable to generate pricing PDF {PricingId}", pricing.Id);
+                return Problem(
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    title: "Invoice PDF generation failed",
+                    detail: "The invoice PDF could not be generated. Please try again.");
+            }
         }
 
 
