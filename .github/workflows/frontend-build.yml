@@ -28,10 +28,10 @@ on:
         description: Only needed when deploy is true.
         required: false
       consumer-secret:
-        description: Only needed when deploy is true. The production build does not require it: every route is server-rendered on demand, so the value is only read at runtime.
+        description: Only needed when deploy is true. The production build does not need it, since every route is server-rendered on demand and the value is only read at runtime.
         required: false
       session-secret:
-        description: Only needed when deploy is true. The production build does not require it: every route is server-rendered on demand, so the value is only read at runtime.
+        description: Only needed when deploy is true. The production build does not need it, since every route is server-rendered on demand and the value is only read at runtime.
         required: false
 
 jobs:
