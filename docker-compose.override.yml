@@ -1,6 +1,10 @@
 services:
   api:
-    command: dotnet watch --project src/Carmasters.Http.Api run
+    # The dev stage keeps the SDK; the runtime image has none, so `dotnet watch`
+    # could never have run there. The stage's ENTRYPOINT starts the watcher from
+    # /src, which is where the sources below are mounted.
+    build:
+      target: dev
     volumes:
       - ./backend/src:/src
   web:

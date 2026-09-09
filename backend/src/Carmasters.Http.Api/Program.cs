@@ -71,8 +71,11 @@ app.UseExceptionHandler(exceptionHandlerApp =>
     });
 });
 app.UseStatusCodePages();
-app.UseRouting();
+// Static files are served before routing: once an endpoint has been selected the static file
+// middleware steps aside, which left the print stylesheet behind the fallback authorization
+// policy when the app runs from sources rather than from a publish output.
 app.UseStaticFiles();
+app.UseRouting();
 app.MapStaticAssets().AllowAnonymous();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
