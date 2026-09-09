@@ -13,7 +13,9 @@ backend/src/DbUp/dist/
 !.env.example
 
 secrets.json
-appsettings.Secrets.json
+# Covers per-environment variants such as appsettings.Secrets.supabase-staging.json.
+# The tracked *.example files end in .example, so they are not matched.
+appsettings.Secrets*.json
 local-credentials.txt
 
 *.bak
