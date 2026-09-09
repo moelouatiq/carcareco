@@ -16,8 +16,9 @@ jobs:
       application-host: carcareco.app
       application-path: /opt/apps/
       application-host-user: debian
-      # Pull requests validate only; deployment happens on a push to main.
-      deploy: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      # Pull requests validate only. Deployment stays tied to the upstream
+      # repository, so a fork never targets infrastructure it does not own.
+      deploy: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'rene98c/carcareco' }}
     secrets:
       ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
@@ -30,7 +31,7 @@ jobs:
       application-host: carcareco.app
       application-path: /opt/apps/
       application-host-user: debian
-      deploy: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      deploy: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'rene98c/carcareco' }}
     secrets:
       ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
       consumer-secret: ${{ secrets.CONSUMER_SECRET }}
