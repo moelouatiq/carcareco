@@ -1,21 +1,33 @@
-'use server'; 
-import { httpGet } from "@/_lib/server/query-api"; 
+'use server';
+import { httpGet } from "@/_lib/server/query-api";
+import { parseContentDispositionFileName } from "@/_lib/content-disposition";
 
 
-export async function downloadPricing({
+export async function downloadPricingHtml({
     pricingId,
     pricingName,
-    downloadHtml, 
 }:{
     pricingId:string,
     pricingName:string,
-    downloadHtml?:boolean| undefined 
 }) {
+    const response = await httpGet(`pricings/${pricingName}/${pricingId}/html`);
 
- 
-    const response = await httpGet(`pricings/${pricingName}/${pricingId}/${downloadHtml?'html':'pdf'}`);
+    return await response.text();
+}
 
-    const responseObj = downloadHtml? (await response.text()):(await response.blob());
- 
-    return responseObj;
+export async function downloadPricingPdf({
+    pricingId,
+    pricingName,
+}:{
+    pricingId:string,
+    pricingName:string,
+}) {
+    const response = await httpGet(`pricings/${pricingName}/${pricingId}/pdf`);
+
+    // The backend names the document (Invoice/Estimate.GetFileName), so the browser saves it
+    // under the same name it carries in email and everywhere else.
+    return {
+        blob: await response.blob(),
+        fileName: parseContentDispositionFileName(response.headers.get("content-disposition")),
+    };
 }

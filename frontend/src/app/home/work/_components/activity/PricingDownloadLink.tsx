@@ -2,7 +2,7 @@
 'use client';
 
 import { PaperClipIcon } from '@heroicons/react/20/solid'; 
-import { downloadPricing } from '../../actions/downloadPricing';
+import { downloadPricingPdf } from '../../actions/downloadPricing';
 import { useState } from 'react';
 import Spinner from '@/_components/Spinner';
 import { ArrowDownTrayIcon } from "@heroicons/react/20/solid";
@@ -10,17 +10,17 @@ import Link from 'next/link';
 import PrintPricingLink from './PrintPricingLink';
 
 
-const handleFileDownload = async (pricingId:string, pricingName: string,fileName: string) => {
+const handleFileDownload = async (pricingId:string, pricingName: string) => {
     try {
-      const blob = await downloadPricing({
+      const { blob, fileName } = await downloadPricingPdf({
         pricingId,pricingName
       });
      // Create a temporary anchor element to trigger the download
      const url = window.URL.createObjectURL(new Blob([blob]));
      const link = document.createElement("a");
      link.href = url;
-     // Setting filename received in response
-     link.setAttribute("download", fileName);
+     // The backend domain owns the document name; only fall back if the header is missing.
+     link.setAttribute("download", fileName ?? "document.pdf");
      document.body.appendChild(link);
      link.click();
      document.body.removeChild(link);
@@ -47,9 +47,6 @@ export default function PricingDownloadLink({
 }) {
     
     const [isDownloading,setIsDownloading] = useState(false);
-    const fileName = `${name.toLowerCase()}_nr_${number}.pdf`;
-
-    
     return (
         <div className="flex  ">
        {!hidePaperClip&&   <PaperClipIcon aria-hidden="true" className="h-6 w-5 text-gray-400 mr-4" />}
@@ -59,7 +56,7 @@ export default function PricingDownloadLink({
                 <Link href="#"  onClick={async (e)=>{
                    e.preventDefault();
                     setIsDownloading(true);
-                    const promise =  handleFileDownload(id,name,fileName);
+                    const promise =  handleFileDownload(id,name);
                     
                     promise.finally(()=>{
                         //scroll stuff

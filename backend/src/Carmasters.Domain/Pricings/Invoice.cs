@@ -26,11 +26,11 @@ namespace Carmasters.Core.Domain
         public virtual bool IsOverDue => !IsPaid && this.IssuedOn.AddDays(DueDays) <= DateTime.Now;
         public override string GetFileName()
         {
-            return $"invoice_nr_{Number}.pdf";
+            return $"facture_{Number}.pdf";
         }
         public override string GetDisplayName()
         {
-            return $"Invoice nr. {Number}";
+            return $"Facture n° {Number}";
         }
         public virtual void MarkPaid(bool paid) => IsPaid = paid;
         public virtual string PaymentStatus 
