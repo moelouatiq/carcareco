@@ -82,6 +82,7 @@ public class AppConfiguration
             connectionBuilder.Username = options.UserId;
             connectionBuilder.Password = options.Password;
             connectionBuilder.Database = options.Name;
+            Carmasters.Core.Application.Database.PostgresTls.Apply(connectionBuilder, options);
             return connectionBuilder.ToString();
         }
     }

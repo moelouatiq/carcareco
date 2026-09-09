@@ -28,7 +28,20 @@ namespace Carmasters.Core.Application.Configuration
         public int Port { get; set; }
         public string UserId { get; set; }
         public string Password { get; set; }
-        public string Name { get; set; } 
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Npgsql SSL mode, e.g. "VerifyFull". Left unset, Npgsql's own default applies and the
+        /// connection string is built exactly as it was before this setting existed.
+        /// </summary>
+        public string SslMode { get; set; }
+
+        /// <summary>
+        /// Path to the PEM root certificate used to verify the server, required by VerifyCA and
+        /// VerifyFull when the issuing authority is not already trusted by the host.
+        /// </summary>
+        public string RootCertificate { get; set; }
+
         public MultiTenancyOptions MultiTenancy { get; set; }
         public class MultiTenancyOptions
         {
