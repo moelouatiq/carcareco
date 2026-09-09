@@ -9,6 +9,6 @@
 **/.env
 **/.env.*
 !**/.env.example
-**/appsettings.Secrets.json
+**/appsettings.Secrets*.json
 local-credentials.txt
 .git

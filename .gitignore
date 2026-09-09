@@ -13,7 +13,9 @@ backend/src/DbUp/dist/
 !.env.example
 
 secrets.json
-appsettings.Secrets.json
+# Covers per-environment variants such as appsettings.Secrets.supabase-staging.json.
+# The tracked *.example files end in .example, so they are not matched.
+appsettings.Secrets*.json
 local-credentials.txt
 
 *.bak
@@ -21,3 +23,19 @@ local-credentials.txt
 *.pem
 *.pfx
 *.p12
+
+# The Vercel image needs Supabase's root CA in its build context: verify-full validates the server
+# against a root the public trust store does not carry. That one public certificate is versioned by
+# name. Everything else in the directory stays ignored, so a key dropped there cannot be committed
+# by accident, and the *.key/*.pem/*.pfx/*.p12 rules above still apply everywhere.
+backend/certs/*
+!backend/certs/prod-ca-2021.crt
+
+# Added when linking the Vercel project: the linked project id, and the local credentials file the
+# CLI writes beside it. Neither is ever committed.
+.vercel
+.env*
+# .env* above is broader than the rules further up and would otherwise re-shadow their negation,
+# because the last matching pattern wins. The example files must stay addable.
+!.env.example
+!**/.env.example

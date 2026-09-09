@@ -27,7 +27,6 @@ jobs:
     uses: ./.github/workflows/frontend-build.yml
     with:
       api-url: http://localhost:15567
-      public-api-url: https://api.carcareco.app
       application-host: carcareco.app
       application-path: /opt/apps/
       application-host-user: debian

@@ -1,4 +1,4 @@
-using Carmasters.Core.Application;
+﻿using Carmasters.Core.Application;
 using Carmasters.Core.Application.Configuration;
 using Carmasters.Core.Application.Model;
 using Carmasters.Core.Application.Printing;
@@ -14,6 +14,7 @@ using PuppeteerSharp;
 using PuppeteerSharp.Media;
 using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.Extensions.Logging;
@@ -145,11 +146,46 @@ namespace Carmasters.Core.Application.Services
             }
         }
 
-        private static string _executablePath; 
-        private async Task PreparePuppeteerAsync( )
+        /// <summary>
+        /// Flags every Chromium launch needs on a container host: no user namespaces to build a
+        /// sandbox from, a /dev/shm too small for the default shared memory backing store, and no GPU.
+        /// </summary>
+        public static readonly IReadOnlyList<string> ChromiumLaunchArguments = new[]
         {
-            if (!string.IsNullOrWhiteSpace(_executablePath)) return;//TODO is it threadsafe?
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-dev-shm-usage",
+            "--disable-gpu",
+        };
 
+        private static string _downloadedExecutablePath;
+
+        /// <summary>
+        /// Returns the browser configured through PuppeteerExecutablePath, or null when none is set.
+        /// A configured path that does not exist is an error rather than a reason to download: a
+        /// read-only host has nowhere to put a download, so the fallback would only turn a clear
+        /// configuration mistake into an obscure runtime failure.
+        /// </summary>
+        public static string ResolveConfiguredExecutablePath(string configuredExecutable)
+        {
+            if (string.IsNullOrWhiteSpace(configuredExecutable)) return null;
+
+            if (!File.Exists(configuredExecutable))
+            {
+                throw new InvalidOperationException(
+                    $"PuppeteerExecutablePath points to '{configuredExecutable}', which does not exist.");
+            }
+
+            return configuredExecutable;
+        }
+
+        private async Task<string> ResolveExecutablePathAsync()
+        {
+            var configuredExecutable = ResolveConfiguredExecutablePath(
+                configuration["PuppeteerExecutablePath"]);
+            if (configuredExecutable != null) return configuredExecutable;
+
+            if (!string.IsNullOrWhiteSpace(_downloadedExecutablePath)) return _downloadedExecutablePath;//TODO is it threadsafe?
 
             var downloadPath = configuration["PuppeteerPath"];
             var browserOptions = new BrowserFetcherOptions { 
@@ -159,9 +195,10 @@ namespace Carmasters.Core.Application.Services
 
             var stableVersion = await browserFetcher.DownloadAsync(BrowserTag.Stable);
 
-            _executablePath = browserFetcher.GetExecutablePath(stableVersion.BuildId);
-            logger.LogDebug("Puppeteer downloaded browser : " + _executablePath);
+            _downloadedExecutablePath = browserFetcher.GetExecutablePath(stableVersion.BuildId);
+            logger.LogDebug("Puppeteer downloaded browser : " + _downloadedExecutablePath);
 
+            return _downloadedExecutablePath;
         }
 
         private async Task<MemoryStream> Print(Pricing pricing )
@@ -169,32 +206,54 @@ namespace Carmasters.Core.Application.Services
              
             var html = await bodyHtmlGenerator.Generate(pricing); 
 
-            await PreparePuppeteerAsync();
+            var executablePath = await ResolveExecutablePathAsync();
 
-            await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
+            // A profile directory of its own per render: concurrent requests each launch their own
+            // browser, and Chromium refuses to share one. It lives under the temp directory because
+            // that is the only writable location the container is guaranteed to have.
+            var userDataDirectory = Path.Combine(
+                Path.GetTempPath(), "carcare-chromium-" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(userDataDirectory);
+
+            try
             {
-                Headless = true,
-                Args = new[] { "--no-sandbox", "--disable-setuid-sandbox" },
-                ExecutablePath = _executablePath
-            });
-             
-            var page = await browser.NewPageAsync(); 
+                await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
+                {
+                    Headless = true,
+                    Args = ChromiumLaunchArguments.ToArray(),
+                    ExecutablePath = executablePath,
+                    UserDataDir = userDataDirectory
+                });
+                 
+                var page = await browser.NewPageAsync(); 
 
-            await page.SetViewportAsync(new ViewPortOptions() { DeviceScaleFactor = 1, Width = 1440, Height = 2880, IsMobile = false, HasTouch = false });
-            await page.SetContentAsync(html, options: new NavigationOptions() { WaitUntil = new [] { WaitUntilNavigation.Load  } });
-            var tailWindCss = $"{serverUri.Scheme}://localhost:{serverUri.Port}/tailwind.css";
-            var printCss = $"{serverUri.Scheme}://localhost:{serverUri.Port}/print.css";
-            await page.AddStyleTagAsync(tailWindCss);
-            await page.AddStyleTagAsync(printCss);
+                await page.SetViewportAsync(new ViewPortOptions() { DeviceScaleFactor = 1, Width = 1440, Height = 2880, IsMobile = false, HasTouch = false });
+                await page.SetContentAsync(html, options: new NavigationOptions() { WaitUntil = new [] { WaitUntilNavigation.Load  } });
+                var tailWindCss = $"{serverUri.Scheme}://localhost:{serverUri.Port}/tailwind.css";
+                var printCss = $"{serverUri.Scheme}://localhost:{serverUri.Port}/print.css";
+                await page.AddStyleTagAsync(tailWindCss);
+                await page.AddStyleTagAsync(printCss);
            
              
-            var pdfContent = await page.PdfStreamAsync(new PdfOptions
+                var pdfContent = await page.PdfStreamAsync(new PdfOptions
+                {
+                    PrintBackground = false,
+                    Format = PaperFormat.A4, 
+                    DisplayHeaderFooter = false  
+                });
+                return (MemoryStream)pdfContent;
+            }
+            finally
             {
-                PrintBackground = false,
-                Format = PaperFormat.A4, 
-                DisplayHeaderFooter = false  
-            });
-            return (MemoryStream)pdfContent;
+                try
+                {
+                    Directory.Delete(userDataDirectory, recursive: true);
+                }
+                catch (IOException)
+                {
+                    // The profile is disposable; a leftover directory must not fail the render.
+                }
+            }
         } 
     }
 }

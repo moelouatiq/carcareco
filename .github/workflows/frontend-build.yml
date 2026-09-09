@@ -15,9 +15,6 @@ on:
       api-url:
         required: true
         type: string
-      public-api-url:
-        required: true
-        type: string
       deploy:
         description: Whether to publish the built output to the application host.
         required: false
@@ -76,14 +73,12 @@ jobs:
        SERVER_SECRET: ${{ secrets.consumer-secret }}
        SESSION_SECRET: ${{ secrets.session-secret }}
        API_URL: ${{ inputs.api-url }}
-       NEXT_PUBLIC_API_URL: ${{ inputs.public-api-url }}
       run: |
        umask 077
        printf '%s\n' \
          "SERVER_SECRET=$SERVER_SECRET" \
          "SESSION_SECRET=$SESSION_SECRET" \
          "API_URL=$API_URL" \
-         "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" \
          "NEXT_PUBLIC_SESSION_TIMEOUT=1500" \
          "NEXT_PUBLIC_SESSION_DIALOG_TIMEOUT=120" \
          "NEXT_TELEMETRY_DISABLED=1" > .env

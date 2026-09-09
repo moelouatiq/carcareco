@@ -1,0 +1,20 @@
+# The Vercel image builds from backend/ as its context, so it needs its own exclusions: a
+# .dockerignore is only read from the root of the context in use.
+**/bin
+**/obj
+**/.vs
+*.user
+*.suo
+
+# Secrets never enter an image. The pattern covers every per-environment variant, such as
+# appsettings.Secrets.supabase-staging.json.
+**/appsettings.Secrets*.json
+**/.env
+**/.env.*
+!**/.env.example
+local-credentials.txt
+*.bak
+*.key
+*.pem
+*.pfx
+*.p12

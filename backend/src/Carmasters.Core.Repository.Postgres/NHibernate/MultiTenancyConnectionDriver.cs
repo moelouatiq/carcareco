@@ -64,6 +64,9 @@ namespace Carmasters.Core.Persistence.Postgres.NHibernate
             connectionBuilder.Database = new MultiTenancyDbName(options, DbKind.Template);
             connectionBuilder.Username = options.UserId;
             connectionBuilder.Password = options.Password;
+            // Per-tenant connections in GetConnection start from this string and only swap the
+            // database name, so the TLS settings applied here carry over to every tenant.
+            PostgresTls.Apply(connectionBuilder, options);
             return connectionBuilder.ToString();
 
         } 

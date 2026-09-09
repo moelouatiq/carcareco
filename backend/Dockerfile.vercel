@@ -1,0 +1,55 @@
+# Image for hosts that run an OCI container as a stateless HTTP function (Vercel Functions and the
+# like). It differs from backend/Dockerfile on three points, all of them consequences of that model:
+# Chromium is baked in at a pinned build rather than downloaded on first use, the listening port comes
+# from the host through PORT, and nothing is written outside /tmp.
+#
+# The build context is backend/, not the repository root, so paths here are relative to that.
+
+# ---------- build ----------
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+
+COPY src/Carmasters.sln .
+COPY src/. .
+
+RUN dotnet restore Carmasters.sln
+RUN dotnet publish Carmasters.Http.Api/Carmasters.Http.Api.csproj \
+        -c Release -o /app/publish
+
+# ---------- runtime ----------
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+
+# The build PuppeteerSharp 20.1.0 declares as its default (Chrome.DefaultBuildId). Pinning to the
+# library's own build keeps the DevTools protocol pairing the one it was tested against; resolving
+# "stable" at run time would hand a different browser to every deployment.
+ARG CHROME_VERSION=132.0.6834.83
+
+ENV PuppeteerExecutablePath=/opt/chromium/chrome-linux64/chrome
+WORKDIR /app
+
+COPY install-browser-deps.sh /tmp/install-browser-deps.sh
+RUN sh /tmp/install-browser-deps.sh \
+    && rm /tmp/install-browser-deps.sh \
+    && apt-get -o Acquire::Retries=5 update \
+    && apt-get -o Acquire::Retries=5 install -y --no-install-recommends unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# No fallback: an unavailable build, a truncated archive or a browser that reports a different
+# version all fail the build here rather than at the first PDF on a host with no writable disk.
+RUN set -e \
+    && wget --tries=3 -q -O /tmp/chrome.zip \
+        "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-linux64.zip" \
+    && unzip -q /tmp/chrome.zip -d /opt/chromium \
+    && rm /tmp/chrome.zip \
+    && "${PuppeteerExecutablePath}" --version | grep -qF "${CHROME_VERSION}"
+
+# Supabase issues its server certificates from a private root, so verify-full needs that root
+# present. It is a public self-signed CA certificate and carries no private key.
+COPY certs/prod-ca-2021.crt /certs/prod-ca-2021.crt
+
+COPY --from=build /app/publish .
+
+COPY docker-entrypoint.vercel.sh /usr/local/bin/docker-entrypoint.vercel.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.vercel.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.vercel.sh"]
