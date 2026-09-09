@@ -43,7 +43,7 @@ export default function Home() {
     setError('')
     
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Demo/setup`, {
+      const response = await fetch('/api/demo/setup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
