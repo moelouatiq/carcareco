@@ -12,9 +12,15 @@ on:
       application-path:
         required: true
         type: string
+      deploy:
+        description: Whether to publish the built output to the application host.
+        required: false
+        type: boolean
+        default: false
     secrets:
       ssh-key:
-        required: true
+        description: Only needed when deploy is true.
+        required: false
 
 jobs:
   build:
@@ -56,6 +62,7 @@ jobs:
       # ---------------------------------------------------------------------
       #  Deploy ------------------------------------------------------------------
       - name: Deploy DbUp with rsync
+        if: ${{ inputs.deploy }}
         uses: burnett01/rsync-deployments@7.0.2
         with:
           switches: -avzr --delete --exclude="appsettings.Secrets.json"
@@ -66,6 +73,7 @@ jobs:
           remote_key: ${{ secrets.ssh-key }}
 
       - name: Deploy API with rsync
+        if: ${{ inputs.deploy }}
         uses: burnett01/rsync-deployments@7.0.2
         with:
           switches: -avzr --delete --exclude="appsettings.Secrets.json" --exclude="Carmasters.Http.Api.staticwebassets.runtime.json"
@@ -76,6 +84,7 @@ jobs:
           remote_key: ${{ secrets.ssh-key }}
           
       - name: Run DbUp migrations and reload API
+        if: ${{ inputs.deploy }}
         uses: appleboy/ssh-action@v1.2.1
         with:
           host: ${{ inputs.application-host }}
