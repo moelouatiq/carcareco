@@ -3,6 +3,8 @@ import Search from "../_components/Search";
 import Main from "../_components/Main";
 import { SearchCardHeader } from "../_components/SearchCardHeader";
 import SimpleSearchBar from "../_components/SimpleSearchBar";
+import { formatMoney } from "@/_lib/money";
+import { labels } from "@/_lib/labels";
 
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
@@ -10,7 +12,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const columns = [
     {
       dataField: 'code',
-      headerText: 'Product code',
+      headerText: labels.inventory.productCode,
       dataFormatter: ({ code, id }: { code: string, id: string }) => {
         return (
           <a href={'/home/inventory/' + id} >
@@ -21,7 +23,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     },
     {
       dataField: 'name',
-      headerText: 'Nimi',
+      headerText: labels.inventory.productName,
       dataFormatter: ({ name }: { name: string }) => {
         return <p title={name} className="truncate" style={{ maxWidth: '500px', marginBottom: "-5px" }} >
           {name}
@@ -30,22 +32,22 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     },
     {
       dataField: 'price',
-      headerText: 'Price',
+      headerText: labels.inventory.price,
       dataFormatter: ({ price }: { price?: number }) => {
         return (
           <Fragment>
-            {price?.toFixed(2)} {price&&'€'} 
+            {formatMoney(price)}
           </Fragment>
         )
       },
     },
     {
       dataField: 'quantity',
-      headerText: 'Quantity',
+      headerText: labels.inventory.quantity,
     },
     {
       dataField: 'discount',
-      headerText: 'Discount',
+      headerText: labels.inventory.discount,
       dataFormatter: ({ discount }: { discount?: number }) => {
         return (
           <Fragment>
@@ -56,18 +58,18 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     },
     {
       dataField: 'storageName',
-      headerText: 'Location'
+      headerText: labels.inventory.location
     }
   ];
 
   return (
  
       <Main  header={
-        <SearchCardHeader title="Find Inventory" pageName="inventory">
+        <SearchCardHeader title={labels.inventory.findInventory} pageName="inventory">
       </SearchCardHeader>
       } narrow={false}>
         <form method="GET" > <Search searchParams={searchParams} pageName="inventory" resourceName="spareparts" columns={columns}>
-          <SimpleSearchBar searchParams={searchParams} placeholder="code or name ..."></SimpleSearchBar>
+          <SimpleSearchBar searchParams={searchParams} placeholder={labels.inventory.searchPlaceholder}></SimpleSearchBar>
           </Search></form>
       </Main> 
   )
