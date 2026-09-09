@@ -3,3 +3,21 @@ backend/src/DbUp/dist/
 /.env
 /local-credentials.txt
 .data-protection-keys/
+
+# --- Local secrets and credentials -------------------------------------------
+# Belt and braces: the per-project ignores below already cover the files the
+# setup-secrets scripts write, but these patterns stop a stray copy, a sed
+# backup or a new environment file from ever being staged by accident.
+.env
+.env.*
+!.env.example
+
+secrets.json
+appsettings.Secrets.json
+local-credentials.txt
+
+*.bak
+*.key
+*.pem
+*.pfx
+*.p12
