@@ -56,7 +56,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         <div className="flex gap-x-2">
           {hasRepairs && <BlueBadge text={labels.work.repairJob}></BlueBadge>}
           {numberOfOffers > 1 ?
-            <BlueBadge text="Many offers"></BlueBadge> :
+            <BlueBadge text={labels.work.manyOffers}></BlueBadge> :
             <>
               {offerIssuance &&
                 <>

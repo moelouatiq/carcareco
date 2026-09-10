@@ -221,6 +221,7 @@ export const labels = {
     information: "Informations intervention",
     newWork: "Nouvelle intervention",
     repairJob: "Réparation",
+    manyOffers: "Plusieurs devis",
     estimateShort: "Devis",
     invoiceShort: "Facture",
     isInProgress: "En cours",
