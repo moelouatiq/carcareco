@@ -149,7 +149,10 @@ export default async function Search(
                         })
                       }
                       <td className="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-0">
-                        <Link href={resourceEditPath(resourceName, item[idField], pageName)} className="text-indigo-900 hover:text-indigo-500">
+                        {/* One of these per row: prefetching every edit page of a full table would
+                            server-render up to a page-size worth of them for the at most one the
+                            user opens. Pagination below keeps its prefetch, where it pays off. */}
+                        <Link prefetch={false} href={resourceEditPath(resourceName, item[idField], pageName)} className="text-indigo-900 hover:text-indigo-500">
                           Edit
                         </Link>
                       </td>

@@ -12,8 +12,10 @@ export default function PrintPricingLink({
 }) {
     
      
+    // Opens in a new tab and renders a printable document server side, so prefetching it would do
+    // that work for a link most rows never have clicked.
     return (
-      <Link href={`/print/${pricingName}/${id}`} target='_blank'  className="font-medium text-indigo-600 hover:text-indigo-500">
+      <Link prefetch={false} href={`/print/${pricingName}/${id}`} target='_blank'  className="font-medium text-indigo-600 hover:text-indigo-500">
         <PrinterIcon aria-hidden="true" className="h-6 w-5 text-gray-400" ></PrinterIcon>
      </Link>
     )
