@@ -12,7 +12,7 @@ export default async function Main({
 }) {
     return (
        <> 
-                <main className=" lg:pl-62 pb-8">
+                <main className=" lg:pl-60 pb-8">
                     <div className="  px-4 sm:py-10 sm:px-6 lg:px-8 lg:py-6 ">
                         {narrow?<Narrow>
                             <Card header={header}  >  {children}</Card> 

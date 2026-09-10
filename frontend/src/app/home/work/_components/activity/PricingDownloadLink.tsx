@@ -7,6 +7,7 @@ import { useState } from 'react';
 import Spinner from '@/_components/Spinner';
 import { ArrowDownTrayIcon } from "@heroicons/react/20/solid";
 import Link from 'next/link';
+import { labels } from '@/_lib/labels';
 import PrintPricingLink from './PrintPricingLink';
 
 
@@ -51,7 +52,7 @@ export default function PricingDownloadLink({
         <div className="flex  ">
        {!hidePaperClip&&   <PaperClipIcon aria-hidden="true" className="h-6 w-5 text-gray-400 mr-4" />}
         <div className=" flex min-w-0 flex-1 gap-2">
-          {!hideLabel&& <span className="truncate text-sm/6 font-bold">{  `${name} nr. ${number}`}</span> }
+          {!hideLabel&& <span className="truncate text-sm/6 font-bold">{`${name === "Invoice" ? labels.work.invoiceShort : labels.work.estimateShort} n° ${number}`}</span> }
             <div className=" text-sm/6 text-gray-500">
                 <Link href="#"  onClick={async (e)=>{
                    e.preventDefault();

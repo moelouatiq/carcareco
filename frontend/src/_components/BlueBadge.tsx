@@ -1,11 +1,11 @@
+import { Badge } from './ui/Badge'
+
+// Kept as a named colour so the many call sites do not all have to change at once; the appearance
+// now comes from the palette rather than from a raw Tailwind colour.
 export default function BlueBadge({
-    
-    text, 
-}: {  
+    text,
+}: {
     text: string
-}) { 
-    return (
-        <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset"> 
-                {text}</span>
-    )
+}) {
+    return <Badge tone="info">{text}</Badge>
 }

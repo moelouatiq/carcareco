@@ -24,18 +24,16 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <>
             {/* <Timeout></Timeout> */}
             <ToastMessages></ToastMessages>
-            <div>
-                {/* Static sidebar for desktop */}
-                <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-62 lg:flex-col">
-                    {/* Sidebar component, swap this element with another sidebar if you like */}
-                    <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6">
-                      <Nav  imageUrl={imageUrl} fullName={fullName}  onSmallScreen={false}></Nav>   
+            <div className="min-h-full bg-app">
+                {/* Desktop sidebar: 240px, light, separated by a hairline rather than a colour block. */}
+                <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
+                    <div className="flex grow flex-col gap-y-4 overflow-y-auto border-r border-line bg-sidebar px-3">
+                        <Nav imageUrl={imageUrl} fullName={fullName} onSmallScreen={false}></Nav>
                     </div>
                 </div>
-                 <NavDialog imageUrl={imageUrl} fullName={fullName} ></NavDialog>   
+                <NavDialog imageUrl={imageUrl} fullName={fullName}></NavDialog>
                 {children}
-              
-              </div>
+            </div>
         </>
     )
 }

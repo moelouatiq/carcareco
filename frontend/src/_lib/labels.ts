@@ -5,8 +5,15 @@
  * wording -- navigation, common actions, business statuses -- cannot drift between screens.
  */
 export const labels = {
+  app: {
+    name: "Solution Mécanique",
+  },
   nav: {
     work: "Interventions",
+    primary: "Navigation principale",
+    groupWorkshop: "Atelier",
+    groupClients: "Clients",
+    groupManagement: "Gestion",
     clients: "Clients",
     vehicles: "Véhicules",
     inventory: "Inventaire",
@@ -22,6 +29,7 @@ export const labels = {
     selectTab: "Sélectionner un onglet",
   },
   search: {
+    emptyHint: "Ajustez votre recherche ou vos filtres.",
     empty: "Aucun résultat",
     search: "Rechercher",
     pagination: "Pagination",
@@ -211,6 +219,9 @@ export const labels = {
     workNumber: "Intervention n°",
     information: "Informations intervention",
     newWork: "Nouvelle intervention",
+    repairJob: "Réparation",
+    estimateShort: "Devis",
+    invoiceShort: "Facture",
     isInProgress: "En cours",
     findWork: "Rechercher une intervention",
     searchPlaceholder: "numéro, client, VIN ou immatriculation",

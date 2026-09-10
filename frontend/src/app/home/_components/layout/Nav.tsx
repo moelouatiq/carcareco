@@ -2,82 +2,124 @@
 import Image from "next/image"
 import Link from "next/link"
 import ProfileMenu from "./ProfileMenu"
-import { 
-    Cog6ToothIcon, 
+import {
+    Cog6ToothIcon,
     QueueListIcon,
     TruckIcon,
-    UsersIcon, 
-  } from '@heroicons/react/24/outline'
-import clsx from "clsx"; 
+    UsersIcon,
+    WrenchScrewdriverIcon,
+} from '@heroicons/react/24/outline'
+import clsx from "clsx";
 import { usePathname } from 'next/navigation'
 import { labels } from "@/_lib/labels";
- const navigationIconClass = "size-6 shrink-0";
-const navigation = [
-    // { name: 'Dashboard', href: '/home', icon: <HomeIcon aria-hidden="true" className={navigationIconClass}></HomeIcon>},
-    { name: labels.nav.work, href: '/home/work', icon: <QueueListIcon aria-hidden="true" className={navigationIconClass}></QueueListIcon> },
-    { name: labels.nav.clients, href: '/home/clients', icon: <UsersIcon aria-hidden="true" className={navigationIconClass}></UsersIcon>  },
-    { name: labels.nav.vehicles, href: '/home/vehicles', icon: <TruckIcon aria-hidden="true" className={navigationIconClass}></TruckIcon>  },
-    { name: labels.nav.inventory, href: '/home/inventory', icon: <Cog6ToothIcon aria-hidden="true" className={navigationIconClass}></Cog6ToothIcon>  },
-    // { name: 'Services', href: '/home/services', icon: <WrenchScrewdriverIcon aria-hidden="true" className={navigationIconClass}></WrenchScrewdriverIcon>  },
-]
- 
 
-export default   function Nav({
-    onSmallScreen, 
+const iconClass = "size-[18px] shrink-0"
+
+// Grouped rather than a flat list: a workshop thinks in terms of what is on the ramps, who owns the
+// car, and what is on the shelves.
+const groups = [
+    {
+        label: labels.nav.groupWorkshop,
+        items: [
+            { name: labels.nav.work, href: '/home/work', icon: <QueueListIcon aria-hidden="true" className={iconClass} /> },
+            { name: labels.nav.vehicles, href: '/home/vehicles', icon: <TruckIcon aria-hidden="true" className={iconClass} /> },
+        ],
+    },
+    {
+        label: labels.nav.groupClients,
+        items: [
+            { name: labels.nav.clients, href: '/home/clients', icon: <UsersIcon aria-hidden="true" className={iconClass} /> },
+        ],
+    },
+    {
+        label: labels.nav.groupManagement,
+        items: [
+            { name: labels.nav.inventory, href: '/home/inventory', icon: <WrenchScrewdriverIcon aria-hidden="true" className={iconClass} /> },
+        ],
+    },
+]
+
+function isCurrent(currentPath: string | null, href: string) {
+    return href === '/home' ? currentPath === '/home' : !!currentPath?.startsWith(href)
+}
+
+function itemClasses(current: boolean) {
+    return clsx(
+        'group flex items-center gap-x-2.5 rounded-md px-2.5 py-1.5 text-sm',
+        current
+            ? 'bg-accent-soft font-medium text-ink'
+            : 'text-muted hover:bg-neutral-soft hover:text-ink',
+    )
+}
+
+export default function Nav({
+    onSmallScreen,
     fullName,
     imageUrl,
-}:{
-    onSmallScreen:boolean, 
-    fullName:string,
-    imageUrl:string
+}: {
+    onSmallScreen: boolean,
+    fullName: string,
+    imageUrl: string
 }) {
-    const currentPath = usePathname() ; 
+    const currentPath = usePathname();
+    // This nav is rendered twice: once as the desktop sidebar and once inside the mobile dialog,
+    // which is hidden and closed. Prefetching from the hidden copy asked the backend to render
+    // every destination a second time on each page view, so only the visible sidebar prefetches.
+    const prefetch = !onSmallScreen
+
     return (
         <>
-            <div className="flex h-16 shrink-0 items-center">
-                <Image alt="B-dec" width="50" height="50" className="h-8 w-auto" src="/logo.png" ></Image>
+            <div className="flex h-14 shrink-0 items-center gap-x-2.5 px-1">
+                <Image alt="" width="40" height="40" className="size-7 w-auto" src="/logo.png" />
+                <span className="truncate text-sm font-semibold text-ink">{labels.app.name}</span>
             </div>
-            <nav className="flex flex-1 flex-col">
-                <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                    <li>
-                        <ul role="list" className="-mx-2 space-y-1">
-                            {/* This nav is rendered twice: once as the desktop sidebar and once inside
-                                the mobile dialog, which is hidden and closed. Prefetching from the
-                                hidden copy asked the backend to render every destination a second
-                                time on each page view, so only the visible sidebar prefetches. */}
-                            {navigation.map((item) => (
-                                <li key={item.name}>
-                                    <Link
-                                        prefetch={!onSmallScreen}
-                                        href={item.href}
-                                        className={clsx(
-                                               (item.href !=='/home'  &&currentPath?.startsWith(item.href) || item.href =='/home'&& currentPath === '/home') //home is ambigous
-                                                ? 'bg-gray-800 text-white'
-                                                : 'text-gray-400 hover:bg-gray-800 hover:text-white',
-                                            'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
-                                        )}
-                                    >
-                                        {item.icon}
-                                        {item.name}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </li>
-                    {!onSmallScreen && <li className="mt-auto flex flex-col mb-5   ">
+
+            <nav className="flex flex-1 flex-col pb-3" aria-label={labels.nav.primary}>
+                <div className="flex flex-1 flex-col gap-y-5">
+                    {groups.map((group) => (
+                        <div key={group.label}>
+                            <p className="px-2.5 pb-1 text-[11px] font-semibold tracking-wider text-muted uppercase">
+                                {group.label}
+                            </p>
+                            <ul role="list" className="space-y-0.5">
+                                {group.items.map((item) => {
+                                    const current = isCurrent(currentPath, item.href)
+                                    return (
+                                        <li key={item.name}>
+                                            <Link
+                                                prefetch={prefetch}
+                                                href={item.href}
+                                                aria-current={current ? 'page' : undefined}
+                                                className={itemClasses(current)}
+                                            >
+                                                {item.icon}
+                                                {item.name}
+                                            </Link>
+                                        </li>
+                                    )
+                                })}
+                            </ul>
+                        </div>
+                    ))}
+
+                    <div className="mt-auto border-t border-line pt-3">
                         <Link
-                            prefetch={!onSmallScreen}
+                            prefetch={prefetch}
                             href="/home/settings"
-                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-400 hover:bg-gray-800 hover:text-white"
+                            aria-current={isCurrent(currentPath, '/home/settings') ? 'page' : undefined}
+                            className={itemClasses(isCurrent(currentPath, '/home/settings'))}
                         >
-                            <Cog6ToothIcon aria-hidden="true" className="size-6 shrink-0" />
+                            <Cog6ToothIcon aria-hidden="true" className={iconClass} />
                             {labels.nav.settings}
                         </Link>
-                        <ProfileMenu  fullName={fullName} imageUrl={imageUrl} onSmallScreen={false}></ProfileMenu>
-                    </li>}
-                </ul>
+                        {!onSmallScreen && (
+                            <div className="mt-1">
+                                <ProfileMenu fullName={fullName} imageUrl={imageUrl} onSmallScreen={false} />
+                            </div>
+                        )}
+                    </div>
+                </div>
             </nav>
-
         </>
     )
 }

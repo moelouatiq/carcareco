@@ -1,5 +1,6 @@
 import Search from "../_components/Search";
 import moment from "moment";
+import "moment/locale/fr";
 import { IOfferIssuance, IWorkIssuance } from "./model";
 import PricingDownloadLink from "./_components/activity/PricingDownloadLink";
 import { ArrowDownTrayIcon } from "@heroicons/react/20/solid";
@@ -8,7 +9,6 @@ import BlueBadge from "@/_components/BlueBadge";
 import WorkStatusBadge from "./_components/activity/badges/WorkStatusBadge";
 import { EmailSentBadge, OverdueBadge } from "./_components/activity/badges/IssuanceBadges";
 import { SearchCardHeader } from "../_components/SearchCardHeader";
-import { Card } from "@/_components/Card";
 import SearchStatusFilter from "./_components/SearchStatusFilter";
 import SearchParams from "./_components/SearchParams";
 import PrimaryButton from "@/_components/PrimaryButton";
@@ -54,7 +54,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
 
       return (
         <div className="flex gap-x-2">
-          {hasRepairs && <BlueBadge text="Repair job"></BlueBadge>}
+          {hasRepairs && <BlueBadge text={labels.work.repairJob}></BlueBadge>}
           {numberOfOffers > 1 ?
             <BlueBadge text="Many offers"></BlueBadge> :
             <>
@@ -88,7 +88,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
 
         return (
           <Link prefetch={false} href={'/home/work/' + id}>
-            <h5 >Work nr. {workNr}
+            <h5>{labels.work.workNumber} {workNr}
               {' '} {!isInvoiceView && <WorkStatusBadge status={status} ></WorkStatusBadge>}
             </h5>
           </Link>
@@ -101,7 +101,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       headerText: labels.work.startedOn,//  {moment(activity?.startedOn, true).format('LLL')}
       dataFormatter: ({ startedOn }: { startedOn: Date }) => {
         return (
-          moment(startedOn, true).format('LL')
+          moment(startedOn, true).locale('fr').format('LL')
         );
       }
     },
@@ -147,50 +147,40 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   ]
 
 
-  return <main className=" lg:pl-62   ">
-    <form method="GET" >
-      <div className=" sm:py-6 px-4 sm:px-8   sm:gap-4">
+  // The filters sit in a compact bar above a full width table rather than inside a form card: the
+  // list is the page, and the controls are how it is narrowed.
+  return <main className="lg:pl-60">
+    <div className="px-4 py-6 sm:px-8">
+      <SearchCardHeader title={labels.nav.work} pageName="work"></SearchCardHeader>
 
-
-        <div className="">
-
-          <Card header={
-            
-            <SearchCardHeader title={labels.work.findWork} pageName="work">
-            </SearchCardHeader>}  >
-
-            <Search
-              searchParams={searchParams}
-              resourceName="work"
-              idField="id"
-              rowClass={(item) => {
-                return (item['status'] === 'closed' ? 'line-through' : '')
-              }}
-              columns={columns}> 
-              <div className=" 3xl:flex">
-                 <div className="  grid grid-cols-1  md:grid-cols-12 md:grid-flow-row md:gap-x-2 3xl:grid-flow-col  3xl:grid-cols-24   p-0 3xl:gap-x-2  gap-y-2  "> 
-                      <div className="3xl:col-span-6 md:col-span-7 "   >
-                        <SearchStatusFilter issued={options.issued === 'on'} status={options.status}></SearchStatusFilter>
-                        <SearchInput searchParams={searchParams} placeholder={labels.work.searchPlaceholder} ></SearchInput> 
-                      </div> 
-                      <div className="3xl:col-span-4  md:col-span-5 ">
-                         <FormInput name="saleable" label={labels.work.productOrService} placeholder={labels.work.productPlaceholder} defaultValue={options.saleable}  ></FormInput>
-                      </div>
-                      <div  className="3xl:col-span-14  md:col-span-12  " >
-                      <SearchParams options={options}></SearchParams>
-                      </div>
-                      
-                  </div> 
-                  <div className="mx-2 text-right mt-8">
-                        <PrimaryButton   id="btnSubmit">{labels.search.search}</PrimaryButton>
-                   </div>
+      <form method="GET">
+        <Search
+          searchParams={searchParams}
+          resourceName="work"
+          idField="id"
+          rowClass={(item) => {
+            return (item['status'] === 'closed' ? 'text-muted' : '')
+          }}
+          columns={columns}>
+          <div className="mb-4 rounded-lg border border-line bg-surface px-3 py-3">
+            <SearchStatusFilter issued={options.issued === 'on'} status={options.status}></SearchStatusFilter>
+            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-12">
+              <div className="md:col-span-4">
+                <SearchInput searchParams={searchParams} placeholder={labels.work.searchPlaceholder}></SearchInput>
               </div>
-                
-            </Search>
-          </Card>
-
-        </div>
-      </div>
-    </form>
+              <div className="md:col-span-3">
+                <FormInput name="saleable" label={labels.work.productOrService} placeholder={labels.work.productPlaceholder} defaultValue={options.saleable}></FormInput>
+              </div>
+              <div className="md:col-span-5">
+                <SearchParams options={options}></SearchParams>
+              </div>
+            </div>
+            <div className="mt-3 flex justify-end border-t border-line pt-3">
+              <PrimaryButton id="btnSubmit">{labels.search.search}</PrimaryButton>
+            </div>
+          </div>
+        </Search>
+      </form>
+    </div>
   </main>
 }

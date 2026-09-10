@@ -12,7 +12,7 @@ export default function SearchParams({
     const clientText = options['clientId[text]'] ?? options['clientiId[text]'];
 
     return (
-        <div className="grid sm:grid-flow-col gap-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         
             {options.issued === 'on' && <>
                 <div className="col-span-1  ">

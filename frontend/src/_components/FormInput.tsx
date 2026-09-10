@@ -54,16 +54,16 @@ export default function FormInput({
                     aria-invalid={hasError}
                     aria-describedby={name + '-error'}
                     className={clsx(className,
-                        hasError ? "col-start-1 row-start-1 text-red-900 outline-red-300 placeholder:text-red-400 focus:outline-red-600"
-                            : "text-gray-900 outline-gray-300 placeholder:text-gray-400 focus:outline-indigo-600"
-                        , "block w-full   rounded-md bg-white px-3 py-1.5 text-base  outline-1 -outline-offset-1  focus:outline-2 focus:-outline-offset-2 text-sm/6")}
+                        hasError ? "col-start-1 row-start-1 border-danger-ink text-danger-ink placeholder:text-danger-ink/60"
+                            : "border-line text-ink placeholder:text-muted focus:border-accent"
+                        , "block w-full rounded-md border bg-surface px-3 py-2 text-sm focus:outline-none")}
                 />
                 {hasError && <ExclamationCircleIcon
                     aria-hidden="true"
-                    className="pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-red-500 sm:size-4"
+                    className="pointer-events-none col-start-1 row-start-1 mr-3 size-4 self-center justify-self-end text-danger-ink"
                 />}
             </div>
-            {hasError && <p id={name + '-error'} className="mt-2 text-sm text-red-600">
+            {hasError && <p id={name + '-error'} className="mt-1.5 text-[13px] text-danger-ink">
                 {inputError}
             </p>}
 

@@ -21,7 +21,7 @@ export default function NavDialog({
            <Dialog open={sidebarOpen} onClose={()=>setSidebarOpen(false)} className="relative z-50 lg:hidden">
                     <DialogBackdrop
                       transition
-                      className="fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0"
+                      className="fixed inset-0 bg-ink/40 transition-opacity duration-300 ease-linear data-closed:opacity-0"
                     />
           
                     <div className="fixed inset-0 flex">
@@ -33,23 +33,23 @@ export default function NavDialog({
                           <div className="absolute top-0 left-full flex w-16 justify-center pt-5 duration-300 ease-in-out data-closed:opacity-0">
                             <button type="button" onClick={() => setSidebarOpen(false)} className="-m-2.5 p-2.5">
                               <span className="sr-only">{labels.nav.closeSidebar}</span>
-                              <XMarkIcon aria-hidden="true" className="size-6 text-white" />
+                              <XMarkIcon aria-hidden="true" className="size-6 text-surface" />
                             </button>
                           </div>
                         </TransitionChild>
                         {/* Sidebar component, swap this element with another sidebar if you like */}
-                        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-2 ring-1 ring-white/10">
+                        <div className="flex grow flex-col gap-y-4 overflow-y-auto border-r border-line bg-sidebar px-3 pb-2">
                           <Nav fullName={fullName} imageUrl={imageUrl}  onSmallScreen={true}></Nav>
                         </div>
                       </DialogPanel>
                     </div>
                   </Dialog>
-                  <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-4 shadow-xs sm:px-6 lg:hidden">
-          <button type="button" onClick={() => setSidebarOpen(true)} className="-m-2.5 p-2.5 text-gray-400 lg:hidden">
+                  <div className="sticky top-0 z-40 flex items-center gap-x-4 border-b border-line bg-sidebar px-4 py-3 sm:px-6 lg:hidden">
+          <button type="button" onClick={() => setSidebarOpen(true)} className="-m-2.5 p-2.5 text-muted hover:text-ink lg:hidden">
             <span className="sr-only">{labels.nav.openSidebar}</span>
             <Bars3Icon aria-hidden="true" className="size-6" />
           </button>
-          <div className="flex-1 text-sm/6 font-semibold text-white"></div>
+          <div className="flex-1 truncate text-sm font-semibold text-ink">{labels.app.name}</div>
          
              {/* Profile dropdown */}
              <ProfileMenu fullName={fullName} imageUrl={imageUrl}  onSmallScreen={true}></ProfileMenu> 

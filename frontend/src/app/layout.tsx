@@ -35,8 +35,8 @@ export default function DefaultLayout({
 }) {
  
   return (
-    <html className={clsx(
-      'h-full xl:bg-gray-50  ',
+    <html lang="fr" className={clsx(
+      'h-full bg-app',
       inter.variable,
       lexend.variable,
     )}>

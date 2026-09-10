@@ -1,5 +1,5 @@
-import clsx from "clsx"
-import { IButtonClick } from "./PrimaryButton"
+import { Button } from './ui/Button'
+import { IButtonClick } from './PrimaryButton'
 
 export default function SecondaryButton({
     children,
@@ -11,8 +11,9 @@ export default function SecondaryButton({
     className?: string | undefined
 }) {
     return (
-        <button type="button" onClick={(e) => onClick(e)} className={clsx(className, "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50")}>
+        <Button tone="secondary" className={className}
+            onClick={onClick as unknown as React.MouseEventHandler<HTMLButtonElement>}>
             {children}
-        </button>
+        </Button>
     )
 }
