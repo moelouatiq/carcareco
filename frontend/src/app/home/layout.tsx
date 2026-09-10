@@ -5,7 +5,7 @@ import Nav from './_components/layout/Nav'
 import NavDialog from './_components/layout/NavDialog'
 import ToastMessages from '@/_components/ToastMessages'  
 import { redirect } from 'next/navigation';
-import { getSessionFullName } from '@/_lib/server/session';
+import { getProfileImageCacheKey, getSessionFullName } from '@/_lib/server/session';
 export default async function Layout({ children }: { children: React.ReactNode }) {
     
     const fullName = await getSessionFullName();
@@ -14,7 +14,12 @@ export default async function Layout({ children }: { children: React.ReactNode }
         redirect('/home/logout');
     }
 
+    // The avatar is the heaviest thing on every page and it never changes within a session, so
+    // the proxy lets the browser keep it. The key makes the URL specific to this login, which is
+    // what makes a private cache safe on a browser several people sign into.
+    const imageCacheKey = await getProfileImageCacheKey();
     const imageUrl = '/api/backend/users/profilepicture'
+        + (imageCacheKey ? '?v=' + imageCacheKey : '')
     return (
         <>
             {/* <Timeout></Timeout> */}

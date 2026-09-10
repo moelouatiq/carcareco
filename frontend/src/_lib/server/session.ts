@@ -59,6 +59,20 @@ export async function getJwt() {
   return typeof payload?.apiRootJwt === 'string' ? payload.apiRootJwt : null
 }
 
+/**
+ * A short opaque token that changes with every login. It is appended to the avatar URL so that a
+ * privately cached image can never be reused for a different account on a shared browser: the URL
+ * itself differs. Derived from the session's own JWT, so it carries no readable information.
+ */
+export async function getProfileImageCacheKey() {
+  const jwt = await getJwt()
+  if (!jwt) return null
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(jwt))
+  return Array.from(new Uint8Array(digest).slice(0, 8))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+}
+
 export async function getSessionFullName() {
   const payload = await getSession()
   return typeof payload?.fullName === 'string' ? payload.fullName : null
