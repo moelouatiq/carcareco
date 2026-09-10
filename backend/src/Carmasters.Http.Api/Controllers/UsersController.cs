@@ -130,15 +130,27 @@ All authenticated user operations; decorate the whole class with [TenantRateLimi
                 }
 
                 var user = repository.GetBy(new UserIdentifier(tenantName, empId)); 
-                if(user == null) return File(new byte[0], "image/jpeg");
-                return File(user.ProfileImage, "image/jpeg");
+                if (user?.ProfileImage == null || user.ProfileImage.Length == 0)
+                {
+                    return File(Array.Empty<byte>(), FallbackImageMediaType);
+                }
+
+                // The stored bytes decide the type. The seeded avatar is a PNG and was announced as
+                // JPEG, which browsers papered over by sniffing; anything stricter would not have.
+                return File(
+                    user.ProfileImage,
+                    ProfileImageContent.TryRead(user.ProfileImage, out var image)
+                        ? image.MediaType
+                        : FallbackImageMediaType);
             }
             catch (Exception)
             {
                 logger.LogWarning("Cannot resolve the authenticated user's profile picture.");
-                return File(new byte[0], "image/jpeg");
+                return File(Array.Empty<byte>(), FallbackImageMediaType);
             }
         }
+
+        private const string FallbackImageMediaType = "application/octet-stream";
         
           
         [TenantRateLimit]
