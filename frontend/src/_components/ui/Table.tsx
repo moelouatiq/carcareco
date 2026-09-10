@@ -37,7 +37,7 @@ export function Th({
     <th
       scope={scope}
       className={clsx(
-        'border-b border-line bg-app px-3 py-2.5 text-[11px] font-semibold tracking-wide text-muted uppercase whitespace-nowrap',
+        'border-b border-line bg-app px-4 py-3 text-[11px] font-semibold tracking-wide text-muted uppercase whitespace-nowrap sm:px-5',
         align === 'right' && 'text-right',
         align === 'center' && 'text-center',
         align === 'left' && 'text-left',
@@ -61,7 +61,7 @@ export function Td({
   return (
     <td
       className={clsx(
-        'border-b border-line px-3 py-2.5 align-middle text-ink',
+        'border-b border-line px-4 py-3.5 align-middle text-ink sm:px-5',
         align === 'right' && 'text-right',
         align === 'center' && 'text-center',
         className,

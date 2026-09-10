@@ -162,21 +162,25 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
             return (item['status'] === 'closed' ? 'text-muted' : '')
           }}
           columns={columns}>
-          <div className="mb-4 rounded-lg border border-line bg-surface px-3 py-3">
+          <div className="mb-4 rounded-lg border border-line bg-surface px-4 py-4">
             <SearchStatusFilter issued={options.issued === 'on'} status={options.status}></SearchStatusFilter>
-            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-12">
-              <div className="md:col-span-4">
+            {/* Every filter is a direct cell of one grid, so all of them share the same columns and
+                the same two gaps, and no cell is taller than the row it sits in. The submit button
+                is the last cell rather than a strip of its own, which is what left it stranded
+                under an empty band. */}
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <div>
                 <SearchInput searchParams={searchParams} placeholder={labels.work.searchPlaceholder}></SearchInput>
               </div>
-              <div className="md:col-span-3">
+              <div>
                 <FormInput name="saleable" label={labels.work.productOrService} placeholder={labels.work.productPlaceholder} defaultValue={options.saleable}></FormInput>
               </div>
-              <div className="md:col-span-5">
-                <SearchParams options={options}></SearchParams>
+              <SearchParams options={options}></SearchParams>
+              {/* items-end drops the button onto the baseline of the inputs beside it, with no
+                  spacer element and no margin nudge. */}
+              <div className="flex items-end sm:col-span-2 lg:col-span-3 xl:col-span-1 xl:col-start-4">
+                <PrimaryButton id="btnSubmit" className="w-full sm:ml-auto sm:w-auto">{labels.search.search}</PrimaryButton>
               </div>
-            </div>
-            <div className="mt-3 flex justify-end border-t border-line pt-3">
-              <PrimaryButton id="btnSubmit">{labels.search.search}</PrimaryButton>
             </div>
           </div>
         </Search>

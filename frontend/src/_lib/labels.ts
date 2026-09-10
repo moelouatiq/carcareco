@@ -32,6 +32,9 @@ export const labels = {
     emptyHint: "Ajustez votre recherche ou vos filtres.",
     empty: "Aucun résultat",
     search: "Rechercher",
+    // The field is named for what it holds, the button for what it does, so the filter panel does
+    // not carry the same word twice.
+    keyword: "Recherche",
     pagination: "Pagination",
     previous: "Précédent",
     next: "Suivant",
