@@ -17,7 +17,7 @@ export default function NoProducts({
        {!work.issuance&& <div className="my-6">
           <Link href={editUrl}
             type="button"
-            className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="inline-flex items-center rounded-md bg-accent px-3.5 py-2 text-sm font-medium text-ink border border-accent hover:bg-accent-hover"
           >
             <PlusIcon aria-hidden="true" className="mr-1.5 -ml-0.5 size-5" />
             Start

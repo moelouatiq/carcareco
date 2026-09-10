@@ -101,7 +101,7 @@ export default function ClientEmailsInput({
                                             setCurrentEmail(mail);
                                         }}
                                         type="button"
-                                        className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500">
+                                        className="rounded-md bg-white font-medium text-accent-ink hover:underline">
                                         Set as primary
                                     </button>}
                                 <span aria-hidden="true" className="text-gray-200">

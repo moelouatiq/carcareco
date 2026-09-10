@@ -73,7 +73,7 @@ const ToastMessages = () => {
                         deleteCookie('toast')
                         setDismissedToast(toast);
                       }}
-                      className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
+                      className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:outline-hidden"
                     >
                       <span className="sr-only">Fermer</span>
                       <XMarkIcon aria-hidden="true" className={clsx(isError ? "bg-red-50" : "bg-green-50", "size-5")} />

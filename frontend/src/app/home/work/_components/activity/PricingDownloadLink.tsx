@@ -65,7 +65,7 @@ export default function PricingDownloadLink({
                     })
                     await promise; 
                     
-                }} className="font-medium text-indigo-600 hover:text-indigo-500">
+                }} className="font-medium text-accent-ink hover:underline">
                     {!isDownloading&&clickableElement} {isDownloading&& downloadingElement}
                 </Link>
             </div>

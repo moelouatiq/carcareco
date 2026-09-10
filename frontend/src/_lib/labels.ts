@@ -56,6 +56,7 @@ export const labels = {
     completed: "Facturées",
   },
   common: {
+    notProvided: "Non renseigné",
     save: "Enregistrer",
     cancel: "Annuler",
     description: "Description",

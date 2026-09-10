@@ -11,7 +11,7 @@ export default async function SearchInput({ searchParams,placeholder }: { search
                 placeholder={placeholder}
                 defaultValue={options.searchText}
                 aria-label={labels.search.search}
-                className="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pr-3 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 pl-9 text-sm/6"
+                className="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pr-3 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink pl-9 text-sm/6"
             />
             <MagnifyingGlassIcon
                 aria-hidden="true"

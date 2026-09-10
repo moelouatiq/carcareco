@@ -9,10 +9,12 @@ import FormListEmailItem from '../_components/FormListEmailItem';
 import { IClientData } from '../model';
 import BlueBadge from '@/_components/BlueBadge';
 import YellowBadge from '@/_components/YellowBadge'; 
-import { CardHeader } from '@/_components/Card';
+import { PageHeader } from '@/_components/ui/PageHeader';
 import ServiceHistory from '../../_components/service-history/ServiceHistory';
 import { IServiceHistoryPage } from '../../_components/service-history/model';
 import { labels } from "@/_lib/labels";
+import moment from "moment";
+import "moment/locale/fr";
 
 
 export default async function Page({
@@ -32,16 +34,22 @@ export default async function Page({
     const history = historyResponse.ok
         ? await historyResponse.json() as IServiceHistoryPage
         : null;
+    const clientDisplayName = client.isPrivate
+        ? [client.firstName, client.lastName].filter(Boolean).join(' ')
+        : (client.name ?? '');
+
     return (
 
         <Main header={
-        <CardHeader  > 
-              <h3 className="px-1 lg:px-0 text-base font-semibold text-gray-900">{labels.clients.information}{' '}
-                        <BlueBadge text={!client.isPrivate ? labels.clients.company : labels.clients.privatePerson}  ></BlueBadge>{' '}
-                        {client.isAsshole && <YellowBadge text={labels.clients.complicated} ></YellowBadge>}</h3> 
-          
-                <DisplayOptionsMenu id={id} pageName='clients'></DisplayOptionsMenu>
-        </CardHeader>} narrow={false}>
+            <PageHeader
+                breadcrumb={[{ label: labels.nav.clients, href: '/home/clients' }, { label: clientDisplayName }]}
+                title={clientDisplayName}
+                meta={<>
+                    <BlueBadge text={!client.isPrivate ? labels.clients.company : labels.clients.privatePerson}></BlueBadge>
+                    {client.isAsshole && <YellowBadge text={labels.clients.complicated}></YellowBadge>}
+                </>}
+                actions={<DisplayOptionsMenu id={id} pageName='clients'></DisplayOptionsMenu>}
+            />} narrow={false}>
                     <div className="  border-gray-100">
                         <dl className="divide-y divide-gray-100">
 
@@ -67,7 +75,7 @@ export default async function Page({
 
                             <DescriptionItem label={labels.clients.address} value={[client.address.country, client.address.region, client.address.city, client.address.street, client.address.postalCode].filter(item => item).join(', ')}></DescriptionItem>
                             <DescriptionItem label={labels.clients.about} value={client.description}></DescriptionItem>
-                            <DescriptionItem label={labels.clients.added} value={client.introducedAt}></DescriptionItem>
+                            <DescriptionItem label={labels.clients.added} value={client.introducedAt ? moment(client.introducedAt).locale('fr').format('LL') : null}></DescriptionItem>
                         </dl>
                     </div>
 

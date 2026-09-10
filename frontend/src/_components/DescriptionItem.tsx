@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { labels } from "@/_lib/labels";
 
 export function DescriptionItem(
     {
@@ -12,10 +13,11 @@ export function DescriptionItem(
     }
 ) {
     return (
-        <div className="px-1 sm:py-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-gray-900">{label}</dt>
-            {value?<dd className={clsx(className&&className,"mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0")}>{value}</dd>:
-            <dd className="mt-1  max-w-2xl text-sm/6 text-gray-300 sm:col-span-2 sm:mt-0">(no data)</dd>}
+        <div className="grid gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt className="text-[11px] font-medium tracking-wide text-muted uppercase sm:pt-0.5">{label}</dt>
+            {value
+                ? <dd className={clsx(className && className, "text-sm text-ink sm:col-span-2")}>{value}</dd>
+                : <dd className="text-sm text-muted italic sm:col-span-2">{labels.common.notProvided}</dd>}
         </div>
     ) 
 }
