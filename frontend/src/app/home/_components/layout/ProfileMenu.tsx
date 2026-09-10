@@ -5,11 +5,18 @@ import {
 } from '@heroicons/react/24/outline'
 import clsx from "clsx" 
 import Image from 'next/image' 
+import Link from 'next/link'
 import { labels } from "@/_lib/labels";
+// Signing out is handled entirely by the middleware, which clears the session cookies and
+// redirects; there is no page behind /home/logout. That needs a real document navigation, so it
+// stays an anchor while the profile link becomes a client-side transition.
 const userNavigation = [
-    { name: labels.nav.profile, href: '/home/profile' },
-    { name: labels.nav.signOut, href: '/home/logout' },
+    { name: labels.nav.profile, href: '/home/profile', clientSide: true },
+    { name: labels.nav.signOut, href: '/home/logout', clientSide: false },
 ]
+
+const menuItemClass =
+    "block px-3 py-1 text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden"
 
  
 export default function ProfileMenu({
@@ -51,10 +58,9 @@ export default function ProfileMenu({
                                >
                                    {userNavigation.map((item) => (
                                        <MenuItem key={item.name}>
-                                           <a  href={item.href} 
-                                               className="block px-3 py-1 text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden"
-                                           >{item.name}
-                                           </a>
+                                           {item.clientSide
+                                               ? <Link href={item.href} className={menuItemClass}>{item.name}</Link>
+                                               : <a href={item.href} className={menuItemClass}>{item.name}</a>}
                                        </MenuItem>
                                    ))}
                                </MenuItems>

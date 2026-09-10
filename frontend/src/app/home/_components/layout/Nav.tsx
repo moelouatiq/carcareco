@@ -1,5 +1,6 @@
 'use client'
 import Image from "next/image"
+import Link from "next/link"
 import ProfileMenu from "./ProfileMenu"
 import { 
     Cog6ToothIcon, 
@@ -40,9 +41,14 @@ export default   function Nav({
                 <ul role="list" className="flex flex-1 flex-col gap-y-7">
                     <li>
                         <ul role="list" className="-mx-2 space-y-1">
+                            {/* This nav is rendered twice: once as the desktop sidebar and once inside
+                                the mobile dialog, which is hidden and closed. Prefetching from the
+                                hidden copy asked the backend to render every destination a second
+                                time on each page view, so only the visible sidebar prefetches. */}
                             {navigation.map((item) => (
                                 <li key={item.name}>
-                                    <a
+                                    <Link
+                                        prefetch={!onSmallScreen}
                                         href={item.href}
                                         className={clsx(
                                                (item.href !=='/home'  &&currentPath?.startsWith(item.href) || item.href =='/home'&& currentPath === '/home') //home is ambigous
@@ -53,19 +59,20 @@ export default   function Nav({
                                     >
                                         {item.icon}
                                         {item.name}
-                                    </a>
+                                    </Link>
                                 </li>
                             ))}
                         </ul>
                     </li>
                     {!onSmallScreen && <li className="mt-auto flex flex-col mb-5   ">
-                        <a
+                        <Link
+                            prefetch={!onSmallScreen}
                             href="/home/settings"
                             className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-400 hover:bg-gray-800 hover:text-white"
                         >
                             <Cog6ToothIcon aria-hidden="true" className="size-6 shrink-0" />
                             {labels.nav.settings}
-                        </a>
+                        </Link>
                         <ProfileMenu  fullName={fullName} imageUrl={imageUrl} onSmallScreen={false}></ProfileMenu>
                     </li>}
                 </ul>

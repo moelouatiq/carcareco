@@ -58,14 +58,36 @@ namespace Carmasters.Core.Application
             this.Email = email;
         }
 
+        /// An avatar is drawn in a circle a few dozen pixels across, so nothing larger than this
+        /// serves any purpose, and the previous five megabyte ceiling let a phone photo be sent to
+        /// every visitor of every page. The browser scales the picture down before uploading; these
+        /// limits are what makes that reduction binding rather than a courtesy.
+        public const int MaximumProfileImageDimension = 256;
+        public const int MaximumProfileImageBytes = 256 * 1024;
+
         public virtual void ChangeProfileImage(byte[] profileImage)
         {
+            if (profileImage == null || profileImage.Length == 0)
+            {
+                this.ProfileImage = profileImage;
+                return;
+            }
 
-            const int fiveMb = 5 * 1024 * 1024; 
-            var fileSize = profileImage == null?0: profileImage.Length;
-            if (fileSize > fiveMb)
+            if (profileImage.Length > MaximumProfileImageBytes)
             {
                 throw new UserException("L'image de profil est trop volumineuse.");
+            }
+
+            // Read from the bytes themselves: a file name or a declared type is chosen by the caller.
+            if (!ProfileImageContent.TryRead(profileImage, out var image))
+            {
+                throw new UserException("Format d'image non reconnu. Formats acceptés : PNG, JPEG, WebP.");
+            }
+
+            if (image.Width > MaximumProfileImageDimension || image.Height > MaximumProfileImageDimension)
+            {
+                throw new UserException(
+                    $"L'image de profil ne doit pas dépasser {MaximumProfileImageDimension}x{MaximumProfileImageDimension} pixels.");
             }
 
             this.ProfileImage = profileImage;

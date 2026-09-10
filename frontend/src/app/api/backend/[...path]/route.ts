@@ -1,5 +1,6 @@
 import { getJwt } from '@/_lib/server/session'
 import { buildBackendProxyUrl } from '@/_lib/backend-proxy-url'
+import { backendCacheControl } from '@/_lib/backend-cache-policy'
 
 interface RouteContext {
   params: Promise<{ path: string[] }>
@@ -36,7 +37,7 @@ export async function GET(request: Request, context: RouteContext) {
     const value = backendResponse.headers.get(name)
     if (value) responseHeaders.set(name, value)
   }
-  responseHeaders.set('Cache-Control', 'private, no-store')
+  responseHeaders.set('Cache-Control', backendCacheControl(path))
 
   return new Response(backendResponse.body, {
     status: backendResponse.status,

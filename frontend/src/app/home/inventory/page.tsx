@@ -6,6 +6,7 @@ import SimpleSearchBar from "../_components/SimpleSearchBar";
 import { formatMoney } from "@/_lib/money";
 import { formatPercent } from "@/_lib/percent";
 import { labels } from "@/_lib/labels";
+import Link from "next/link";
 
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
@@ -16,9 +17,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       headerText: labels.inventory.productCode,
       dataFormatter: ({ code, id }: { code: string, id: string }) => {
         return (
-          <a href={'/home/inventory/' + id} >
+          <Link prefetch={false} href={'/home/inventory/' + id} >
             <h5 className="mb-0 fs--1">{code} </h5>
-          </a>
+          </Link>
         );
       }
     },
