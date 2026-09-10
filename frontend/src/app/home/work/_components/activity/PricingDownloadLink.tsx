@@ -36,7 +36,7 @@ export default function PricingDownloadLink({
     downloadingElement= <>{<Spinner></Spinner>}</>,
     hidePaperClip = true,
     hideLabel,
-    clickableElement=<>{<ArrowDownTrayIcon aria-hidden="true" className="h-6 w-5 text-gray-400" ></ArrowDownTrayIcon>}</>, 
+    clickableElement=<>{<ArrowDownTrayIcon aria-hidden="true" className="h-6 w-5 text-muted" ></ArrowDownTrayIcon>}<span className="sr-only">{labels.actions.download}</span></>, 
 }:{
     id:string,
     name:string,

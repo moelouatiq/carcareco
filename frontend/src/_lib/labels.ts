@@ -23,8 +23,8 @@ export const labels = {
     account: "Mon compte",
     invoiceOptions: "Options de facturation",
     openUserMenu: "Ouvrir le menu utilisateur",
-    openSidebar: "Ouvrir le menu",
-    closeSidebar: "Fermer le menu",
+    openSidebar: "Ouvrir la navigation",
+    closeSidebar: "Fermer la navigation",
     openOptions: "Ouvrir les options",
     selectTab: "Sélectionner un onglet",
   },
@@ -40,6 +40,8 @@ export const labels = {
   },
   actions: {
     edit: "Modifier",
+    print: "Imprimer",
+    download: "Télécharger",
   },
   /**
    * Business statuses. These stay distinct on purpose: "Non terminées" covers every intervention
@@ -64,6 +66,7 @@ export const labels = {
     status: "Statut",
     summary: "Résumé",
     yes: "Oui",
+    no: "Non",
     code: "Code",
     name: "Libellé",
     price: "Prix",

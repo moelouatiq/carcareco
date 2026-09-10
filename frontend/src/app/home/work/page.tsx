@@ -150,7 +150,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   // The filters sit in a compact bar above a full width table rather than inside a form card: the
   // list is the page, and the controls are how it is narrowed.
   return <main className="lg:pl-60">
-    <div className="px-4 py-6 sm:px-8">
+    <div className="min-w-0 px-4 py-6 sm:px-8">
       <SearchCardHeader title={labels.nav.work} pageName="work"></SearchCardHeader>
 
       <form method="GET">

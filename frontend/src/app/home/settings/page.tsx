@@ -1,67 +1,65 @@
 import { httpGet } from "@/_lib/server/query-api";
 import { IUserOptions } from "./model";
 import SettingsTabs from "@/_components/SettingsTabs";
-import Main from "../_components/Main";
-import Link from "next/link";
+import { PageHeader } from "@/_components/ui/PageHeader";
+import { ButtonLink } from "@/_components/ui/Button";
+import { Section } from "@/_components/ui/Section";
 import { DescriptionItem } from "@/_components/DescriptionItem";
+import { PencilSquareIcon } from "@heroicons/react/16/solid";
 import { labels } from "@/_lib/labels";
 
 export default async function Page() {
-
     const data = await httpGet('options');
     const options = await data.json() as IUserOptions;
- 
+
     return (
+        <main className="lg:pl-60 pb-8">
+            <div className="px-4 py-6 sm:px-8">
+                <PageHeader
+                    breadcrumb={[{ label: labels.nav.settings }]}
+                    title={labels.nav.settings}
+                    actions={
+                        <ButtonLink href="/home/settings/edit" tone="primary">
+                            <PencilSquareIcon aria-hidden="true" className="-ml-0.5 size-4" />
+                            {labels.actions.edit}
+                        </ButtonLink>
+                    }
+                />
 
-        <Main header={
-            <SettingsTabs>
-            </SettingsTabs>
-        } narrow={true}>
-              
-            <div className="  px-0">
-                <h3 className="text-base/7 font-semibold text-gray-900  my-4">{labels.settings.companyInformation}</h3> 
+                <SettingsTabs />
+
+                {/* Three groups, each in its own light section, so a long settings page reads as a
+                    list of subjects rather than one continuous form. */}
+                <div className="mt-5 grid gap-4">
+                    <Section title={labels.settings.companyInformation} bodyClassName="px-4 py-1">
+                        <dl className="divide-y divide-line">
+                            <DescriptionItem label={labels.settings.name} value={options.requisites.name}></DescriptionItem>
+                            <DescriptionItem label={labels.settings.phone} value={options.requisites.phone}></DescriptionItem>
+                            <DescriptionItem label={labels.settings.address} value={options.requisites.address}></DescriptionItem>
+                            <DescriptionItem label={labels.settings.email} value={options.requisites.email}></DescriptionItem>
+                            <DescriptionItem label={labels.settings.bankAccount} value={options.requisites.bankAccount}></DescriptionItem>
+                            <DescriptionItem label={labels.settings.regNr} value={options.requisites.regNr}></DescriptionItem>
+                            <DescriptionItem label={labels.settings.taxId} value={options.requisites.kmkr}></DescriptionItem>
+                        </dl>
+                    </Section>
+
+                    <Section title={labels.settings.invoiceOptions} bodyClassName="px-4 py-1">
+                        <dl className="divide-y divide-line">
+                            <DescriptionItem label={labels.settings.vatRate} value={options.pricing.invoice.vatRate}></DescriptionItem>
+                            <DescriptionItem label={labels.settings.surcharge} value={options.pricing.invoice.surCharge}></DescriptionItem>
+                            <DescriptionItem label={labels.settings.disclaimer} className="whitespace-pre-line" value={options.pricing.invoice.disclaimer}></DescriptionItem>
+                            <DescriptionItem label={labels.settings.signatureLine} value={options.pricing.invoice.signatureLine ? labels.common.yes : labels.common.no}></DescriptionItem>
+                            <DescriptionItem label={labels.settings.emailContent} className="whitespace-pre-line" value={options.pricing.invoice.emailContent}></DescriptionItem>
+                        </dl>
+                    </Section>
+
+                    <Section title={labels.settings.offerOptions} bodyClassName="px-4 py-1">
+                        <dl className="divide-y divide-line">
+                            <DescriptionItem label={labels.settings.emailContent} className="whitespace-pre-line" value={options.pricing.estimate.emailContent}></DescriptionItem>
+                        </dl>
+                    </Section>
+                </div>
             </div>
-            <div className="mt-6 border-t border-gray-100">
-                <dl className="divide-y divide-gray-100">
-                    <DescriptionItem label={labels.settings.name} value={options.requisites.name}></DescriptionItem>
-                    <DescriptionItem label={labels.settings.phone} value={options.requisites.phone}></DescriptionItem>
-                    <DescriptionItem label={labels.settings.address} value={options.requisites.address}></DescriptionItem>
-                    <DescriptionItem label={labels.settings.email} value={options.requisites.email}></DescriptionItem>
-                    <DescriptionItem label={labels.settings.bankAccount} value={options.requisites.bankAccount}></DescriptionItem>
-                    <DescriptionItem label={labels.settings.regNr} value={options.requisites.regNr}></DescriptionItem>
-                    <DescriptionItem label={labels.settings.taxId} value={options.requisites.kmkr}></DescriptionItem>
-                </dl>
-            </div>
-            <div className=" pt-8   px-0">
-                <h3 className="text-base/7 font-semibold text-gray-900">{labels.settings.invoiceOptions}</h3> 
-            </div>
-            <div className="mt-6 border-t border-gray-100">
-                <dl className="divide-y divide-gray-100">
-                    <DescriptionItem label={labels.settings.vatRate} value={options.pricing.invoice.vatRate}></DescriptionItem>
-                    <DescriptionItem label={labels.settings.surcharge} value={options.pricing.invoice.surCharge}></DescriptionItem>
-                    <DescriptionItem label={labels.settings.disclaimer} className="whitespace-pre-line" value={options.pricing.invoice.disclaimer}></DescriptionItem>
-                    <DescriptionItem label={labels.settings.signatureLine} value={(options.pricing.invoice.signatureLine?'Yes':'No')}></DescriptionItem>
-                    <DescriptionItem label={labels.settings.emailContent}  className="whitespace-pre-line" value={options.pricing.invoice.emailContent}></DescriptionItem> 
-                </dl>
-            </div>
-            <div className=" pt-8   px-0">
-                <h3 className="text-base/7 font-semibold text-gray-900">{labels.settings.offerOptions}</h3>
-                <p className="mt-1 max-w-2xl text-sm/6 text-gray-500">{labels.settings.offerOptions}</p>
-            </div>
-            <div className="mt-6 border-t border-gray-100">
-                <dl className="divide-y divide-gray-100"> 
-                    <DescriptionItem label={labels.settings.emailContent} className="whitespace-pre-line" value={options.pricing.estimate.emailContent}></DescriptionItem> 
-                </dl>
-            </div>
-             <div className="mt-6 flex items-center justify-end gap-x-6">
-                <Link href={`/home/settings/edit`}
-                    type="button"
-                    className="inline-flex items-center gap-x-1.5 rounded-md bg-accent px-3.5 py-2 text-sm font-medium text-ink border border-accent hover:bg-accent-hover"
-                >
-                    Edit
-                </Link>
-            </div>
-        </Main>
+        </main>
     )
-
 }

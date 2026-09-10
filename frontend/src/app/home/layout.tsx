@@ -24,7 +24,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <>
             {/* <Timeout></Timeout> */}
             <ToastMessages></ToastMessages>
-            <div className="min-h-full bg-app">
+            <div className="min-h-full min-w-0 bg-app">
                 {/* Desktop sidebar: 240px, light, separated by a hairline rather than a colour block. */}
                 <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
                     <div className="flex grow flex-col gap-y-4 overflow-y-auto border-r border-line bg-sidebar px-3">

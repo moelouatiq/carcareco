@@ -18,7 +18,7 @@ export default function NavDialog({
  
     const [sidebarOpen, setSidebarOpen] = useState(false)
     return (<>
-           <Dialog open={sidebarOpen} onClose={()=>setSidebarOpen(false)} className="relative z-50 lg:hidden">
+           <Dialog open={sidebarOpen} onClose={()=>setSidebarOpen(false)} aria-label={labels.nav.primary} className="relative z-50 lg:hidden">
                     <DialogBackdrop
                       transition
                       className="fixed inset-0 bg-ink/40 transition-opacity duration-300 ease-linear data-closed:opacity-0"

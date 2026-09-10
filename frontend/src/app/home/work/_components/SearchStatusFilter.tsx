@@ -16,7 +16,7 @@ export default function SearchStatusFilter({
   }
 
   return (
-    <div className=" flex gap-x-2 mb-2">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-2">
       <div className="flex  items-center gap-x-2 ">
         <input type="hidden" id="issued" name="issued" value={(issued ? "on" : "off")}></input>
         <FormSwitch

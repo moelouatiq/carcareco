@@ -43,7 +43,7 @@ export default function DefaultLayout({
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
-      <body className=" h-full ">
+      <body className="h-full">
      
         {children}
       </body>

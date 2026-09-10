@@ -6,8 +6,10 @@ import clsx from 'clsx'
  */
 export function TableFrame({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={clsx('overflow-hidden rounded-lg border border-line bg-surface', className)}>
-      <div className="overflow-x-auto">{children}</div>
+    // min-w-0 and max-w-full stop a wide table from becoming the page width: it scrolls inside its
+    // own panel instead of dragging every other element off the side of a phone.
+    <div className={clsx('w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-line bg-surface', className)}>
+      <div className="w-full max-w-full overflow-x-auto">{children}</div>
     </div>
   )
 }

@@ -13,7 +13,7 @@ export default async function Main({
     return (
        <> 
                 <main className="lg:pl-60 pb-8">
-                    <div className="px-4 py-6 sm:px-8">
+                    <div className="min-w-0 px-4 py-6 sm:px-8">
                         {header}
                         {narrow ? <Narrow><Card>{children}</Card></Narrow> : <Card>{children}</Card>}
                         
