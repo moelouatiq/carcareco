@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { IUserProfile } from '../model';
+import { AVATAR_MAX_DIMENSION, resizeAvatarToPngDataUrl } from '@/_lib/resize-avatar';
 
 
 export default function ProfileImage({
@@ -13,27 +14,19 @@ export default function ProfileImage({
 
     const [selectedImage, setSelectedImage] = useState(encodeURIComponent("data:image/png;base64, " + options.profileImageBase64))
     const [selectedBase64Image,setSelectedBase64Image] = useState(options.profileImageBase64??'');
-    const toBase64 = (file: Blob) => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-    });
+    // The picture is scaled down here rather than sent whole: it is displayed in a circle a few
+    // dozen pixels across, and what is stored is served to the browser on every page. Any photograph
+    // is accepted; the server refuses anything above the same ceiling, from the bytes themselves.
     async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>): Promise<void> {
-        if (event.currentTarget.files && event.currentTarget.files.length > 0) {
-            const file = event.currentTarget.files[0];
+        const file = event.currentTarget.files?.[0];
+        if (!file) return;
 
-            const fsize = file.size;
-            const fileSize = Math.round((fsize / 1024));
-            // The size of the file.
-            if (fileSize >= 5120) {
-                alert("Image trop volumineuse : choisissez un fichier de moins de 5 Mo.");
-            }
-            else {
-                const base64File = await toBase64(file) as string; 
-                setSelectedBase64Image(base64File.split("base64,")[1]);
-                setSelectedImage(encodeURIComponent(base64File));
-            }    
+        try {
+            const resized = await resizeAvatarToPngDataUrl(file, AVATAR_MAX_DIMENSION);
+            setSelectedBase64Image(resized.split("base64,")[1]);
+            setSelectedImage(encodeURIComponent(resized));
+        } catch {
+            alert("Cette image n'a pas pu être lue. Choisissez une photo au format PNG, JPEG ou WebP.");
         }
     }
 
