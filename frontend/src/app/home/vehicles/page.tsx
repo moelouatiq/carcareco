@@ -5,6 +5,7 @@ import { SearchCardHeader } from "../_components/SearchCardHeader";
 import Main from "../_components/Main";
 import SimpleSearchBar from "../_components/SimpleSearchBar";
 import { labels } from "@/_lib/labels";
+import Link from "next/link";
 
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
@@ -43,9 +44,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           headerText: labels.vehicles.regNr,
           dataFormatter: ({ regNr, id }) => {
             return (
-              <a href={'/home/vehicles/' + id} >
+              <Link prefetch={false} href={'/home/vehicles/' + id} >
                 <h5 className="font-semibold"> {regNr}</h5>
-              </a>
+              </Link>
             );
           }
         },
@@ -55,9 +56,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           dataFormatter: ({ ownerName, ownerId }) => {
             if (!ownerName) return <p className="font-italic text-gray-400">{labels.vehicles.noOwner}</p>;
             return (
-              <a href={'/home/clients/' + ownerId} >
+              <Link prefetch={false} href={'/home/clients/' + ownerId} >
                 <h5 >{ownerName}</h5>
-              </a>
+              </Link>
             );
           }
         },
@@ -66,9 +67,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           headerText: labels.vehicles.vin,
           dataFormatter: ({ vin, id }) => {
             return (
-              <a href={'/home/vehicles/' + id} >
+              <Link prefetch={false} href={'/home/vehicles/' + id} >
                 <h5  >{vin}</h5>
-              </a>
+              </Link>
             );
           }
         }

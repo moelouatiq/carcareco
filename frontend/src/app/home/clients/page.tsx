@@ -4,6 +4,7 @@ import Search from "../_components/Search";
 import { SearchCardHeader } from "../_components/SearchCardHeader";
 import SimpleSearchBar from "../_components/SimpleSearchBar";
 import { labels } from "@/_lib/labels";
+import Link from "next/link";
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
 
@@ -19,10 +20,10 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         dataField: "name",
         dataFormatter: ({ id, name }) => {
           return (
-            <a href={'/home/clients/' + id}>
+            <Link prefetch={false} href={'/home/clients/' + id}>
 
               {name}
-            </a>
+            </Link>
           );
         }
       }, {

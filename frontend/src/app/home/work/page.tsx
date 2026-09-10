@@ -15,6 +15,7 @@ import PrimaryButton from "@/_components/PrimaryButton";
 import SearchInput from "../_components/SearchInput";
 import FormInput from "@/_components/FormInput";
 import { labels } from "@/_lib/labels";
+import Link from "next/link";
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
 
@@ -86,11 +87,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       dataFormatter: ({ id, workNr, status }: { id: string, status: string, workNr: string }) => {
 
         return (
-          <a href={'/home/work/' + id}>
+          <Link prefetch={false} href={'/home/work/' + id}>
             <h5 >Work nr. {workNr}
               {' '} {!isInvoiceView && <WorkStatusBadge status={status} ></WorkStatusBadge>}
             </h5>
-          </a>
+          </Link>
         );
       }
     },
@@ -110,9 +111,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       headerText: labels.work.client,
       dataFormatter: ({ clientName, clientId }: { clientName: string, clientId: string }) => {
         return (
-          <a href={'/home/clients/' + clientId} >
+          <Link prefetch={false} href={'/home/clients/' + clientId} >
             <h5 >{clientName}</h5>
-          </a>
+          </Link>
         );
       }
     },
@@ -121,9 +122,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       headerText: labels.work.vehicle,
       dataFormatter: ({ regNr, vehicleId }: { regNr: string, vehicleId: string }) => {
         return (
-          <a href={'/home/vehicles/' + vehicleId} >
+          <Link prefetch={false} href={'/home/vehicles/' + vehicleId} >
             <h5 className="mb-0 fs--1">{regNr}</h5>
-          </a>
+          </Link>
         );
       }
     },
