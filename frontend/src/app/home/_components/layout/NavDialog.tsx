@@ -39,7 +39,13 @@ export default function NavDialog({
                         </TransitionChild>
                         {/* Sidebar component, swap this element with another sidebar if you like */}
                         <div className="flex grow flex-col gap-y-4 overflow-y-auto border-r border-line bg-sidebar px-3 pb-2">
-                          <Nav fullName={fullName} imageUrl={imageUrl}  onSmallScreen={true}></Nav>
+                          {/* Navigation is client side now, so the drawer is no longer torn down by a
+                              page load: choosing a destination has to close it. */}
+                          <div className="contents" onClick={(e) => {
+                            if ((e.target as HTMLElement).closest('a')) setSidebarOpen(false)
+                          }}>
+                            <Nav fullName={fullName} imageUrl={imageUrl} onSmallScreen={true}></Nav>
+                          </div>
                         </div>
                       </DialogPanel>
                     </div>

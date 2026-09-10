@@ -9,7 +9,11 @@ export function TableFrame({ children, className }: { children: React.ReactNode;
     // min-w-0 and max-w-full stop a wide table from becoming the page width: it scrolls inside its
     // own panel instead of dragging every other element off the side of a phone.
     <div className={clsx('w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-line bg-surface', className)}>
-      <div className="w-full max-w-full overflow-x-auto">{children}</div>
+      {/* contain: paint keeps the table's overflow inside this box. Without it the document
+          itself became scrollable by the width the table exceeds the panel -- measured at 248px
+          on a 1440px screen -- while the fixed sidebar stayed put and the content slid under it.
+          overflow-x on html or body does not fix that; containment does. */}
+      <div className="w-full max-w-full overflow-x-auto [contain:paint]">{children}</div>
     </div>
   )
 }
