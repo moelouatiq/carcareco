@@ -41,9 +41,14 @@ export default   function Nav({
                 <ul role="list" className="flex flex-1 flex-col gap-y-7">
                     <li>
                         <ul role="list" className="-mx-2 space-y-1">
+                            {/* This nav is rendered twice: once as the desktop sidebar and once inside
+                                the mobile dialog, which is hidden and closed. Prefetching from the
+                                hidden copy asked the backend to render every destination a second
+                                time on each page view, so only the visible sidebar prefetches. */}
                             {navigation.map((item) => (
                                 <li key={item.name}>
                                     <Link
+                                        prefetch={!onSmallScreen}
                                         href={item.href}
                                         className={clsx(
                                                (item.href !=='/home'  &&currentPath?.startsWith(item.href) || item.href =='/home'&& currentPath === '/home') //home is ambigous
@@ -61,6 +66,7 @@ export default   function Nav({
                     </li>
                     {!onSmallScreen && <li className="mt-auto flex flex-col mb-5   ">
                         <Link
+                            prefetch={!onSmallScreen}
                             href="/home/settings"
                             className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-400 hover:bg-gray-800 hover:text-white"
                         >
