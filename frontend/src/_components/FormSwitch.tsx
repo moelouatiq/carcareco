@@ -12,6 +12,7 @@ export default function FormSwitch({
     onChange,
     onClick,
     small,
+    ariaLabel,
 }: {
     checked?: boolean | undefined,
     defaultChecked?: boolean | undefined,
@@ -19,7 +20,10 @@ export default function FormSwitch({
     name?: string | undefined,
     small?: boolean | undefined,
     onChange?: ISwitchChanged,
-    onClick?: React.MouseEventHandler<HTMLButtonElement>
+    onClick?: React.MouseEventHandler<HTMLButtonElement>,
+    /** A switch renders as a bare button, so without this it reaches the accessibility tree
+        with no name at all. The text beside it is a plain label with no control to bind to. */
+    ariaLabel?: string | undefined,
 }) {
     return (
         <>{
@@ -31,6 +35,7 @@ export default function FormSwitch({
             onClick={onClick}
             name={name}
             onChange={onChange}
+            aria-label={ariaLabel}
             className="  group relative inline-flex h-4 w-7 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:outline-hidden data-checked:bg-accent"
         >
             <span
@@ -45,6 +50,7 @@ export default function FormSwitch({
         name={name}
         onChange={onChange}
         onClick={onClick}
+        aria-label={ariaLabel}
         className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:outline-hidden data-checked:bg-accent"
     >
         <span

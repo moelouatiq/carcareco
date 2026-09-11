@@ -21,6 +21,7 @@ export default function SearchStatusFilter({
         <input type="hidden" id="issued" name="issued" value={(issued ? "on" : "off")}></input>
         <FormSwitch
           defaultChecked={issued}
+          ariaLabel={labels.workStatus.showInvoices}
           small={true}
           onChange={() => {
             const issuedHidden = document.getElementById("issued");
