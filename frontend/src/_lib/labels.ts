@@ -102,6 +102,12 @@ export const labels = {
     issueOffer: "Émettre un devis",
     offerAccepted: "Devis accepté par le client",
     startNewRepairJob: "Démarrer une nouvelle réparation",
+    // The document named here differs with the activity, and so does the French article, so the
+    // two cases are whole sentences rather than a stem plus a word.
+    showVehicleOnInvoice: "Afficher les informations du véhicule sur la facture",
+    showVehicleOnEstimate: "Afficher les informations du véhicule sur le devis",
+    // The switch above it starts a repair job, not a new intervention.
+    newJobNotes: "Notes à ajouter à la nouvelle réparation",
     repairJobTarget: "Réparation à compléter",
   },
   clients: {
@@ -250,6 +256,10 @@ export const labels = {
     odometerPlaceholder: "Kilométrage",
     about: "À propos",
     addMechanic: "Ajouter un mécanicien",
+    newMechanic: "Nouveau",
+    deleteMechanic: "Supprimer le mécanicien",
+    removeTitle: "Suppression de",
+    removeMechanicConfirm: "Êtes-vous sûr de vouloir supprimer ce mécanicien ? Assurez-vous qu’il n’est affecté à aucune intervention, sinon la suppression échouera.",
     newMechanicPlaceholder: "Nom du nouveau mécanicien",
     // Actions on the intervention record. The verbs name the business act, not the HTTP verb.
     makeAnOffer: "Créer un devis",

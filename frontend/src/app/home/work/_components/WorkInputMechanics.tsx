@@ -29,22 +29,22 @@ export default function WorkInputMechanics({
 
     const addOrRemoveOption = [
         {
-            name: 'New',
+            name: labels.work.newMechanic,
             onClick: () => {
                 newLocationDialogRef?.current?.open();
             },
             inMenu: false
         },
         {
-            name: 'Delete mechanic',
+            name: labels.work.deleteMechanic,
             onClick: () => {
                 if (!selectedMechanicId) return;
                
                 const itemToRemove = allMechanics.find(x => x.id.toString() == selectedMechanicId)?.name;
                 if(!itemToRemove) return;
                 confirmRemoveLocationRef?.current?.open({
-                    title: "About to remove '" + itemToRemove + "'",
-                    description: "Are you sure you want to remove this mechanic? Make sure mechanic is not assigned to any work, otherwise it cannot be removed.",
+                    title: `${labels.work.removeTitle} « ${itemToRemove} »`,
+                    description: labels.work.removeMechanicConfirm,
                     confirmObj: selectedMechanicId
                 });
             },

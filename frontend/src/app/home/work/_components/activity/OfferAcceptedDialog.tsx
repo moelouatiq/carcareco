@@ -90,7 +90,7 @@ export default function OfferAcceptedDialog({
                             </div>}</>} 
 
                         {startNewRepairJob && <div className="sm:col-span-full">
-                            <FormLabel name="notes" label={'Notes to add to new job'} ></FormLabel>
+                            <FormLabel name="notes" label={labels.dialogs.newJobNotes} ></FormLabel>
                             <div className="mt-2  ">
                                 <FormTextArea
                                     name="notes"

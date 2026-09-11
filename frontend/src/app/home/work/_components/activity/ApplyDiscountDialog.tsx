@@ -20,7 +20,7 @@ export default function ApplyDiscountsDialog({
 
     return (
         <BaseDialog ref={dialogRef}
-        yesButtonText="Apply"
+        yesButtonText={labels.actions.apply}
         center={false} 
         title={labels.dialogs.applyDiscount} 
         onConfirm={() => {
