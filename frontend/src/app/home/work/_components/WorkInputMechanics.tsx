@@ -29,22 +29,22 @@ export default function WorkInputMechanics({
 
     const addOrRemoveOption = [
         {
-            name: 'New',
+            name: labels.work.newMechanic,
             onClick: () => {
                 newLocationDialogRef?.current?.open();
             },
             inMenu: false
         },
         {
-            name: 'Delete mechanic',
+            name: labels.work.deleteMechanic,
             onClick: () => {
                 if (!selectedMechanicId) return;
                
                 const itemToRemove = allMechanics.find(x => x.id.toString() == selectedMechanicId)?.name;
                 if(!itemToRemove) return;
                 confirmRemoveLocationRef?.current?.open({
-                    title: "About to remove '" + itemToRemove + "'",
-                    description: "Are you sure you want to remove this mechanic? Make sure mechanic is not assigned to any work, otherwise it cannot be removed.",
+                    title: `${labels.work.removeTitle} « ${itemToRemove} »`,
+                    description: labels.work.removeMechanicConfirm,
                     confirmObj: selectedMechanicId
                 });
             },
@@ -61,6 +61,8 @@ export default function WorkInputMechanics({
                 <div className="-mr-px grid grow grid-cols-1 focus-within:relative">
                     <div className="  sm:col-span-2 grid grid-cols-1">
                         <select
+                            id="mechanics"
+                            aria-label={labels.work.selectMechanic}
                             value={selectedMechanicId}
                             onChange={(e) => {
                                 setSelectedMechanicId(e.currentTarget.value);
@@ -87,9 +89,9 @@ export default function WorkInputMechanics({
                             setSelectedMechanics(newSet)
                         }
                     }}
-                    className="flex shrink-0 items-center gap-x-1.5 rounded-r-md bg-accent px-3 py-2 text-sm font-semibold text-white outline-1 -outline-offset-1 outline-accent hover:bg-accent-hover focus:relative focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink"
+                    className="flex shrink-0 items-center gap-x-1.5 rounded-r-md bg-accent px-3 py-2 text-sm font-semibold text-ink outline-1 -outline-offset-1 outline-accent hover:bg-accent-hover focus:relative focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink"
                 >
-                    Add
+                    {labels.actions.add}
                 </button>
                 <ButtonGroup options={addOrRemoveOption}></ButtonGroup>
             </div>
@@ -101,7 +103,7 @@ export default function WorkInputMechanics({
                 setAllMechanics([...allMechanics]);
             }} ref={confirmRemoveLocationRef} ></ConfirmDialog>
 
-            <BaseDialog ref={newLocationDialogRef} yesButtonText="Save" title={labels.work.addMechanic}
+            <BaseDialog ref={newLocationDialogRef} yesButtonText={labels.actions.save} title={labels.work.addMechanic}
                 onConfirm={async () => {
 
                     newLocationDialogRef.current?.loading(true);

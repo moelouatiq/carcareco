@@ -1,113 +1,87 @@
 'use client'
 
-import clsx from "clsx";
-import {   IPriceSummary, IProduct  } from "../../model";
-import React, { useRef }  from "react";
-import { DataItemRow, DataItemRowHandle } from "./DataIItemRow"; 
+import { IPriceSummary, IProduct } from "../../model";
+import React, { useRef } from "react";
+import { DataItemRow, DataItemRowHandle, cellPadding } from "./DataIItemRow";
 import { useDragAndDrop } from "../activity/dragAndDrop";
+import { TableFrame } from "@/_components/ui/Table";
 import { formatMoney } from "@/_lib/money";
 import { labels } from "@/_lib/labels";
 
+// The header uses the same horizontal padding as the body cells so the columns line up. The row
+// component owns its own cells because they carry the editing refs, so the padding is shared as a
+// constant rather than through the Th and Td primitives.
+const headerCell = `${cellPadding} border-b border-line bg-app text-[11px] font-semibold tracking-wide text-muted uppercase whitespace-nowrap`;
+
 export default function Saleables({
-    edit, 
+    edit,
     data,
     priceSummary,
-    tableRef, 
+    tableRef,
     removeItem,
     refreshData
 }: {
-    edit: boolean, 
+    edit: boolean,
     data: IProduct[],
     priceSummary: IPriceSummary,
-    tableRef: React.RefObject<DataItemRowHandle<IProduct>[] | null[]>, 
+    tableRef: React.RefObject<DataItemRowHandle<IProduct>[] | null[]>,
     removeItem: (id: string) => void,
     refreshData: (data: IProduct[]) => void
 }) {
 
-     
- 
     const dragItem = useRef<string | undefined>(null);
     const dragOverItem = useRef<string | undefined>(null);
-    
+
     const dnd = useDragAndDrop(refreshData, tableRef, dragItem, dragOverItem);
- 
+
     return (
-        <>
-         
-            <div className="flow-root">
-                <div className="  overflow-x-auto  ">
-                    <div className=" inline-block  min-w-full py-2 align-middle  ">
-                        <table id="items" border={1} className=" min-w-full divide-y divide-gray-300">
-                            <thead>
-                                <tr>
-                                    {edit && <th></th>}
-                                    <th className="py-3.5 pr-3 pl-4   text-sm font-semibold whitespace-nowrap text-gray-900 sm:pl-0"
-                                    >{labels.common.code}
-                                    </th>
-                                    <th className="px-2 py-3.5  text-sm font-semibold whitespace-nowrap text-gray-900">
-                                        {labels.common.name}
-                                    </th>
-                                    <th className="px-2 py-3.5 text-end  text-sm font-semibold whitespace-nowrap text-gray-900">
-                                        {labels.common.price}
-                                    </th>
-                                    <th className="px-2 py-3.5 text-end   text-sm font-semibold whitespace-nowrap text-gray-900">
-                                        {labels.common.quantity}
-                                    </th>
-                                    <th className="px-2 py-3.5 text-end  text-sm font-semibold whitespace-nowrap text-gray-900">
-                                        {labels.common.unit}
-                                    </th>
-                                    <th className="px-2 py-3.5 text-end  text-sm font-semibold whitespace-nowrap text-gray-900">
-                                        {labels.common.discount}
-                                    </th>
-                                    {edit && <th className="px-2 py-3.5 text-end text-sm font-semibold whitespace-nowrap text-gray-900"></th>}
-                                </tr>
-                            </thead>
-                            <tbody className={clsx(!edit && "divide-y divide-gray-200", " bg-white")}>
-                                {data.filter(x=>x).map((product, index) => {
-                                    
-                                    return (
-                                        <DataItemRow key={'dr' + product.id}
-                                            isEditing={edit}
-                                            index={index}
-                                            ref={el => {
-                                                if (tableRef?.current) tableRef.current[index] = el;
-                                            }}
-                                            item={product}
-                                            onDragStart={e => dnd.handleDragStart(e)}
-                                            onDragEnter={e => dnd.handleDragEnter(e)}
-                                            removeWorkItem={(id) => {
-                                                removeItem(id);
-                                            }}>
-                                        </DataItemRow>
-                                    )
-                                })}
-                            </tbody>
-                            {!edit && priceSummary && <tfoot>
-                                <tr>
-                                    <th colSpan={6}>
-                                        <div className="grid grid-rows-3 gap-0">
-                                            <div className="flex flex-row-reverse " >
-
-                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0 w-25">{formatMoney(priceSummary.totalWithoutVat)}</div>
-                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">{labels.common.subtotal}</div>
-                                            </div>
-                                            <div className="flex flex-row-reverse " >
-                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0 w-25">{formatMoney(priceSummary.totalWithVat - priceSummary.totalWithoutVat)}</div>
-                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">{labels.common.tax}</div>
-                                            </div>
-                                            <div className="flex flex-row-reverse  " >
-
-                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0 w-25">{formatMoney(priceSummary.totalWithVat)}</div>
-                                                <div className="hidden pt-4 pr-3 pl-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">{labels.common.total}</div>
-                                            </div>
-                                        </div>
-                                    </th>
-                                </tr>
-                            </tfoot>}
-                        </table>
-                    </div>
-                </div>
-            </div>
-           </>)
-
+        <TableFrame>
+            <table id="items" className="min-w-full border-collapse text-sm">
+                <thead>
+                    <tr>
+                        {edit && <th className={`${headerCell} w-10`}><span className="sr-only">{labels.work.reorderRow}</span></th>}
+                        <th scope="col" className={`${headerCell} text-left`}>{labels.common.code}</th>
+                        <th scope="col" className={`${headerCell} text-left`}>{labels.common.name}</th>
+                        <th scope="col" className={`${headerCell} text-right`}>{labels.common.price}</th>
+                        <th scope="col" className={`${headerCell} text-right`}>{labels.common.quantity}</th>
+                        <th scope="col" className={`${headerCell} text-right`}>{labels.common.unit}</th>
+                        <th scope="col" className={`${headerCell} text-right`}>{labels.common.discount}</th>
+                        {edit && <th className={`${headerCell} w-10`}><span className="sr-only">{labels.actions.delete}</span></th>}
+                    </tr>
+                </thead>
+                <tbody>
+                    {data.filter(x => x).map((product, index) => (
+                        <DataItemRow key={'dr' + product.id}
+                            isEditing={edit}
+                            index={index}
+                            ref={el => {
+                                if (tableRef?.current) tableRef.current[index] = el;
+                            }}
+                            item={product}
+                            onDragStart={e => dnd.handleDragStart(e)}
+                            onDragEnter={e => dnd.handleDragEnter(e)}
+                            removeWorkItem={(id) => {
+                                removeItem(id);
+                            }}>
+                        </DataItemRow>
+                    ))}
+                </tbody>
+                {!edit && priceSummary && <tfoot>
+                    {/* The totals come from the record. Nothing is added up in the browser. */}
+                    <tr>
+                        <td colSpan={5} className={`${cellPadding} pt-3 text-right text-[13px] text-muted`}>{labels.common.subtotal}</td>
+                        <td className={`${cellPadding} pt-3 text-right text-[13px] text-muted whitespace-nowrap`}>{formatMoney(priceSummary.totalWithoutVat)}</td>
+                    </tr>
+                    <tr>
+                        <td colSpan={5} className={`${cellPadding} text-right text-[13px] text-muted`}>{labels.common.tax}</td>
+                        <td className={`${cellPadding} text-right text-[13px] text-muted whitespace-nowrap`}>{formatMoney(priceSummary.totalWithVat - priceSummary.totalWithoutVat)}</td>
+                    </tr>
+                    <tr>
+                        <td colSpan={5} className={`${cellPadding} border-t border-line text-right text-sm font-semibold text-ink`}>{labels.common.total}</td>
+                        <td className={`${cellPadding} border-t border-line text-right text-sm font-semibold text-ink whitespace-nowrap`}>{formatMoney(priceSummary.totalWithVat)}</td>
+                    </tr>
+                </tfoot>}
+            </table>
+        </TableFrame>
+    )
 }

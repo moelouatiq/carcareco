@@ -59,7 +59,7 @@ export default function OfferAcceptedDialog({
                 <div className="border-b border-gray-900/10 pb-12">
                     <div className=" pt-8">
                         <p className="text-sm   text-gray-500">
-                            Create a new job or update existing based on what offer contained.
+                            {labels.dialogs.offerAcceptedHelp}
                         </p>
                     </div>
                     <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -90,7 +90,7 @@ export default function OfferAcceptedDialog({
                             </div>}</>} 
 
                         {startNewRepairJob && <div className="sm:col-span-full">
-                            <FormLabel name="notes" label={'Notes to add to new job'} ></FormLabel>
+                            <FormLabel name="notes" label={labels.dialogs.newJobNotes} ></FormLabel>
                             <div className="mt-2  ">
                                 <FormTextArea
                                     name="notes"

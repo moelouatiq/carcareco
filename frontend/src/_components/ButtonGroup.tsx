@@ -32,7 +32,8 @@ export default function ButtonGroup({
             const className = clsx(
                  index==0&&"rounded-l-md", 
                  index==(normalButtons.length-1)&&menuButtons.length==0&&"rounded-r-md", 
-                    opt.isPrimary ? "relative inline-flex items-center  -ml-px bg-accent px-3 py-2 text-sm font-semibold text-white   hover:bg-accent-hover focus:z-10" 
+                    // Ink on amber is 6.80:1; the white this replaced was 2.17:1, under the 4.5:1 threshold.
+                    opt.isPrimary ? "relative inline-flex items-center  -ml-px bg-accent px-3 py-2 text-sm font-semibold text-ink   hover:bg-accent-hover focus:z-10" 
                                     :clsx(opt.redText?"text-red-900 ring-red-300 hover:bg-red-50":"text-gray-900 ring-gray-300 hover:bg-gray-50", "relative  inline-flex items-end  -ml-px bg-white px-3 py-2 text-sm font-semibold  ring-1 ring-inset  focus:z-10"))
 
             return opt.href ?

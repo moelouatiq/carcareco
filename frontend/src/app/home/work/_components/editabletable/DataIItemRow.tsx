@@ -10,6 +10,9 @@ import { Bars3Icon } from "@heroicons/react/20/solid";
 import { EditableCodeCell } from "./EditableCodeCell";
 import { labels } from "@/_lib/labels";
 
+// Shared with the header in Saleables so both halves of the table sit on one horizontal grid.
+export const cellPadding = "px-3 py-2.5";
+
 export type DataItemRowHandle<T> = {
     
     getValue: () => T; 
@@ -65,11 +68,12 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
         }
     }));
  
-    const textSize = clsx(  "font-medium  text-sm/7  px-2  outline-1 -outline-offset-1 outline-gray-300   focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink  " );
+    const textSize = clsx("rounded-sm border border-line bg-surface px-2 text-sm/7 font-medium text-ink focus:border-accent focus:outline-none");
     const pricePropsClass = clsx(textSize, "text-right ");
     const codeStyle = clsx(textSize,   "w-full");
     const nameStyle = clsx( textSize, "w-full ");
-    const tdStyle = isEditing ? "py-0 pr-3 pl-4 text-sm  whitespace-nowrap text-gray-500 sm:pl-0" : "px-2 py-2 text-sm whitespace-nowrap text-gray-900";
+    const tdStyle = clsx(cellPadding, "border-b border-line text-sm whitespace-nowrap align-middle",
+        isEditing ? "text-muted" : "text-ink");
    
     return (
     <>
@@ -81,11 +85,13 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
       onDragEnter={onDragEnter}  
       >
         {isEditing && <>
-            <td className="w-10 px-3 py-2"> 
+            <td className={clsx(tdStyle, "w-10")}>
             <input type="hidden" value={item.id} name="id"/>
+            {/* The row is dragged by its handle, so the handle needs a name of its own. */}
             <button
                 type="button"
-                className=" py-0 text-gray-700 bg-white shadow-xs hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+                aria-label={labels.work.reorderRow}
+                className="cursor-grab text-muted hover:text-ink"
             >
                 <Bars3Icon aria-hidden="true" className="size-4" />
             </button>
@@ -166,15 +172,17 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
                     </EditableNumberCell>
             </td>
       
-        {isEditing && <td className="w-10 text-right text-end">
-            <Link color="link" href="#" 
+        {isEditing && <td className={clsx(tdStyle, "w-10 text-right")}>
+            <Link color="link" href="#"
+                aria-label={labels.work.removeRow}
+                className="inline-flex text-muted hover:text-danger-ink"
                 onClick={(e) =>
                  {
                     e.preventDefault();
                     removeWorkItem(item.id)
                  }
                  }>
-                <XMarkIcon className="h-6 w-6"></XMarkIcon>
+                <XMarkIcon aria-hidden="true" className="size-4"></XMarkIcon>
             </Link>
         </td>}
     </tr>

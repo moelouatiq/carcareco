@@ -57,7 +57,7 @@ export default function IssueOfferDialog({
                                 <div className="col-span-full">
                                 <div className="flex items-end">
                                         <div className="flex-auto  ">
-                                        <FormLabel name="isVehicelLinesOnPricing" label={'Show vehicle information on ' + (activityName == 'repairjob' ? 'invoice' : 'offer')} ></FormLabel>
+                                        <FormLabel name="isVehicelLinesOnPricing" label={activityName == 'repairjob' ? labels.dialogs.showVehicleOnInvoice : labels.dialogs.showVehicleOnEstimate} ></FormLabel>
                                         </div>
                                         <div className="mt-2  ">
                                         <FormSwitch name='isVehicelLinesOnPricing' checked={isVehicelLinesOnPricing} onChange={(value) => setIsVehicelLinesOnPricing(value)}></FormSwitch>
