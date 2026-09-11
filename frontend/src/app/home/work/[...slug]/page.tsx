@@ -14,7 +14,6 @@ import { WorkProgressToggle } from '../_components/WorkProgressToggle'
 import { InvoiceSection } from '../_components/InvoiceSection'
 import { EstimateSummary } from '../_components/EstimateSummary'
 import PricingDownloadLink from '../_components/activity/PricingDownloadLink'
-import PrintPricingLink from '../_components/activity/PrintPricingLink'
 import { getActivityDisplayName } from '../_components/activity/getActivityDisplayName'
 import { ActivityCreatedBy } from '../_components/activity/ActivityCreatedBy'
 import WorkStatusBadge from '../_components/activity/badges/WorkStatusBadge'
@@ -82,10 +81,8 @@ export default async function Page({
                     <Section
                         title={activityDisplayName}
                         actions={issuance && (
-                            <div className="flex items-center gap-x-3">
-                                <PricingDownloadLink name="Offer" hideLabel={true} id={issuance.id} number={issuance.number}></PricingDownloadLink>
-                                <PrintPricingLink pricingName="Offer" id={issuance.id}></PrintPricingLink>
-                            </div>
+                            /* PricingDownloadLink already carries the print link beside the download. */
+                            <PricingDownloadLink name="Offer" hideLabel={true} id={issuance.id} number={issuance.number}></PricingDownloadLink>
                         )}
                     >
                         <div className="mb-4">

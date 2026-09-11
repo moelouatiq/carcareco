@@ -4,7 +4,6 @@ import { IWorkData } from '../model'
 import { Field, FieldGrid, Section } from '@/_components/ui/Section'
 import { Badge } from '@/_components/ui/Badge'
 import PricingDownloadLink from './activity/PricingDownloadLink'
-import PrintPricingLink from './activity/PrintPricingLink'
 import { EmailSentBadge, OverdueBadge } from './activity/badges/IssuanceBadges'
 import { useLocalDateTime } from '@/_components/LocalDateTime'
 import { labels } from '@/_lib/labels'
@@ -23,15 +22,13 @@ export function InvoiceSection({ work }: { work: IWorkData }) {
     <Section
       title={labels.work.invoicing}
       actions={
-        <div className="flex items-center gap-x-3">
-          <PricingDownloadLink
-            name="Invoice"
-            id={work.id}
-            number={issuance.invoiceNumber}
-            hideLabel={true}
-          ></PricingDownloadLink>
-          <PrintPricingLink pricingName="Invoice" id={work.id}></PrintPricingLink>
-        </div>
+        /* PricingDownloadLink already carries the print link beside the download. */
+        <PricingDownloadLink
+          name="Invoice"
+          id={work.id}
+          number={issuance.invoiceNumber}
+          hideLabel={true}
+        ></PricingDownloadLink>
       }
     >
       <FieldGrid>
