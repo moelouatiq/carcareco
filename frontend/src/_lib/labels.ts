@@ -49,6 +49,7 @@ export const labels = {
     save: "Enregistrer",
     cancel: "Annuler",
     apply: "Appliquer",
+    add: "Ajouter",
     open: "Ouvrir",
     close: "Fermer",
   },
@@ -108,6 +109,7 @@ export const labels = {
     showVehicleOnEstimate: "Afficher les informations du véhicule sur le devis",
     // The switch above it starts a repair job, not a new intervention.
     newJobNotes: "Notes à ajouter à la nouvelle réparation",
+    offerAcceptedHelp: "Créez une nouvelle réparation ou complétez une réparation existante à partir du contenu du devis.",
     repairJobTarget: "Réparation à compléter",
   },
   clients: {
@@ -257,6 +259,10 @@ export const labels = {
     about: "À propos",
     addMechanic: "Ajouter un mécanicien",
     newMechanic: "Nouveau",
+    selectMechanic: "Choisir un mécanicien",
+    // The two switches beside the client and vehicle pickers on the edit form.
+    clientUndisclosed: "Client non communiqué",
+    allVehicles: "Tous les véhicules",
     deleteMechanic: "Supprimer le mécanicien",
     removeTitle: "Suppression de",
     removeMechanicConfirm: "Êtes-vous sûr de vouloir supprimer ce mécanicien ? Assurez-vous qu’il n’est affecté à aucune intervention, sinon la suppression échouera.",

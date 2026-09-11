@@ -63,13 +63,14 @@ export default function WorkInput({
                             <Field className="flex mt-2 items-center">
                                 <FormSwitch
                                     name='isOffer'
+                                    ariaLabel={labels.work.estimateShort}
                                     checked={isOffer}
                                     onChange={(value) => {
                                         setIsOffer(value);
                                     }}></FormSwitch>
 
                                 <Label as="span" className="ml-3 text-sm">
-                                    Offer
+                                    {labels.work.estimateShort}
                                 </Label>
                             </Field>
                         </div>}
@@ -77,9 +78,10 @@ export default function WorkInput({
                         <div className=" ">
                             <FormLabel name='clientId' label={labels.work.client}>
                                 <span className="ml-4 float-right text-gray-500">
-                                    Undisclosed{' '}
+                                    {labels.work.clientUndisclosed}{' '}
                                     <FormSwitch
                                         name='clientUndisclosed'
+                                        ariaLabel={labels.work.clientUndisclosed}
                                         small={true}
                                         checked={clientUndisclosed}
                                         onChange={(value) => {
@@ -105,9 +107,10 @@ export default function WorkInput({
                         <div className='  ' >
                             <FormLabel name='vehicleId' label={labels.work.vehicle}>
                                 {!clientUndisclosed && <span className="ml-2 float-right text-gray-500">
-                                    Search all vehicles{' '}
+                                    {labels.work.allVehicles}{' '}
                                     <FormSwitch
                                         name='onlyClientVehicles'
+                                        ariaLabel={labels.work.allVehicles}
                                         small={true}
                                         checked={!onlyClientVehicles}
                                         onChange={(value) => {

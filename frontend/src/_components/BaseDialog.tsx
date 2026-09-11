@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { useState, useImperativeHandle } from 'react';
 import Spinner from './Spinner';
+import { labels } from '@/_lib/labels';
 
 export interface IOnConfirm {
   (): void
@@ -28,7 +29,7 @@ type Props = {
 
 const BaseDialog = React.forwardRef<BaseDialogHandle, Props>((props, ref) => {
 
-  const { title, description, center = true, noButtonText = 'Cancel', yesButtonText = 'Yes', onConfirm, children } = props;
+  const { title, description, center = true, noButtonText = labels.common.cancel, yesButtonText = labels.common.yes, onConfirm, children } = props;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 

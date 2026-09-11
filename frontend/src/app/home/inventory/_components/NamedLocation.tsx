@@ -77,7 +77,7 @@ export default function NamedLocation({
                 setLocations([...locations]); 
            }}  ref={confirmRemoveLocationRef} ></ConfirmDialog>
 
-            <BaseDialog ref={newLocationDialogRef} yesButtonText="Save" title={labels.inventory.addLocation} 
+            <BaseDialog ref={newLocationDialogRef} yesButtonText={labels.actions.save} title={labels.inventory.addLocation} 
                 onConfirm={async () => { 
                      
                     newLocationDialogRef.current?.loading(true);
