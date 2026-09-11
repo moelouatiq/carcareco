@@ -1,6 +1,7 @@
 'use client'
 
-import ButtonGroup, { IButtonOption } from "@/_components/ButtonGroup"
+import { IButtonOption } from "@/_components/ButtonGroup"
+import { ActionBar } from "@/_components/ui/ActionBar"
 import ApplyDiscountsDialog from "./activity/ApplyDiscountDialog"
 import IssueOfferDialog from "./activity/IssueOfferDialog"
 import ActivityNotes from "./activity/Notes"
@@ -11,6 +12,7 @@ import { DataItemRowHandle } from "./editabletable/DataIItemRow"
 import { IActivities, IOfferIssuance, IProduct, IWorkData } from "../model"
 import OfferAcceptedDialog from "./activity/OfferAcceptedDialog" 
 import SendPricingDialog from "./activity/SendPricingDialog"
+import { labels } from "@/_lib/labels"
 
 export default function Activity({
     edit,
@@ -48,14 +50,14 @@ export default function Activity({
     const pathEdit = pathCancel + '/edit#items'
     const activityIsOffer = activities.items.find(x => x.id === activities.current.id)?.name == 'offer';
     const editOptions =work.issuance?[]: [
-        { name: 'Add row', onClick: () =>{
+        { name: labels.work.addRow, onClick: () =>{
             addEmptyRow(1);
             scrollToBottom();
         } },
-        { name: 'Cancel ', href: pathCancel },
-        { name: 'Save', isPrimary: true },
-        { name: 'Apply discount', inMenu: true, onClick: () => applyDiscountsRef.current?.open() },
-        { name: 'Add more rows', inMenu: true, onClick: () =>{
+        { name: labels.actions.cancel, href: pathCancel },
+        { name: labels.actions.save, isPrimary: true },
+        { name: labels.work.applyDiscount, inMenu: true, onClick: () => applyDiscountsRef.current?.open() },
+        { name: labels.work.addRows, inMenu: true, onClick: () =>{
             addEmptyRow(5);
             scrollToBottom();
         } }
@@ -66,21 +68,21 @@ export default function Activity({
     const accepted = !!issuance?.acceptedOn;
     const sent = !!issuance?.sentOn;
     const readOptions = work.issuance ? [] : [
-        { name: 'Edit ', isPrimary: !activityIsOffer, inMenu: issued, href: pathEdit },
+        { name: labels.actions.edit, isPrimary: !activityIsOffer, inMenu: issued, href: pathEdit },
         ...(activityIsOffer && data.length > 0 ? [{
-                name:  (issued?'Reissue offer':'Issue offer'),
+                name: (issued ? labels.work.reissueOffer : labels.work.issueOffer),
                 inMenu: issued,
                 isPrimary: !issued,
                 onClick: () => { issueOfferRef.current?.open() },
         }] : []),
         ...(activityIsOffer && issued ? [{
-            name: (sent?'Resend offer':'Send offer'),
+            name: (sent ? labels.work.resendOffer : labels.work.sendOffer),
             inMenu: sent,
             isPrimary: false,
             onClick: () => { sendOfferRef.current?.open() },
         }] : []),
         ...(activityIsOffer && issued && !accepted ? [{
-            name: 'Client accepted',
+            name: labels.work.clientAccepted,
             isPrimary: true,
             onClick: () => { offerAcceptedRef.current?.open() },
         }] : []),
@@ -107,27 +109,18 @@ export default function Activity({
         setData(current => current.filter(item => item.id !== id));
     }
     return (
-        <div className="">
+        <div>
             {activityIsOffer&&<OfferAcceptedDialog  dialogRef={offerAcceptedRef} work={work}  activities={activities}></OfferAcceptedDialog>}
             <ApplyDiscountsDialog dialogRef={applyDiscountsRef} tableRef={tableRef} ></ApplyDiscountsDialog>
             {activityIsOffer&& <IssueOfferDialog dialogRef={issueOfferRef} work={work}   activities={activities} ></IssueOfferDialog>}
             {activityIsOffer&&issuance&& <SendPricingDialog work={work} offerId={issuance.id}  dialogRef={sendOfferRef}></SendPricingDialog>}
-            <div className="xl:flex xl:items-end">
-                <div className="xl:flex-auto xl:px-4  ">
-                    <ActivityNotes notes={activities.current.notes} edit={edit} ></ActivityNotes>
-                </div>
-            </div>
+            <ActivityNotes notes={activities.current.notes} edit={edit} ></ActivityNotes>
+
             <Saleables
                 edit={edit} data={data} priceSummary={activities.current.priceSummary} tableRef={tableRef} removeItem={removeItem} refreshData={setData} >
             </Saleables>
-            <div className="xl:flex inline-flex float-right xl:items-center">
-                <div className="xl:flex-auto mt-8 inline-flex">
 
-                </div>
-                <div className="inline-flex   mt-8 mb-8 rounded-md shadow-xs">
-                    {edit ? <ButtonGroup  options={editOptions} ></ButtonGroup> : <ButtonGroup options={readOptions} ></ButtonGroup>}
-                </div>
-            </div>
+            <ActionBar className="mt-4 justify-end" options={edit ? editOptions : readOptions} />
         </div>
     )
 }

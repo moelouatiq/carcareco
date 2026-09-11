@@ -1,21 +1,25 @@
 'use server'
 
 import { httpGet } from '@/_lib/server/query-api'
-import { IWorkData, IActivities, IOfferIssuance } from '../model';
-import { Card, CardHeader } from '@/_components/Card';
-import NoProducts from '../_components/NoProducts';
-import { createOrUpdateProducts } from '../actions/createOrUpdateProducts';
-import Activities from '../_components/AllActivities';
-import Activity from '../_components/Activity'; 
-import PricingDownloadLink from '../_components/activity/PricingDownloadLink';
-import { getActivityDisplayName } from '../_components/activity/getActivityDisplayName';
-import { IssuanceBadges } from '../_components/activity/badges/IssuanceBadges'; 
-import { ActivityCreatedBy } from '../_components/activity/ActivityCreatedBy';
-import clsx from 'clsx'; 
-import ActivitySelect from '../_components/ActivitySelect'; 
+import { IWorkData, IActivities, IOfferIssuance } from '../model'
+import { PageHeader } from '@/_components/ui/PageHeader'
+import { Section } from '@/_components/ui/Section'
+import NoProducts from '../_components/NoProducts'
+import { createOrUpdateProducts } from '../actions/createOrUpdateProducts'
+import Activity from '../_components/Activity'
+import { ActivityTimeline } from '../_components/ActivityTimeline'
+import { WorkSummary } from '../_components/WorkSummary'
+import { WorkActions } from '../_components/WorkActions'
+import { WorkProgressToggle } from '../_components/WorkProgressToggle'
+import { InvoiceSection } from '../_components/InvoiceSection'
+import { EstimateSummary } from '../_components/EstimateSummary'
+import PricingDownloadLink from '../_components/activity/PricingDownloadLink'
+import PrintPricingLink from '../_components/activity/PrintPricingLink'
+import { getActivityDisplayName } from '../_components/activity/getActivityDisplayName'
+import { ActivityCreatedBy } from '../_components/activity/ActivityCreatedBy'
+import WorkStatusBadge from '../_components/activity/badges/WorkStatusBadge'
+import { labels } from '@/_lib/labels'
 
-
- 
 export default async function Page({
     params,
 }: {
@@ -34,63 +38,76 @@ export default async function Page({
     const current = activities.current;
 
     const activity = activities?.items?.find(x => x.id == current.id);
-    if(!activity) throw new Error('Activity expected');
+    if (!activity) throw new Error('Activity expected');
     const activityName = activity.name;
     const activityNumber = activity.number;
- 
-    data = await httpGet('pricings/offers/' + work.id);
-    const issueances = await data.json() as IOfferIssuance[]; 
-    const issuance = issueances.find(x => x.id === activity?.id)
- 
-    const activityDisplayName = getActivityDisplayName(activityName,activityNumber,issuance?.number);
 
+    data = await httpGet('pricings/offers/' + work.id);
+    const issueances = await data.json() as IOfferIssuance[];
+    const issuance = issueances.find(x => x.id === activity?.id)
+
+    const activityDisplayName = getActivityDisplayName(activityName, activityNumber, issuance?.number);
+    const hasRepairJobWithProductsOrServices = activities.items.findIndex(x => !x.isEmpty && x.name == 'repairjob') > -1;
+    const workTitle = `${labels.work.workNumber} ${work.number}`;
+    const isEmpty = current.products.length === 0 && !current?.notes && !isEditing;
 
     return (
-        <div  >
-              <Activities work={work} issueances={issueances} activities={activities}></Activities>
-            <main className='pl-0 lg:pl-60  2xl:pr-108  '>
-                <div>
-                    <div className="  px-4  xl:py-10 xl:px-8 xl:py-6 ">
-                        <div className='flex flex-col border-t border-gray-200 xl:border-t-0  '>
+        <main className="lg:pl-60 pb-8">
+            <div className="min-w-0 px-4 py-6 sm:px-8">
+                <PageHeader
+                    breadcrumb={[{ label: labels.nav.work, href: '/home/work' }, { label: workTitle }]}
+                    title={workTitle}
+                    meta={
+                        <>
+                            <WorkStatusBadge status={work.status}></WorkStatusBadge>
+                            <WorkProgressToggle work={work}></WorkProgressToggle>
+                        </>
+                    }
+                    actions={
+                        <WorkActions
+                            work={work}
+                            hasRepairJobWithProductsOrServices={hasRepairJobWithProductsOrServices}
+                        ></WorkActions>
+                    }
+                />
 
-                            {activity && <Card header={
-                                <CardHeader> 
-                                   <div className={clsx( "flex gap-x-2 mb-4 xl:ml-4")}>
-                                        <div className='grid grid-flow-col  gap-2'>
-                                            <div className='-mr-2'><ActivitySelect issueances={issueances} work={work} activities={activities} ></ActivitySelect>    </div>
-                                            <div className='xs:-ml-4 -ml-2 my-1'>
-                                            <h3 className={clsx(activities.items.length>1 && "hidden", "text-base  2xl:block font-semibold text-gray-900")}>{activityDisplayName}</h3>
-                                            </div>
-                                            <div  className='my-1' > 
-                                                {issuance && <PricingDownloadLink name="Offer" hideLabel={!!issuance.number} id={issuance.id} number={issuance.number} ></PricingDownloadLink>}
-                                                </div>
-                                            <div className='flex gap-x-2 my-1'>
-                                                {issuance && <IssuanceBadges issueance={issuance}   ></IssuanceBadges>} </div>
-                                        </div> 
-                                    </div>  
-                                
-                                   <div className='hidden xl:flex gap-x-2 mb-4  xl:ml-4' > 
-                                        <ActivityCreatedBy activity={activity}></ActivityCreatedBy> 
-                                    </div>  
-                                  
-                                </CardHeader>}> 
-                                {current.products.length == 0 && !current?.notes && !isEditing ? <NoProducts work={work} activityId={current.id}></NoProducts>
-                                    : <form action={createOrUpdateProducts}>
-                                        <input type="hidden" name="workId" value={work.id}></input>
-                                        <input type="hidden" name="activityId" value={current.id}></input>
-                                        <input type="hidden" name="activityName" value={activityName}></input>
-                                        <input type="hidden" name="activityNumber" value={activityNumber}></input>
-                                        <Activity issuance={issuance} edit={isEditing} work={work} activities={activities} startfresh={startfresh === 'startfresh'}  ></Activity>
-                                    </form>
-                                }
-                              
-                            </Card>}
+                {/* One column of sections, in the order the shop reads them: who and what, then what
+                    was done, then what it is billed as. The record used to put all of this in a
+                    432px panel that only existed above 1536px. */}
+                <div className="grid gap-4">
+                    <WorkSummary work={work}></WorkSummary>
+
+                    <ActivityTimeline work={work} activities={activities} issueances={issueances}></ActivityTimeline>
+
+                    <Section
+                        title={activityDisplayName}
+                        actions={issuance && (
+                            <div className="flex items-center gap-x-3">
+                                <PricingDownloadLink name="Offer" hideLabel={true} id={issuance.id} number={issuance.number}></PricingDownloadLink>
+                                <PrintPricingLink pricingName="Offer" id={issuance.id}></PrintPricingLink>
+                            </div>
+                        )}
+                    >
+                        <div className="mb-4">
+                            <ActivityCreatedBy activity={activity}></ActivityCreatedBy>
                         </div>
-                    </div>
+
+                        {issuance && <EstimateSummary issuance={issuance} priceSummary={current.priceSummary}></EstimateSummary>}
+
+                        {isEmpty ? <NoProducts work={work} activityId={current.id}></NoProducts>
+                            : <form action={createOrUpdateProducts}>
+                                <input type="hidden" name="workId" value={work.id}></input>
+                                <input type="hidden" name="activityId" value={current.id}></input>
+                                <input type="hidden" name="activityName" value={activityName}></input>
+                                <input type="hidden" name="activityNumber" value={activityNumber}></input>
+                                <Activity issuance={issuance} edit={isEditing} work={work} activities={activities} startfresh={startfresh === 'startfresh'}></Activity>
+                            </form>
+                        }
+                    </Section>
+
+                    <InvoiceSection work={work}></InvoiceSection>
                 </div>
-            </main>
-          
-        </div>
+            </div>
+        </main>
     )
 }
-
