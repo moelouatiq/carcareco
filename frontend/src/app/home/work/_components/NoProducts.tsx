@@ -20,7 +20,7 @@ export default function NoProducts({
             className="inline-flex items-center rounded-md bg-accent px-3.5 py-2 text-sm font-medium text-ink border border-accent hover:bg-accent-hover"
           >
             <PlusIcon aria-hidden="true" className="mr-1.5 -ml-0.5 size-5" />
-            Start
+            {labels.work.startEntry}
           </Link>
         </div>}
       </div>)
