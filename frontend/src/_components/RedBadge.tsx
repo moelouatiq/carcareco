@@ -1,14 +1,13 @@
- 
+import { Badge } from './ui/Badge'
+
+// Kept as a named colour so the many call sites do not all have to change at once; the appearance
+// now comes from the palette rather than from a raw Tailwind colour.
 export default function RedBadge({
-    
-    text, 
-    title, 
-}: {  
+    title,
+    text,
+}: {
+    title?: string,
     text: string
-    title?: string, 
-}) { 
-    return (
-        <span title={title} className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-red-600/10 ring-inset"> 
-                {text}</span>
-    )
+}) {
+    return <Badge tone="danger" title={title}>{text}</Badge>
 }

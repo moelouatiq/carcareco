@@ -1,49 +1,57 @@
 import { httpGet } from "@/_lib/server/query-api";
 import { IUserProfile } from "./model";
 import SettingsTabs from "@/_components/SettingsTabs";
-import Main from "../_components/Main";
-import Link from "next/link";
+import { PageHeader } from "@/_components/ui/PageHeader";
+import { ButtonLink } from "@/_components/ui/Button";
+import { Section } from "@/_components/ui/Section";
 import { DescriptionItem } from "@/_components/DescriptionItem";
+import { PencilSquareIcon } from "@heroicons/react/16/solid";
 import Image from 'next/image';
 import { labels } from "@/_lib/labels";
 
 export default async function Page() {
-
     const data = await httpGet('profile');
     const options = await data.json() as IUserProfile;
- 
-    return ( 
-        <Main header={
-            <SettingsTabs>
-            </SettingsTabs>
-        } narrow={true}>
-              
-            <div className=" px-0 ">
-                <h3 className="text-base/7 font-semibold text-gray-900 my-4">{labels.profile.myInformation}</h3> 
-               {options.profileImageBase64&&<Image
-                      alt={`${options.firstName} ${options.lastName}`}
-                      src={decodeURIComponent(encodeURIComponent("data:image/png;base64, " + options.profileImageBase64))}
-                      width={100}
-                      height={100}
-                      className="size-24 flex-none rounded-lg bg-gray-800 object-cover"
-                      ></Image>} 
-            </div>
-            <div className="mt-6 border-t border-gray-100">
-            <dl className="divide-y divide-gray-100">
-                    <DescriptionItem label={labels.profile.fullName} value={options.firstName+` `+options.lastName}></DescriptionItem>
-                    <DescriptionItem label={labels.profile.userName} value={options.userName}></DescriptionItem>
-                    <DescriptionItem label={labels.profile.email} value={options.email}></DescriptionItem>
-                </dl>
-            </div> 
-             <div className="mt-6 flex items-center justify-end gap-x-6">
-                <Link href={`/home/profile/edit`}
-                    type="button"
-                    className="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                    Edit
-                </Link>
-            </div>
-        </Main>
-    )
+    const fullName = [options.firstName, options.lastName].filter(Boolean).join(' ');
 
+    return (
+        <main className="lg:pl-60 pb-8">
+            <div className="px-4 py-6 sm:px-8">
+                <PageHeader
+                    breadcrumb={[{ label: labels.nav.account }]}
+                    title={labels.nav.profile}
+                    actions={
+                        <ButtonLink href="/home/profile/edit" tone="primary">
+                            <PencilSquareIcon aria-hidden="true" className="-ml-0.5 size-4" />
+                            {labels.actions.edit}
+                        </ButtonLink>
+                    }
+                />
+
+                <SettingsTabs />
+
+                <div className="mt-5">
+                    <Section title={labels.profile.myInformation} bodyClassName="px-4 py-4">
+                        <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+                            {options.profileImageBase64 && (
+                                <Image
+                                    alt=""
+                                    src={"data:image/png;base64," + options.profileImageBase64}
+                                    width={128}
+                                    height={128}
+                                    unoptimized
+                                    className="size-20 shrink-0 rounded-full border border-line bg-neutral-soft object-cover"
+                                />
+                            )}
+                            <dl className="min-w-0 flex-1 divide-y divide-line">
+                                <DescriptionItem label={labels.profile.fullName} value={fullName}></DescriptionItem>
+                                <DescriptionItem label={labels.profile.userName} value={options.userName}></DescriptionItem>
+                                <DescriptionItem label={labels.profile.email} value={options.email}></DescriptionItem>
+                            </dl>
+                        </div>
+                    </Section>
+                </div>
+            </div>
+        </main>
+    )
 }

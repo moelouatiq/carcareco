@@ -50,7 +50,7 @@ const ToastMessages = () => {
       {/* Global notification live region, render this permanently at the end of the document */}
       <div
         aria-live="assertive"
-        className="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6 z-400"
+        className="pointer-events-none fixed inset-0 w-screen max-w-full flex items-end overflow-hidden px-4 py-6 sm:items-start sm:p-6 z-400"
       >
         <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
           {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */}
@@ -73,7 +73,7 @@ const ToastMessages = () => {
                         deleteCookie('toast')
                         setDismissedToast(toast);
                       }}
-                      className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
+                      className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:outline-hidden"
                     >
                       <span className="sr-only">Fermer</span>
                       <XMarkIcon aria-hidden="true" className={clsx(isError ? "bg-red-50" : "bg-green-50", "size-5")} />

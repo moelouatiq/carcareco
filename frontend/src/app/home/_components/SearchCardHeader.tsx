@@ -1,33 +1,43 @@
-import { CardHeader } from "@/_components/Card" 
-import { PlusCircleIcon } from "@heroicons/react/24/outline"
-import Link from "next/link"
+import { PlusIcon } from "@heroicons/react/16/solid"
+import { PageHeader } from "@/_components/ui/PageHeader"
+import { ButtonLink } from "@/_components/ui/Button"
+import { labels } from "@/_lib/labels"
+
+// The action names what will be created rather than saying "add new", so a workshop reads
+// "Nouvelle intervention" rather than a generic verb.
+const createLabel: Record<string, string> = {
+  work: labels.work.newWork,
+  clients: labels.clients.newClient,
+  vehicles: labels.vehicles.newVehicle,
+  inventory: labels.inventory.newSparePart,
+}
 
 export function SearchCardHeader({
-    title,
-    description,
-    pageName, 
-    children,
-  }: {
-    title?: string | undefined,
-    description?:string | undefined,
-    pageName?: string, 
-    children?: React.ReactNode
-  }){
-    return (
-      <div className=" sm:px-0">
-      <CardHeader title={title} description={description}  >
-        {children}
-          <div className="mt-2  shrink-0">
-            
-            <Link href={`/home/${pageName}/new`}
-              type="button"
-              className="inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50"
-            >
-              <PlusCircleIcon aria-hidden="true" className="-ml-0.5 size-5" />
-              Add new
-            </Link> 
-            </div>
-      </CardHeader>
-      </div>
-    )
-  }
+  title,
+  description,
+  pageName,
+  children,
+}: {
+  title?: string | undefined,
+  description?: string | undefined,
+  pageName?: string,
+  children?: React.ReactNode
+}) {
+  return (
+    <PageHeader
+      title={title ?? ''}
+      description={description}
+      actions={
+        <>
+          {children}
+          {pageName && (
+            <ButtonLink href={`/home/${pageName}/new`} tone="primary">
+              <PlusIcon aria-hidden="true" className="-ml-0.5 size-4" />
+              {createLabel[pageName] ?? labels.actions.edit}
+            </ButtonLink>
+          )}
+        </>
+      }
+    />
+  )
+}

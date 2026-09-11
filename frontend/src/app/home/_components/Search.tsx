@@ -1,5 +1,7 @@
 import clsx from "clsx";
 import Link from "next/link";
+import { Table, TableFrame, Td, Th, Tr } from "@/_components/ui/Table";
+import { EmptyState } from "@/_components/ui/EmptyState";
 import React  from "react";
 import { httpGet } from "@/_lib/server/query-api"; 
 import { resourceEditPath, resolveResourcePageName } from "@/_lib/resource-path";
@@ -71,16 +73,17 @@ export default async function Search(
           return item[col.dataField];
         }
       }
+      // No padding here: Th and Td own the horizontal grid, so the first and last columns line up
+      // with the rest. These defaults used to add pl-4 sm:pl-0 to the first column, which is why
+      // the leading header and cell sat almost against the panel edge.
       if (!col.headerClasses) {
-        col.headerClasses = (index) => {
-          return clsx(index === 0 ? "py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-0" : "px-3 py-3.5 text-left text-sm font-semibold text-gray-900")
-        }
+        col.headerClasses = () => undefined
       }
       if (!col.dataClasses) {
         col.dataClasses = (item, index) => {
           return clsx(index === 0 ?
-            "py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-0" :
-            "px-3 py-4 text-sm whitespace-nowrap text-gray-500");
+            "font-medium whitespace-nowrap text-gray-900" :
+            "whitespace-nowrap text-gray-500");
         }
       }
     })
@@ -115,77 +118,74 @@ export default async function Search(
       </div>
     </div>
    
-      <div className="-mx-4 sm:mx-0 mt-4 flow-root">
-        {data.items.length===0? 
-         <div className="text-center"> 
-           <h3 className="mt-2 pb-6 text-sm font-semibold text-gray-900">{labels.search.empty}</h3> 
-        </div>:
-          <div className="overflow-hidden">
-          <div className=" overflow-x-auto  ">
-            <div className="inline-block min-w-full   align-middle  ">
-
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead>
-                  <tr>
-                    {
-                      columns?.map((val, index) => {
-                        return <th key={'th' + index} className={val.headerClasses && val.headerClasses(index)}>{val.headerText}</th>
-                      })
-                    }
-                    <th scope="col" className="relative py-3.5 pr-4 pl-3 sm:pr-0">
-                      <span className="sr-only">{labels.actions.edit}</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {data.items.map((item, rowindex) => (
-                    <tr key={'tr' + item[idField]}  className={rowClass && rowClass(item)}>
-                      {
-                        columns?.map((col, colindex) => {
-                          return <td key={'td' + colindex + item[idField] + rowindex}
-                            className={col.dataClasses && col.dataClasses(item, colindex)}>
-                            {col.dataFormatter && col.dataFormatter(item, colindex)}
-                          </td>
-                        })
-                      }
-                      <td className="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-0">
-                        {/* One of these per row: prefetching every edit page of a full table would
-                            server-render up to a page-size worth of them for the at most one the
-                            user opens. Pagination below keeps its prefetch, where it pays off. */}
-                        <Link prefetch={false} href={resourceEditPath(resourceName, item[idField], pageName)} className="text-indigo-900 hover:text-indigo-500">
-                          Edit
-                        </Link>
-                      </td>
-                    </tr>
+      {data.items.length === 0 ? (
+        <TableFrame>
+          <EmptyState title={labels.search.empty} description={labels.search.emptyHint} />
+        </TableFrame>
+      ) : (
+        <TableFrame>
+          <Table>
+            <thead>
+              <tr>
+                {columns?.map((val, index) => (
+                  <Th key={"th" + index} className={val.headerClasses && val.headerClasses(index)}>
+                    {val.headerText}
+                  </Th>
+                ))}
+                <Th align="right">
+                  <span className="sr-only">{labels.actions.edit}</span>
+                </Th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.items.map((item, rowindex) => (
+                <Tr key={"tr" + item[idField]} className={rowClass && rowClass(item)}>
+                  {columns?.map((col, colindex) => (
+                    <Td key={"td" + colindex + item[idField] + rowindex}
+                      className={col.dataClasses && col.dataClasses(item, colindex)}>
+                      {col.dataFormatter && col.dataFormatter(item, colindex)}
+                    </Td>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <nav
-            aria-label={labels.search.pagination}
-            className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
-          >
-            <div className="hidden sm:block">
-              <p className="text-sm text-gray-700">
-                {labels.search.showing} <span className="font-medium">{offset + 1}</span> {labels.search.to} <span className="font-medium">{offset + limit}</span>
-                {/* of{' '} <span className="font-medium">{limit}</span> results */}
-              </p>
-            </div>
-            <div className="flex flex-1 justify-between sm:justify-end">
+                  <Td align="right" className="whitespace-nowrap">
+                    {/* One of these per row: prefetching every edit page of a full table would
+                        server-render up to a page-size worth of them for the at most one the
+                        user opens. Pagination below keeps its prefetch, where it pays off. */}
+                    <Link prefetch={false}
+                      href={resourceEditPath(resourceName, item[idField], pageName)}
+                      className="font-medium text-accent-ink hover:underline">
+                      {labels.actions.edit}
+                    </Link>
+                  </Td>
+                </Tr>
+              ))}
+            </tbody>
+          </Table>
+          <nav aria-label={labels.search.pagination}
+            className="flex items-center justify-between gap-3 px-3 py-2.5">
+            <p className="hidden text-[13px] text-muted sm:block">
+              {labels.search.showing} <span className="font-medium text-ink">{offset + 1}</span>{" "}
+              {labels.search.to} <span className="font-medium text-ink">{offset + limit}</span>
+            </p>
+            <div className="flex flex-1 justify-between gap-2 sm:flex-none sm:justify-end">
               <Link href={prevPage}
-                className={
-                  clsx(offset <= 0 ? "pointer-events-none text-gray-400" : "text-gray-900", "relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus-visible:outline-offset-0")} >{labels.search.previous}</Link>
+                aria-disabled={offset <= 0}
+                className={clsx(
+                  offset <= 0 ? "pointer-events-none border-line text-muted opacity-60" : "border-line text-ink hover:bg-neutral-soft",
+                  "inline-flex items-center rounded-md border bg-surface px-3 py-1.5 text-[13px] font-medium")}>
+                {labels.search.previous}
+              </Link>
               <Link href={nextPage}
-                className={
-                  clsx(!data.hasMore ? "pointer-events-none text-gray-400" : "text-gray-900", " relative ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus-visible:outline-offset-0")}>{labels.search.next}</Link>
+                aria-disabled={!data.hasMore}
+                className={clsx(
+                  !data.hasMore ? "pointer-events-none border-line text-muted opacity-60" : "border-line text-ink hover:bg-neutral-soft",
+                  "inline-flex items-center rounded-md border bg-surface px-3 py-1.5 text-[13px] font-medium")}>
+                {labels.search.next}
+              </Link>
             </div>
           </nav>
-        </div>
-        }
-      
-      </div>
-      
+        </TableFrame>
+      )}
+
        </>
 
   )

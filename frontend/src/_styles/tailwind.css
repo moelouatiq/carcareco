@@ -4,8 +4,45 @@
   --font-sans: Inter, sans-serif;
   --font-sans--font-feature-settings: 'cv11';
   --breakpoint-3xl: 120rem;
+
+  /* The whole interface is built from these. Adding a raw Tailwind colour to a screen means the
+     screen has drifted from the palette, so reach for a token first.
+
+     The accent is a mid amber: readable as a surface, not as text. Contrast against white is
+     2.17:1, so it is never used for a label. Text that has to look accented uses accent-ink
+     (5.76:1 on white), and the primary button is the accent behind ink (6.80:1) rather than the
+     white-on-amber that would fail. */
+  --color-app: #faf9f6;
+  --color-surface: #ffffff;
+  --color-sidebar: #fcfbf8;
+  --color-line: #e8e5df;
+  --color-line-strong: #d8d4cc;
+
+  --color-ink: #292824;
+  --color-muted: #73716b;
+
+  --color-accent: #e8a317;
+  --color-accent-hover: #d6940f;
+  --color-accent-ink: #8a5d00;
+  --color-accent-soft: #fbf3e2;
+
+  --color-success-ink: #2f5d3e;
+  --color-success-soft: #ecf5ee;
+  --color-danger-ink: #912018;
+  --color-danger-soft: #fef3f2;
+  --color-info-ink: #1f4e79;
+  --color-info-soft: #eaf2fa;
+  --color-neutral-ink: #4a4842;
+  --color-neutral-soft: #f2f0ea;
 }
 @layer base {
+  /* One visible focus treatment everywhere, so keyboard users get the same ring on a link, a
+     button, a field and a table row action. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent-ink);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
   button,
   [role='button'] {
     cursor: pointer;

@@ -48,7 +48,7 @@ export default async function Page({
     return (
         <div  >
               <Activities work={work} issueances={issueances} activities={activities}></Activities>
-            <main className='pl-0 lg:pl-62  2xl:pr-108  '>
+            <main className='pl-0 lg:pl-60  2xl:pr-108  '>
                 <div>
                     <div className="  px-4  xl:py-10 xl:px-8 xl:py-6 ">
                         <div className='flex flex-col border-t border-gray-200 xl:border-t-0  '>

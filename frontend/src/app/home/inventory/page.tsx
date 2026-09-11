@@ -67,7 +67,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   return (
  
       <Main  header={
-        <SearchCardHeader title={labels.inventory.findInventory} pageName="inventory">
+        <SearchCardHeader title={labels.nav.inventory} pageName="inventory">
       </SearchCardHeader>
       } narrow={false}>
         <form method="GET" > <Search searchParams={searchParams} pageName="inventory" resourceName="spareparts" columns={columns}>

@@ -5,7 +5,7 @@ import { httpGet, httpGetResponse } from '@/_lib/server/query-api'
 import Main from '../../_components/Main'; 
 import DisplayOptionsMenu from '@/_components/DisplayOptionsMenu';
 import { IVehicleData } from '../model';
-import { CardHeader } from '@/_components/Card';
+import { PageHeader } from '@/_components/ui/PageHeader';
 import ServiceHistory from '../../_components/service-history/ServiceHistory';
 import { IServiceHistoryPage } from '../../_components/service-history/model';
 import { labels } from "@/_lib/labels";
@@ -33,10 +33,12 @@ export default async function Page({
     return (
 
         <Main header={
-            <CardHeader  >
-                 <h3 className="px-1 text-base font-semibold text-gray-900">{labels.vehicles.information}</h3>
-                <DisplayOptionsMenu id={id} pageName='vehicles'></DisplayOptionsMenu>
-            </CardHeader>} narrow={false}>
+            <PageHeader
+                breadcrumb={[{ label: labels.nav.vehicles, href: '/home/vehicles' }, { label: vehicle.regNr ?? '' }]}
+                title={[vehicle.producer, vehicle.model].filter(Boolean).join(' ') || (vehicle.regNr ?? '')}
+                description={vehicle.regNr ?? undefined}
+                actions={<DisplayOptionsMenu id={id} pageName='vehicles'></DisplayOptionsMenu>}
+            />} narrow={false}>
             <dl className="divide-y divide-gray-100"> 
                 <DescriptionItem label={labels.vehicles.makeAndModel} value={[vehicle.producer, vehicle.model].join(' ')}></DescriptionItem>
                 <DescriptionItem label={labels.vehicles.vin} value={vehicle.vin}></DescriptionItem>

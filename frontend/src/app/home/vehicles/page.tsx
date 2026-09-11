@@ -11,7 +11,7 @@ import Link from "next/link";
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
 
   return <Main header={
-    <SearchCardHeader title={labels.vehicles.findVehicles} pageName="vehicles">
+    <SearchCardHeader title={labels.nav.vehicles} pageName="vehicles">
     </SearchCardHeader>
   } narrow={false}>
      <form method="GET" > <Search

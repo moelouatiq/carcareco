@@ -12,13 +12,10 @@ export default async function Main({
 }) {
     return (
        <> 
-                <main className=" lg:pl-62 pb-8">
-                    <div className="  px-4 sm:py-10 sm:px-6 lg:px-8 lg:py-6 ">
-                        {narrow?<Narrow>
-                            <Card header={header}  >  {children}</Card> 
-                        </Narrow>:
-                         <Card header={header}  >  {children}</Card> 
-                        }
+                <main className="lg:pl-60 pb-8">
+                    <div className="min-w-0 px-4 py-6 sm:px-8">
+                        {header}
+                        {narrow ? <Narrow><Card>{children}</Card></Narrow> : <Card>{children}</Card>}
                         
                     </div>
                 </main> 

@@ -1,6 +1,7 @@
  
 import {  PrinterIcon } from '@heroicons/react/20/solid';  
 import Link from 'next/link';
+import { labels } from '@/_lib/labels';
 
  
 export default function PrintPricingLink({
@@ -15,8 +16,8 @@ export default function PrintPricingLink({
     // Opens in a new tab and renders a printable document server side, so prefetching it would do
     // that work for a link most rows never have clicked.
     return (
-      <Link prefetch={false} href={`/print/${pricingName}/${id}`} target='_blank'  className="font-medium text-indigo-600 hover:text-indigo-500">
-        <PrinterIcon aria-hidden="true" className="h-6 w-5 text-gray-400" ></PrinterIcon>
+      <Link prefetch={false} href={`/print/${pricingName}/${id}`} target='_blank'  className="font-medium text-accent-ink hover:underline">
+        <PrinterIcon aria-hidden="true" className="h-6 w-5 text-muted" ></PrinterIcon><span className="sr-only">{labels.actions.print}</span>
      </Link>
     )
 } 

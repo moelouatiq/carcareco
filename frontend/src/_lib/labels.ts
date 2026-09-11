@@ -5,8 +5,15 @@
  * wording -- navigation, common actions, business statuses -- cannot drift between screens.
  */
 export const labels = {
+  app: {
+    name: "Solution Mécanique",
+  },
   nav: {
     work: "Interventions",
+    primary: "Navigation principale",
+    groupWorkshop: "Atelier",
+    groupClients: "Clients",
+    groupManagement: "Gestion",
     clients: "Clients",
     vehicles: "Véhicules",
     inventory: "Inventaire",
@@ -16,14 +23,18 @@ export const labels = {
     account: "Mon compte",
     invoiceOptions: "Options de facturation",
     openUserMenu: "Ouvrir le menu utilisateur",
-    openSidebar: "Ouvrir le menu",
-    closeSidebar: "Fermer le menu",
+    openSidebar: "Ouvrir la navigation",
+    closeSidebar: "Fermer la navigation",
     openOptions: "Ouvrir les options",
     selectTab: "Sélectionner un onglet",
   },
   search: {
+    emptyHint: "Ajustez votre recherche ou vos filtres.",
     empty: "Aucun résultat",
     search: "Rechercher",
+    // The field is named for what it holds, the button for what it does, so the filter panel does
+    // not carry the same word twice.
+    keyword: "Recherche",
     pagination: "Pagination",
     previous: "Précédent",
     next: "Suivant",
@@ -32,6 +43,8 @@ export const labels = {
   },
   actions: {
     edit: "Modifier",
+    print: "Imprimer",
+    download: "Télécharger",
   },
   /**
    * Business statuses. These stay distinct on purpose: "Non terminées" covers every intervention
@@ -48,6 +61,7 @@ export const labels = {
     completed: "Facturées",
   },
   common: {
+    notProvided: "Non renseigné",
     save: "Enregistrer",
     cancel: "Annuler",
     description: "Description",
@@ -55,6 +69,7 @@ export const labels = {
     status: "Statut",
     summary: "Résumé",
     yes: "Oui",
+    no: "Non",
     code: "Code",
     name: "Libellé",
     price: "Prix",
@@ -211,6 +226,10 @@ export const labels = {
     workNumber: "Intervention n°",
     information: "Informations intervention",
     newWork: "Nouvelle intervention",
+    repairJob: "Réparation",
+    manyOffers: "Plusieurs devis",
+    estimateShort: "Devis",
+    invoiceShort: "Facture",
     isInProgress: "En cours",
     findWork: "Rechercher une intervention",
     searchPlaceholder: "numéro, client, VIN ou immatriculation",

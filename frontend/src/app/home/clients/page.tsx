@@ -10,7 +10,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
 
 
   return <Main header={
-    <SearchCardHeader title={labels.clients.findClients} pageName="clients">
+    <SearchCardHeader title={labels.nav.clients} pageName="clients">
     </SearchCardHeader>
   } narrow={false}>
     <form method="GET" > <Search

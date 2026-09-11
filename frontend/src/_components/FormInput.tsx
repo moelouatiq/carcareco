@@ -54,16 +54,16 @@ export default function FormInput({
                     aria-invalid={hasError}
                     aria-describedby={name + '-error'}
                     className={clsx(className,
-                        hasError ? "col-start-1 row-start-1 text-red-900 outline-red-300 placeholder:text-red-400 focus:outline-red-600"
-                            : "text-gray-900 outline-gray-300 placeholder:text-gray-400 focus:outline-indigo-600"
-                        , "block w-full   rounded-md bg-white px-3 py-1.5 text-base  outline-1 -outline-offset-1  focus:outline-2 focus:-outline-offset-2 text-sm/6")}
+                        hasError ? "col-start-1 row-start-1 border-danger-ink text-danger-ink placeholder:text-danger-ink/60"
+                            : "border-line text-ink placeholder:text-muted focus:border-accent"
+                        , "block w-full rounded-md border bg-surface px-3 py-2 text-sm focus:outline-none")}
                 />
                 {hasError && <ExclamationCircleIcon
                     aria-hidden="true"
-                    className="pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-red-500 sm:size-4"
+                    className="pointer-events-none col-start-1 row-start-1 mr-3 size-4 self-center justify-self-end text-danger-ink"
                 />}
             </div>
-            {hasError && <p id={name + '-error'} className="mt-2 text-sm text-red-600">
+            {hasError && <p id={name + '-error'} className="mt-1.5 text-[13px] text-danger-ink">
                 {inputError}
             </p>}
 
@@ -96,7 +96,7 @@ export function FormRadio({
         value={value}
         onChange={onChange}
         type="radio"
-        className="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden"
+        className="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-accent checked:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden"
       />
       <label htmlFor={name} className="block text-sm/6 text-nowrap font-medium text-gray-900">
       {label}

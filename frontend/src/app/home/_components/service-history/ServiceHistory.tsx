@@ -167,8 +167,8 @@ function HistoryDetail({ label, value }: { label: string; value: string }) {
 
 function HistoryActions({ item, compact = false }: { item: IServiceHistoryItem; compact?: boolean }) {
   const workClass = compact
-    ? "text-sm font-medium text-indigo-700 hover:text-indigo-500"
-    : "inline-flex min-h-10 items-center justify-center rounded-md px-3 py-2 text-sm font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-200 hover:bg-indigo-50";
+    ? "text-sm font-medium text-accent-ink hover:text-accent-ink"
+    : "inline-flex min-h-10 items-center justify-center rounded-md px-3 py-2 text-sm font-semibold text-accent-ink ring-1 ring-inset ring-accent hover:bg-accent-soft";
 
   return (
     <div className={clsx("flex flex-wrap", compact ? "flex-col gap-2" : "gap-2")}>

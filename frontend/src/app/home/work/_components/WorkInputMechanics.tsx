@@ -65,7 +65,7 @@ export default function WorkInputMechanics({
                             onChange={(e) => {
                                 setSelectedMechanicId(e.currentTarget.value);
                             }}
-                            className="col-start-1 row-start-1 w-full appearance-none rounded-l-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 text-sm/6"
+                            className="col-start-1 row-start-1 w-full appearance-none rounded-l-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink text-sm/6"
                         >
                             <option value={''}></option>
                             {mechanics?.map((item, index) => {
@@ -87,7 +87,7 @@ export default function WorkInputMechanics({
                             setSelectedMechanics(newSet)
                         }
                     }}
-                    className="flex shrink-0 items-center gap-x-1.5 rounded-r-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white outline-1 -outline-offset-1 outline-indigo-300 hover:bg-indigo-500 focus:relative focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                    className="flex shrink-0 items-center gap-x-1.5 rounded-r-md bg-accent px-3 py-2 text-sm font-semibold text-white outline-1 -outline-offset-1 outline-accent hover:bg-accent-hover focus:relative focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink"
                 >
                     Add
                 </button>

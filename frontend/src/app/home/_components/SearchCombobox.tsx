@@ -4,6 +4,7 @@ import { dataPage } from "@/_lib/client/query-api";
 import TypeAheadCombobox, { ISearchComboboxOnItemChange } from "./TypeAheadCombobox"
 import { useState } from "react";
 import { IVehicleData } from "../vehicles/model";
+import { labels } from "@/_lib/labels";
 
 interface ISearchComboItem
 {
@@ -28,7 +29,7 @@ export function VehiclesCombobox( {
             return [item.producer,item.model].filter(x=>x).join(' ')+ (!item.regNr?'':` (${item.regNr})`)
         }}
         resourceName="vehicles"
-        placeholder="vin, reg nr., owner or make ..." ></SearchCombobox>)
+        placeholder={labels.vehicles.searchPlaceholder} ></SearchCombobox>)
 }
 
 export function ClientsCombobox( {
@@ -51,7 +52,7 @@ export function ClientsCombobox( {
         }}
         onItemChange={onItemChange}
         resourceName="clients"
-        placeholder="name ..." ></SearchCombobox>)
+        placeholder={labels.clients.searchPlaceholder} ></SearchCombobox>)
 }
 
 interface ISearchResultDisplayTextFormatter{

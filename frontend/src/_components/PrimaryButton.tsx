@@ -1,9 +1,8 @@
-import clsx from "clsx"
+import { Button } from './ui/Button'
 
 export interface IButtonClick {
     (event: React.MouseEvent): void
 }
-
 
 export default function PrimaryButton({
     id,
@@ -12,21 +11,16 @@ export default function PrimaryButton({
     className,
     disabled,
 }: {
-    id?:string|undefined,
+    id?: string | undefined,
     children: React.ReactNode,
     onClick?: IButtonClick,
     className?: string | undefined,
     disabled?: boolean | undefined
 }) {
     return (
-        <button
-            id={id}
-            disabled={disabled}
-            type="submit"
-            onClick={onClick}
-            className={clsx(className, "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600")}
-        >
+        <Button id={id} type="submit" tone="primary" disabled={disabled} className={className}
+            onClick={onClick as unknown as React.MouseEventHandler<HTMLButtonElement>}>
             {children}
-        </button>
+        </Button>
     )
 }
