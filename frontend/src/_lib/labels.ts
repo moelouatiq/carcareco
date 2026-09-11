@@ -59,6 +59,8 @@ export const labels = {
     /** Toggle between not-yet-invoiced interventions and issued invoices. */
     work: "Interventions",
     completed: "Facturées",
+    /** Names the toggle itself: a switch is named for what turning it on does. */
+    showInvoices: "Afficher les factures",
   },
   common: {
     notProvided: "Non renseigné",
@@ -230,6 +232,8 @@ export const labels = {
     manyOffers: "Plusieurs devis",
     estimateShort: "Devis",
     invoiceShort: "Facture",
+    downloadEstimate: "Télécharger le devis",
+    downloadInvoice: "Télécharger la facture",
     isInProgress: "En cours",
     findWork: "Rechercher une intervention",
     searchPlaceholder: "numéro, client, VIN ou immatriculation",

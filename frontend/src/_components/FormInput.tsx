@@ -98,7 +98,9 @@ export function FormRadio({
         type="radio"
         className="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-accent checked:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden"
       />
-      <label htmlFor={name} className="block text-sm/6 text-nowrap font-medium text-gray-900">
+      {/* The radios in a group share one name, so htmlFor={name} pointed every label at the same
+          non-existent element and left all of them unnamed. Each radio has its own id. */}
+      <label htmlFor={id} className="block text-sm/6 text-nowrap font-medium text-gray-900">
       {label}
       </label>
       </>

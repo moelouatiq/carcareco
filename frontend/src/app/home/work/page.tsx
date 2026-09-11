@@ -37,7 +37,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
               number={issuance.invoiceNumber}
               downloadingElement={<Spinner></Spinner>}
               hidePaperClip={true}
-              clickableElement={<ArrowDownTrayIcon aria-hidden="true" className="h-6 w-5 text-gray-400" ></ArrowDownTrayIcon>} >
+              clickableElement={<><ArrowDownTrayIcon aria-hidden="true" className="h-6 w-5 text-gray-400" ></ArrowDownTrayIcon><span className="sr-only">{labels.work.downloadInvoice}</span></>} >
             </PricingDownloadLink> </div>
             <div>
               <EmailSentBadge issueance={issuance}></EmailSentBadge>
@@ -67,7 +67,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                     downloadingElement={<Spinner></Spinner>}
                     hidePaperClip={true}
                     hideLabel={false}
-                    clickableElement={<ArrowDownTrayIcon aria-hidden="true" className="h-6 w-5 text-gray-400" ></ArrowDownTrayIcon>} >
+                    clickableElement={<><ArrowDownTrayIcon aria-hidden="true" className="h-6 w-5 text-gray-400" ></ArrowDownTrayIcon><span className="sr-only">{labels.work.downloadEstimate}</span></>} >
                   </PricingDownloadLink> </div>
                   <div> <h5><EmailSentBadge issueance={offerIssuance}></EmailSentBadge></h5></div>
                 </>
