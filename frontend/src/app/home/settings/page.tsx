@@ -6,6 +6,7 @@ import { ButtonLink } from "@/_components/ui/Button";
 import { Section } from "@/_components/ui/Section";
 import { DescriptionItem } from "@/_components/DescriptionItem";
 import { PencilSquareIcon } from "@heroicons/react/16/solid";
+import BackupSection from "./_components/BackupSection";
 import { labels } from "@/_lib/labels";
 
 export default async function Page() {
@@ -58,6 +59,8 @@ export default async function Page() {
                             <DescriptionItem label={labels.settings.emailContent} className="whitespace-pre-line" value={options.pricing.estimate.emailContent}></DescriptionItem>
                         </dl>
                     </Section>
+
+                    <BackupSection />
                 </div>
             </div>
         </main>
