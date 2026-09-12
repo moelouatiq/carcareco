@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Text;
 using System.Threading.Tasks;
 using Carmasters.Core.Application.Configuration;
 using Carmasters.Core.Application.RateLimiting;
 using Carmasters.Core.Application.Services;
-using Carmasters.Core.Persistence.Postgres;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,16 +17,13 @@ namespace Carmasters.Http.Api.Controllers
     public class OptionsController : ControllerBase
     {
         private readonly ITenantConfigService tenantConfigService;
-        private readonly DatabaseBackup backup;
         private readonly ILogger<OptionsController> logger;
 
         public OptionsController(
             ITenantConfigService tenantConfigService,
-            DatabaseBackup backup,
             ILogger<OptionsController> logger)
         {
             this.tenantConfigService = tenantConfigService;
-            this.backup = backup;
             this.logger = logger;
         }
 
@@ -59,15 +54,6 @@ namespace Carmasters.Http.Api.Controllers
                 logger.LogError("Error saving tenant configuration. Type: {ExceptionType}", ex.GetType().Name);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Failed to save configuration");
             }
-        }
-
-        [HttpGet("dbdump")]
-        public async Task<IActionResult> DumpDb()
-        {
-            var script = await backup.Dump();
-            Response.Headers.Append("content-disposition", $"inline;filename=dbdump{DateTime.Now.ToString("yyyyMMddmmss")}.sql");
-
-            return File(Encoding.UTF8.GetBytes(script), "application/octet-stream");
         }
     }
 }

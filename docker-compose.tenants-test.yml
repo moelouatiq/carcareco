@@ -1,0 +1,175 @@
+# Throwaway multi-tenant stack, only to run the tenant isolation test. Its own Compose project
+# (-p carcare-test-backup) and its own tmpfs database: it touches nothing the local dev stack owns.
+#
+# Two tenants are provisioned directly rather than through /api/demo/setup, because that endpoint
+# is deliberately limited to one call per day and could only ever create one of them.
+x-tenant-secrets: &tenant-secrets
+  ${TENANT_SECRETS_FILE:?Point TENANT_SECRETS_FILE at a secrets file with MultiTenancy enabled}:/app/appsettings.Secrets.json:ro
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: ${POSTGRES_DB:-carcare}
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  # Brings the main database up to schema, exactly as the normal stack does.
+  migrate:
+    build:
+      context: .
+      dockerfile: backend/DbUp.Dockerfile
+    volumes:
+      - ./backend/src/Carmasters.Http.Api/appsettings.Secrets.json:/app/appsettings.Secrets.json:ro
+    environment:
+      CARCARE_ADMIN_USERNAME: ${CARCARE_ADMIN_USERNAME:?}
+      CARCARE_ADMIN_PASSWORD: ${CARCARE_ADMIN_PASSWORD:?}
+      CARCARE_ADMIN_EMAIL: ${CARCARE_ADMIN_EMAIL:-admin@example.invalid}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Multi-tenancy needs a template database each tenant is cloned from and a tenancy database
+  # holding public.user for every tenant, then the two tenants themselves with data that tells
+  # them apart. All of it has to exist before the API opens its connection to the template.
+  tenancy-setup:
+    image: postgres:16
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER:?}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?}
+      PGDATABASE: postgres
+      MAIN_DB: ${POSTGRES_DB:-carcare}
+      TENANT_A: ${TENANT_A:-alpha7f3}
+      TENANT_B: ${TENANT_B:-beta9k2}
+      TENANT_A_MARKER: ${TENANT_A_MARKER:-Garage Alpha ISOLATION-A7F3}
+      TENANT_B_MARKER: ${TENANT_B_MARKER:-Garage Beta ISOLATION-B9K2}
+      TENANT_PASSWORD: ${TENANT_PASSWORD:-isolation-test-password}
+    entrypoint:
+      - bash
+      - -lc
+      - |
+        set -e
+
+        # CREATE DATABASE has no IF NOT EXISTS, and this stack is brought up more than once.
+        make_db() {
+          if [ "$$(psql -tAc "select 1 from pg_database where datname = '$$1'")" = "1" ]; then
+            echo "  $$1 already present"
+          else
+            psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE \"$$1\" TEMPLATE \"$$2\""
+            echo "  $$1 created from $$2"
+          fi
+        }
+
+        make_db "carcare-template" "$$MAIN_DB"
+        make_db "carcare-tenancy"  "$$MAIN_DB"
+        make_db "carcare-$$TENANT_A" "carcare-template"
+        make_db "carcare-$$TENANT_B" "carcare-template"
+
+        # Fixed employee ids, because login resolves the signed-in person's name from
+        # domain.employee in the tenant's own database: a user row pointing at nobody fails.
+        EMP_A=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
+        EMP_B=bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb
+
+        # Data that tells the two tenants apart, in a column the workbook is certain to carry.
+        # Each tenant gets the employee its account points at, plus a client, a vehicle and an
+        # intervention carrying its own marker, so the workbook has real rows to compare.
+        seed() {
+          psql -v ON_ERROR_STOP=1 -d "carcare-$$1" <<SEED
+          update tenant_config.requisites set name = '$$2';
+          insert into domain.employee (id, firstname, lastname, proffession, introducedat)
+            values ('$$3'::uuid, '$$2', 'Owner', 'Gerant', now())
+            on conflict (id) do nothing;
+          insert into domain.client (id, address, city, phone, introducedat)
+            values ('11111111-1111-1111-1111-111111111111'::uuid, '$$2 street', '$$2 city', '+212000000', now())
+            on conflict (id) do nothing;
+          insert into domain.privateclient (id, firstname, lastname)
+            values ('11111111-1111-1111-1111-111111111111'::uuid, '$$2', 'Client')
+            on conflict (id) do nothing;
+          insert into domain.vehicle (id, producer, model, regnr, introducedat)
+            values ('22222222-2222-2222-2222-222222222222'::uuid, '$$2', 'Model', '$$1-PLATE', now())
+            on conflict (id) do nothing;
+          insert into domain.work (id, number, clientid, vehicleid, startedon, changedon, starterid, notes)
+            values ('33333333-3333-3333-3333-333333333333'::uuid, 901,
+                    '11111111-1111-1111-1111-111111111111'::uuid,
+                    '22222222-2222-2222-2222-222222222222'::uuid,
+                    now(), now(), '$$3'::uuid, '$$2 notes')
+            on conflict (id) do nothing;
+        SEED
+          echo "  carcare-$$1 seeded"
+        }
+
+        seed "$$TENANT_A" "$$TENANT_A_MARKER" "$$EMP_A"
+        seed "$$TENANT_B" "$$TENANT_B_MARKER" "$$EMP_B"
+
+        # The accounts themselves, in the tenancy database where login looks for them. pgcrypto's
+        # blowfish hashes are the $$2a$$ form BCrypt.Net verifies.
+        psql -v ON_ERROR_STOP=1 -d "carcare-tenancy" <<SQL
+        create extension if not exists pgcrypto;
+        delete from public.user where tenantname in ('$$TENANT_A', '$$TENANT_B');
+        insert into public.user (tenantname, employeeid, username, password, email, validated)
+        values ('$$TENANT_A', '$$EMP_A'::uuid, '$$TENANT_A' || 'admin',
+                crypt('$$TENANT_PASSWORD', gen_salt('bf')), 'a@example.invalid', true),
+               ('$$TENANT_B', '$$EMP_B'::uuid, '$$TENANT_B' || 'admin',
+                crypt('$$TENANT_PASSWORD', gen_salt('bf')), 'b@example.invalid', true);
+        SQL
+        echo "tenants ready"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    volumes:
+      # The repository's own secrets file pins MultiTenancy to false and is loaded after the
+      # environment, so it has to be replaced rather than overridden.
+      - *tenant-secrets
+      - test-browser-cache:/opt/puppeteer
+    tmpfs:
+      - /var/carcare/dataprotection-keys
+      - /var/carcare/pdf
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      DataProtection__KeysDirectory: /var/carcare/dataprotection-keys
+    ports:
+      - "127.0.0.1:16599:15567"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --spider http://localhost:15567/health"]
+      interval: 2s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      tenancy-setup:
+        condition: service_completed_successfully
+
+  tests:
+    build:
+      context: .
+      dockerfile: backend/Tests.Dockerfile
+    env_file:
+      - frontend/.env
+    environment:
+      CARCARE_TEST_API_URL: http://api:15567
+      CARCARE_TEST_TENANCY_API_URL: http://api:15567
+      CARCARE_TEST_USERNAME: ${CARCARE_ADMIN_USERNAME:?}
+      CARCARE_TEST_PASSWORD: ${CARCARE_ADMIN_PASSWORD:?}
+      CARCARE_TEST_TENANT_A_USER: ${TENANT_A:-alpha7f3}admin
+      CARCARE_TEST_TENANT_B_USER: ${TENANT_B:-beta9k2}admin
+      CARCARE_TEST_TENANT_PASSWORD: ${TENANT_PASSWORD:-isolation-test-password}
+      CARCARE_TEST_TENANT_A_MARKER: ${TENANT_A_MARKER:-Garage Alpha ISOLATION-A7F3}
+      CARCARE_TEST_TENANT_B_MARKER: ${TENANT_B_MARKER:-Garage Beta ISOLATION-B9K2}
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  test-browser-cache:

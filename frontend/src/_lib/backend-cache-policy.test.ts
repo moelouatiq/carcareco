@@ -22,6 +22,7 @@ describe('backendCacheControl', () => {
     ['pricings', 'offer', 'some-id', 'pdf'],
     ['users', 'authenticate'],
     ['users', 'profilepicture', 'something-else'],
+    ['backup', 'excel'],
   ])('does not cache %s', (...path: string[]) => {
     expect(backendCacheControl(path)).toBe('private, no-store')
   })

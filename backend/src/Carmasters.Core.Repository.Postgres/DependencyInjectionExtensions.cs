@@ -80,7 +80,6 @@ namespace Carmasters.Core.Repository.Postgres
             services.AddSingleton<DbConnectionProvider>();
             services.AddScoped<DbConnection>(x => new Npgsql.NpgsqlConnection());
             services.AddSingleton<MultiTenancyConnectionDriver>();
-            services.AddSingleton<DatabaseBackup>();
             services.AddScoped<ITenancyRepository, TenancyRepository>();
             return services;
         }

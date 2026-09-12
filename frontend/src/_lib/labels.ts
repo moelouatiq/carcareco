@@ -190,6 +190,16 @@ export const labels = {
     signatureLine: "Ligne de signature",
     emailContent: "Contenu de l’e-mail",
   },
+  backup: {
+    title: "Sauvegarde des données",
+    description:
+      "Téléchargez une copie Excel complète des données de votre garage afin de conserver une sauvegarde locale de vos clients, véhicules, interventions, devis, factures et autres données métier.",
+    download: "Télécharger la sauvegarde Excel",
+    preparing: "Préparation de la sauvegarde…",
+    failed: "Impossible de générer la sauvegarde. Réessayez dans quelques instants.",
+    warning:
+      "Ce fichier contient des données personnelles et commerciales. Conservez-le dans un emplacement sécurisé.",
+  },
   profile: {
     myInformation: "Mes informations",
     personalInformation: "Informations personnelles",
