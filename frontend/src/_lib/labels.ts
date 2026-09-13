@@ -70,6 +70,7 @@ export const labels = {
     showInvoices: "Afficher les factures",
   },
   common: {
+    loading: "Chargement…",
     notProvided: "Non renseigné",
     save: "Enregistrer",
     cancel: "Annuler",
@@ -224,6 +225,7 @@ export const labels = {
     rememberMe: "Se souvenir de moi",
     forgotPassword: "Mot de passe oublié ?",
     signIn: "Se connecter",
+    signingIn: "Connexion…",
     orContinueWith: "Ou continuer avec",
   },
   address: {
