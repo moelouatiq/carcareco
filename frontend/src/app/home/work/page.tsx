@@ -16,6 +16,7 @@ import SearchInput from "../_components/SearchInput";
 import FormInput from "@/_components/FormInput";
 import { labels } from "@/_lib/labels";
 import Link from "next/link";
+import { PendingLinkTrail } from "@/_components/PendingLinkIndicator";
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
 
@@ -90,6 +91,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           <Link prefetch={false} href={'/home/work/' + id}>
             <h5>{labels.work.workNumber} {workNr}
               {' '} {!isInvoiceView && <WorkStatusBadge status={status} ></WorkStatusBadge>}
+              <PendingLinkTrail />
             </h5>
           </Link>
         );

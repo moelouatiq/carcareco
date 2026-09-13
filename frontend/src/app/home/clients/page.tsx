@@ -5,6 +5,7 @@ import { SearchCardHeader } from "../_components/SearchCardHeader";
 import SimpleSearchBar from "../_components/SimpleSearchBar";
 import { labels } from "@/_lib/labels";
 import Link from "next/link";
+import { PendingLinkTrail } from "@/_components/PendingLinkIndicator";
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
 
@@ -22,7 +23,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           return (
             <Link prefetch={false} href={'/home/clients/' + id}>
 
-              {name}
+              {name}<PendingLinkTrail />
             </Link>
           );
         }
