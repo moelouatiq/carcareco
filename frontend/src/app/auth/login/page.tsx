@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { authenticate } from './authenticate'
 import { useActionState } from 'react'
 import { labels } from "@/_lib/labels";
+import SubmitButton from './_components/SubmitButton'
 
 const initialState = {
   error: '',
@@ -11,7 +12,7 @@ const initialState = {
 
 export default function LoginPage() {
  
-  const [state, action] = useActionState(authenticate, initialState);
+  const [state, action, isPending] = useActionState(authenticate, initialState);
  
   return (
     <>
@@ -111,12 +112,7 @@ export default function LoginPage() {
                   </div>
 
                   <div>
-                    <button
-                      type="submit"
-                      className="flex w-full justify-center rounded-md bg-accent px-3 py-1.5 text-sm/6 font-semibold text-ink shadow-xs hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
-                    >
-                      {labels.auth.signIn}
-                    </button>
+                    <SubmitButton isPending={isPending} />
                   </div>
                 </form>
               </div>

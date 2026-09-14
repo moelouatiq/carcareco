@@ -6,6 +6,7 @@ import Main from "../_components/Main";
 import SimpleSearchBar from "../_components/SimpleSearchBar";
 import { labels } from "@/_lib/labels";
 import Link from "next/link";
+import { PendingLinkTrail } from "@/_components/PendingLinkIndicator";
 
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
@@ -45,7 +46,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           dataFormatter: ({ regNr, id }) => {
             return (
               <Link prefetch={false} href={'/home/vehicles/' + id} >
-                <h5 className="font-semibold"> {regNr}</h5>
+                <h5 className="font-semibold"> {regNr}<PendingLinkTrail /></h5>
               </Link>
             );
           }

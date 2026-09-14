@@ -1,6 +1,7 @@
 import { PlusIcon } from "@heroicons/react/16/solid"
 import { PageHeader } from "@/_components/ui/PageHeader"
 import { ButtonLink } from "@/_components/ui/Button"
+import { PendingLinkIcon } from "@/_components/PendingLinkIndicator"
 import { labels } from "@/_lib/labels"
 
 // The action names what will be created rather than saying "add new", so a workshop reads
@@ -32,7 +33,7 @@ export function SearchCardHeader({
           {children}
           {pageName && (
             <ButtonLink href={`/home/${pageName}/new`} tone="primary">
-              <PlusIcon aria-hidden="true" className="-ml-0.5 size-4" />
+              <PendingLinkIcon size="sm" className="-ml-0.5" icon={<PlusIcon aria-hidden="true" className="size-4" />} />
               {createLabel[pageName] ?? labels.actions.edit}
             </ButtonLink>
           )}

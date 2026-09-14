@@ -6,6 +6,7 @@ import React  from "react";
 import { httpGet } from "@/_lib/server/query-api"; 
 import { resourceEditPath, resolveResourcePageName } from "@/_lib/resource-path";
 import { labels } from "@/_lib/labels";
+import { PendingLinkTrail } from "@/_components/PendingLinkIndicator";
 interface DataResult {
   hasMore: boolean,
   items: Record<string, string>[]
@@ -152,8 +153,8 @@ export default async function Search(
                         user opens. Pagination below keeps its prefetch, where it pays off. */}
                     <Link prefetch={false}
                       href={resourceEditPath(resourceName, item[idField], pageName)}
-                      className="font-medium text-accent-ink hover:underline">
-                      {labels.actions.edit}
+                      className="inline-flex items-center font-medium text-accent-ink hover:underline">
+                      {labels.actions.edit}<PendingLinkTrail />
                     </Link>
                   </Td>
                 </Tr>

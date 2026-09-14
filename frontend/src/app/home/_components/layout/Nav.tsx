@@ -12,6 +12,7 @@ import {
 import clsx from "clsx";
 import { usePathname } from 'next/navigation'
 import { labels } from "@/_lib/labels";
+import { PendingLinkIcon } from "@/_components/PendingLinkIndicator";
 
 const iconClass = "size-[18px] shrink-0"
 
@@ -92,7 +93,7 @@ export default function Nav({
                                                 aria-current={current ? 'page' : undefined}
                                                 className={itemClasses(current)}
                                             >
-                                                {item.icon}
+                                                <PendingLinkIcon icon={item.icon} />
                                                 {item.name}
                                             </Link>
                                         </li>
@@ -109,7 +110,7 @@ export default function Nav({
                             aria-current={isCurrent(currentPath, '/home/settings') ? 'page' : undefined}
                             className={itemClasses(isCurrent(currentPath, '/home/settings'))}
                         >
-                            <Cog6ToothIcon aria-hidden="true" className={iconClass} />
+                            <PendingLinkIcon icon={<Cog6ToothIcon aria-hidden="true" className={iconClass} />} />
                             {labels.nav.settings}
                         </Link>
                         {!onSmallScreen && (
