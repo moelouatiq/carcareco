@@ -103,12 +103,12 @@ namespace Carmasters.Core.Domain
             } 
         }
          
-        public virtual void GenerateInvoice(ISequnceNumberProviderFactory numberProvider, int purchaseTax, PaymentType paymentType, short dueDays, Employee issuer)
+        public virtual void GenerateInvoice(ISequnceNumberProviderFactory numberProvider, int purchaseTax, PaymentType paymentType, short dueDays, Employee issuer, bool showVehicleOnInvoice)
         {
             var number = numberProvider.
                 GetNumberProvider<Invoice>();
 
-            this.Invoice = Invoice.CreateFor(this,  number,purchaseTax, paymentType, dueDays, issuer); 
+            this.Invoice = Invoice.CreateFor(this,  number,purchaseTax, paymentType, dueDays, issuer, showVehicleOnInvoice); 
         }
   
         public virtual void WithNotes(string description)

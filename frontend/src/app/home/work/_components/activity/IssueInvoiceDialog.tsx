@@ -9,6 +9,7 @@ import FormInput from "@/_components/FormInput";
 import { issueInvoice } from "../../actions/issueInvoice";
 import FormSwitch from "@/_components/FormSwitch";
 import { labels } from "@/_lib/labels";
+import { vehicleOnInvoice, vehicleOnInvoiceDefault } from "./vehicleOnInvoice";
 
 export default function IssueInvoiceDialog({
     work,
@@ -21,6 +22,8 @@ export default function IssueInvoiceDialog({
     const [dueDays, setDueDays] = useState(1);
     const [sendClientAnEmail,setSendClientAnEmail] = useState(!!work.clientEmail);
     const [clientEmail,setlientEmail] = useState(work.clientEmail??'');
+    const [showVehicleOnInvoice, setShowVehicleOnInvoice] = useState(vehicleOnInvoiceDefault(work.vehicleId));
+    const vehicleChoice = vehicleOnInvoice(work.vehicleId, showVehicleOnInvoice);
 
     return (
         <BaseDialog ref={dialogRef}
@@ -35,6 +38,7 @@ export default function IssueInvoiceDialog({
                     paymentType: selectedPaymentType,
                     sendClientEmail:sendClientAnEmail,
                     clientEmail:clientEmail, 
+                    showVehicleOnInvoice: vehicleChoice.send,
                 })
 
                 result.finally(() => {
@@ -67,6 +71,19 @@ export default function IssueInvoiceDialog({
                                 </Select>
                             </div>
                         </div>
+                        {vehicleChoice.offered && <div className="col-span-full">
+                            <div className="flex items-end">
+                                <div className="flex-auto  ">
+                                    <FormLabel name="showVehicleOnInvoice" label={labels.dialogs.showVehicleOnInvoice} ></FormLabel>
+                                </div>
+                                <div className="mt-2  ">
+                                    <FormSwitch name='showVehicleOnInvoice'
+                                        ariaLabel={labels.dialogs.showVehicleOnInvoice}
+                                        checked={showVehicleOnInvoice}
+                                        onChange={(value) => setShowVehicleOnInvoice(value)}></FormSwitch>
+                                </div>
+                            </div>
+                        </div>}
                         <div className="col-span-full">
                             <div className="flex items-end">
                                 <div className="flex-auto  ">

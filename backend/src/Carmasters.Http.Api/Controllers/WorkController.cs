@@ -1,4 +1,4 @@
-using Carmasters.Core.Application;
+﻿using Carmasters.Core.Application;
 using Carmasters.Core.Application.Configuration;
 using Carmasters.Core.Application.Extensions;
 using Carmasters.Core.Application.RateLimiting;
@@ -570,7 +570,7 @@ from (
             var work = session.Get<Work>(id);
             var issuer = this.Employee();
 
-            work.GenerateInvoice(numberProviderFactory, await GetVatRateaAsync(), model.PaymentType, model.DueDays, issuer);
+            work.GenerateInvoice(numberProviderFactory, await GetVatRateaAsync(), model.PaymentType, model.DueDays, issuer, model.ShowVehicleOnInvoice);
 
             session.Save(work.Invoice);
 
