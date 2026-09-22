@@ -50,8 +50,8 @@ export default async function Page({
                 </>}
                 actions={<DisplayOptionsMenu id={id} pageName='clients'></DisplayOptionsMenu>}
             />} narrow={false}>
-                    <div className="  border-gray-100">
-                        <dl className="divide-y divide-gray-100">
+                    <div className="  border-line">
+                        <dl className="divide-y divide-line">
 
                             {!client.isPrivate ?
                                 <DescriptionItem label={labels.clients.companyName} value={client.name}></DescriptionItem>
@@ -60,7 +60,7 @@ export default async function Page({
                             {client.emailAddresses.length < 2 ?
                                 <DescriptionItem label={labels.clients.emailAddress} value={client.currentEmail}></DescriptionItem>
                                 : <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                    <dt className="text-sm/6 font-medium text-gray-900">{labels.clients.emailAddresses}</dt>
+                                    <dt className="text-sm/6 font-medium text-ink">{labels.clients.emailAddresses}</dt>
                                     <FormList
                                         items={client.emailAddresses}
                                         renderItem={(item) => {

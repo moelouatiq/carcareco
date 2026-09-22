@@ -29,7 +29,7 @@ export default function Select({
         defaultValue={defaultValue}
         value={value}
         onChange={onChange }
-        className="col-start-1 row-start-1 w-full appearance-none rounded-md border border-line bg-surface py-2 pr-8 pl-3 text-sm text-ink focus:border-accent focus:outline-none"
+        className="col-start-1 row-start-1 w-full appearance-none rounded-md border border-line bg-field py-2 pr-8 pl-3 text-sm text-ink focus:border-accent focus:outline-none"
     >
         {children}
     </select>

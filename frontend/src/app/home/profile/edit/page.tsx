@@ -26,8 +26,8 @@ export default async function Page() {
     } narrow={true}>
 
       <div className="space-y-12">
-      <div className="border-b border-gray-900/10 pb-12">
-            <h2 className="text-base/7 font-semibold text-gray-900   my-4" >{labels.profile.personalInformation}</h2>
+      <div className="border-b border-line pb-12">
+            <h2 className="text-base/7 font-semibold text-ink   my-4" >{labels.profile.personalInformation}</h2>
             <form  action={createOrUpdate}>
               
             <div className="  grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -57,8 +57,8 @@ export default async function Page() {
             </form>
           </div>
        
-        <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base/7 font-semibold text-gray-900">{labels.profile.changePassword}</h2>
+        <div className="border-b border-line pb-12">
+          <h2 className="text-base/7 font-semibold text-ink">{labels.profile.changePassword}</h2>
           <form   action={changePassword}>
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-full">
@@ -82,9 +82,9 @@ export default async function Page() {
           </div>
           </form>
         </div>
-        <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base/7 font-semibold text-gray-900">{labels.profile.deleteAccount}</h2>
-          <p className="mt-1 text-sm/6 text-gray-400">{labels.profile.deleteAccountWarning}</p>
+        <div className="border-b border-line pb-12">
+          <h2 className="text-base/7 font-semibold text-ink">{labels.profile.deleteAccount}</h2>
+          <p className="mt-1 text-sm/6 text-muted">{labels.profile.deleteAccountWarning}</p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-full flex items-center justify-end gap-x-6">

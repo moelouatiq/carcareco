@@ -23,10 +23,10 @@ export default async function Page({
 
         <Main header={
             <CardHeader  > 
-                     <h3 className="px-1 text-base font-semibold text-gray-900">{labels.inventory.information}</h3> 
+                     <h3 className="px-1 text-base font-semibold text-ink">{labels.inventory.information}</h3> 
                     <DisplayOptionsMenu id={id} pageName='inventory'></DisplayOptionsMenu> 
             </CardHeader>}>  
-            <dl className="divide-y divide-gray-100">
+            <dl className="divide-y divide-line">
                     <DescriptionItem label={labels.inventory.productCode} value={sparepart.code}></DescriptionItem> 
                     <DescriptionItem label={labels.inventory.productName} value={sparepart.name}></DescriptionItem>   
                     <DescriptionItem label={labels.inventory.quantity} value={sparepart.quantity}></DescriptionItem>  

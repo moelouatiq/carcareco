@@ -34,7 +34,7 @@ export default function ButtonGroup({
                  index==(normalButtons.length-1)&&menuButtons.length==0&&"rounded-r-md", 
                     // Ink on amber is 6.80:1; the white this replaced was 2.17:1, under the 4.5:1 threshold.
                     opt.isPrimary ? "relative inline-flex items-center  -ml-px bg-accent px-3 py-2 text-sm font-semibold text-ink   hover:bg-accent-hover focus:z-10" 
-                                    :clsx(opt.redText?"text-red-900 ring-red-300 hover:bg-red-50":"text-gray-900 ring-gray-300 hover:bg-gray-50", "relative  inline-flex items-end  -ml-px bg-white px-3 py-2 text-sm font-semibold  ring-1 ring-inset  focus:z-10"))
+                                    :clsx(opt.redText?"text-red-900 ring-red-300 hover:bg-red-50":"text-ink ring-line hover:bg-neutral-soft", "relative  inline-flex items-end  -ml-px bg-surface px-3 py-2 text-sm font-semibold  ring-1 ring-inset  focus:z-10"))
 
             return opt.href ?
                 <Link key={index} href={opt.href} className={className}>{opt.name}</Link> :
@@ -42,17 +42,17 @@ export default function ButtonGroup({
         })}
         {menuButtons.length>0 && 
           <Menu as="div" className="relative -ml-px block">
-            <MenuButton className="relative  inline-flex items-end rounded-r-md bg-white px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-10">
+            <MenuButton className="relative  inline-flex items-end rounded-r-md bg-surface px-2 py-2 text-muted ring-1 ring-line ring-inset hover:bg-neutral-soft focus:z-10">
                 <span className="sr-only">{labels.nav.openOptions}</span>
                 <ChevronDownIcon aria-hidden="true" className="size-5" />
             </MenuButton>
             <MenuItems
                 transition
                 modal={false}
-                className=" absolute bottom-full  right-0 z-20 mb-2 -mr-1 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in">
+                className=" absolute bottom-full  right-0 z-20 mb-2 -mr-1 w-56 origin-top-right rounded-md bg-surface ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in">
                 <div className="py-1 z-20">
                     {options.filter(x => x.inMenu).map((opt,index) => {
-                        const className = clsx(opt.redText?"text-red-700   data-focus:text-red-900":"text-gray-700   data-focus:text-gray-900", "block z-20 px-4 py-2 text-sm  data-focus:outline-hidden") 
+                        const className = clsx(opt.redText?"text-red-700   data-focus:text-red-900":"text-ink   data-focus:text-ink", "block z-20 px-4 py-2 text-sm  data-focus:outline-hidden") 
                         return (
                             <MenuItem key={index}>
                                {opt.href ?

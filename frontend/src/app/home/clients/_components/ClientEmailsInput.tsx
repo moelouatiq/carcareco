@@ -87,7 +87,7 @@ export default function ClientEmailsInput({
                         return (
                           <>
                             <div className="flex w-0 flex-1 items-center">
-                                <EnvelopeIcon aria-hidden="true" className="size-5 shrink-0 text-gray-400" />
+                                <EnvelopeIcon aria-hidden="true" className="size-5 shrink-0 text-muted" />
                                 <div className="ml-4 flex min-w-0 flex-1 gap-2">
                                     <span className="truncate font-medium">{mail}</span>
                                     {isPrimary && <BlueBadge text={labels.clients.primary} ></BlueBadge>}  
@@ -101,10 +101,10 @@ export default function ClientEmailsInput({
                                             setCurrentEmail(mail);
                                         }}
                                         type="button"
-                                        className="rounded-md bg-white font-medium text-accent-ink hover:underline">
+                                        className="rounded-md bg-surface font-medium text-accent-ink hover:underline">
                                         Set as primary
                                     </button>}
-                                <span aria-hidden="true" className="text-gray-200">
+                                <span aria-hidden="true" className="text-line">
                                     |
                                 </span>
                                 <button type="button"
@@ -115,7 +115,7 @@ export default function ClientEmailsInput({
                                             setCurrentEmail(emails[0])
                                         } 
                                     }}
-                                    className="rounded-md bg-white font-medium text-gray-900 hover:text-gray-800">
+                                    className="rounded-md bg-surface font-medium text-ink hover:text-ink">
                                     Remove
                                 </button>
                             </div>

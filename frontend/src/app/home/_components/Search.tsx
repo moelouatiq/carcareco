@@ -83,8 +83,8 @@ export default async function Search(
       if (!col.dataClasses) {
         col.dataClasses = (item, index) => {
           return clsx(index === 0 ?
-            "font-medium whitespace-nowrap text-gray-900" :
-            "whitespace-nowrap text-gray-500");
+            "font-medium whitespace-nowrap text-ink" :
+            "whitespace-nowrap text-muted");
         }
       }
     })
@@ -107,8 +107,8 @@ export default async function Search(
     <div className="sm:flex sm:items-center">
       <div className="sm:flex-auto">
         
-        {/* <h1 className="text-base font-semibold text-gray-900">{displayName}</h1>
-                            <p className="mt-2 text-sm text-gray-700">
+        {/* <h1 className="text-base font-semibold text-ink">{displayName}</h1>
+                            <p className="mt-2 text-sm text-ink">
                                
                             </p> */}
           

@@ -67,7 +67,7 @@ export default function WorkInputMechanics({
                             onChange={(e) => {
                                 setSelectedMechanicId(e.currentTarget.value);
                             }}
-                            className="col-start-1 row-start-1 w-full appearance-none rounded-l-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink text-sm/6"
+                            className="col-start-1 row-start-1 w-full appearance-none rounded-l-md bg-surface py-1.5 pr-8 pl-3 text-base text-ink outline-1 -outline-offset-1 outline-line focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink text-sm/6"
                         >
                             <option value={''}></option>
                             {mechanics?.map((item, index) => {
@@ -76,7 +76,7 @@ export default function WorkInputMechanics({
                         </select>
                         <ChevronDownIcon
                             aria-hidden="true"
-                            className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+                            className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-muted sm:size-4"
                         />
                     </div>
                 </div>
@@ -134,7 +134,7 @@ export default function WorkInputMechanics({
                 renderItem={(item) => {
                     return (
                         <> <div className="flex w-0 flex-1 items-center">
-                            <UserCircleIcon aria-hidden="true" className="size-5 shrink-0 text-gray-400" />
+                            <UserCircleIcon aria-hidden="true" className="size-5 shrink-0 text-muted" />
                             <div className="ml-4 flex min-w-0 flex-1 gap-2">
                                 <span className="truncate font-medium">{item.name}</span>
                             </div>
@@ -147,7 +147,7 @@ export default function WorkInputMechanics({
                                         selectedMechanics.splice(selectedMechanics.indexOf(item), 1);
                                         setSelectedMechanics([...selectedMechanics]);
                                     }}
-                                    className="rounded-md bg-white font-medium text-gray-900 hover:text-gray-800">
+                                    className="rounded-md bg-surface font-medium text-ink hover:text-ink">
                                     Remove
                                 </button>
                             </div>

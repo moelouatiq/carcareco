@@ -50,7 +50,7 @@ export default function ClientInput({
     return (
         <>
             <div className="space-y-12">
-                <div className="border-b border-gray-900/10 pb-12">
+                <div className="border-b border-line pb-12">
                    <Field className="flex items-center mb-4 ">
                             <FormSwitch 
                             name='isCompany' 
@@ -98,7 +98,7 @@ export default function ClientInput({
                     </div>
                 </div>
             </div>
-            <div className="border-b border-gray-900/10 pb-12">
+            <div className="border-b border-line pb-12">
                 <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                     <div className="col-span-full">
                         <FormCheckBox name='complicated' label={labels.clients.complicatedClient} defaultChecked={client?.isAsshole}></FormCheckBox>

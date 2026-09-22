@@ -43,7 +43,7 @@ export default function IssueInvoiceDialog({
                 await result;
             }}>
             <div className="space-y-12">
-                <div className="border-b border-gray-900/10 pb-12">
+                <div className="border-b border-line pb-12">
 
                     <div className="mt-10 grid grid-cols-2 gap-x-2 gap-y-2 grid-cols-3">
 

@@ -27,8 +27,8 @@ export default async function Page( ) {
       } narrow={true}>
         <form action={createOrUpdate}>
       <div className="space-y-12">
-        <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base/7 font-semibold text-gray-900  my-4">{labels.settings.companyInformation}</h2>
+        <div className="border-b border-line pb-12">
+          <h2 className="text-base/7 font-semibold text-ink  my-4">{labels.settings.companyInformation}</h2>
           
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -56,8 +56,8 @@ export default async function Page( ) {
             </div> 
           </div>
          
-        <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base/7 font-semibold text-gray-900">{labels.settings.invoiceOptions}</h2> 
+        <div className="border-b border-line pb-12">
+          <h2 className="text-base/7 font-semibold text-ink">{labels.settings.invoiceOptions}</h2> 
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
              <div className="sm:col-span-2">
@@ -82,8 +82,8 @@ export default async function Page( ) {
           </div>
         </div>
 
-        <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base/7 font-semibold text-gray-900">{labels.settings.offerOptions}</h2> 
+        <div className="border-b border-line pb-12">
+          <h2 className="text-base/7 font-semibold text-ink">{labels.settings.offerOptions}</h2> 
           <div className="mt-10 space-y-10">
           <div className="sm:col-span-full">
                 <FormTextArea name='estimateEmailContent' rows={10} label={labels.settings.emailContent} defaultValue={options.pricing.estimate.emailContent}></FormTextArea> 

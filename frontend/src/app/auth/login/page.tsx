@@ -17,14 +17,14 @@ export default function LoginPage() {
   return (
     <>
 
-      <div className="bg-white flex min-h-full flex-1">
+      <div className="bg-surface flex min-h-full flex-1">
         <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
               <Image alt="B-dec" width="50" height="50" className="h-10 w-auto" src="/logo.png" ></Image>
 
-              <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-gray-900">{labels.auth.signInTitle}</h2>
-              {/* <p className="mt-2 text-sm/6 text-gray-500">
+              <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-ink">{labels.auth.signInTitle}</h2>
+              {/* <p className="mt-2 text-sm/6 text-muted">
                 Not a member?{' '}
                 <a href="#" className="font-semibold text-accent-ink hover:underline">
                   Start a 14 day free trial
@@ -37,7 +37,7 @@ export default function LoginPage() {
                 {state?.error && <p>{state.error}</p>}
                 <form action={action} className="space-y-6">
                   <div>
-                    <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
+                    <label htmlFor="username" className="block text-sm/6 font-medium text-ink">
                       {labels.auth.username}
                     </label>
                     <div className="mt-2">
@@ -46,13 +46,13 @@ export default function LoginPage() {
                         name="username"
                         type="text"
                         required
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink text-sm/6"
+                        className="block w-full rounded-md bg-surface px-3 py-1.5 text-base text-ink outline-1 -outline-offset-1 outline-line placeholder:text-muted focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink text-sm/6"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
+                    <label htmlFor="password" className="block text-sm/6 font-medium text-ink">
                       {labels.auth.password}
                     </label>
                     <div className="mt-2">
@@ -62,7 +62,7 @@ export default function LoginPage() {
                         type="password"
                         required
                         autoComplete="current-password"
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink text-sm/6"
+                        className="block w-full rounded-md bg-surface px-3 py-1.5 text-base text-ink outline-1 -outline-offset-1 outline-line placeholder:text-muted focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink text-sm/6"
                       />
                     </div>
                   </div>
@@ -75,7 +75,7 @@ export default function LoginPage() {
                             id="remember-me"
                             name="remember-me"
                             type="checkbox"
-                            className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-accent checked:bg-accent indeterminate:border-accent indeterminate:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+                            className="col-start-1 row-start-1 appearance-none rounded-sm border border-line bg-surface checked:border-accent checked:bg-accent indeterminate:border-accent indeterminate:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink disabled:border-line disabled:bg-neutral-soft disabled:checked:bg-neutral-soft forced-colors:appearance-auto"
                           />
                           <svg
                             fill="none"
@@ -99,7 +99,7 @@ export default function LoginPage() {
                           </svg>
                         </div>
                       </div>
-                      <label htmlFor="remember-me" className="block text-sm/6 text-gray-900">
+                      <label htmlFor="remember-me" className="block text-sm/6 text-ink">
                         {labels.auth.rememberMe}
                       </label>
                     </div>
@@ -120,17 +120,17 @@ export default function LoginPage() {
               <div className="mt-10">
                 <div className="relative">
                   <div aria-hidden="true" className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-200" />
+                    <div className="w-full border-t border-line" />
                   </div>
                   <div className="relative flex justify-center text-sm/6 font-medium">
-                    <span className="bg-white px-6 text-gray-900">{labels.auth.orContinueWith}</span>
+                    <span className="bg-surface px-6 text-ink">{labels.auth.orContinueWith}</span>
                   </div>
                 </div>
 
                 <div className="mt-6 grid grid-cols-1 gap-4">
                   <a
                     href="#"
-                    className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50 focus-visible:ring-transparent"
+                    className="flex w-full items-center justify-center gap-3 rounded-md bg-surface px-3 py-2 text-sm font-semibold text-ink ring-1 shadow-xs ring-line ring-inset hover:bg-neutral-soft focus-visible:ring-transparent"
                      >
                     <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
                       <path

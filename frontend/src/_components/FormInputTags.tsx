@@ -32,18 +32,18 @@ export default function FormInputTags(
     }
 
     return (
-        <div className="mt-2 flex flex-wrap items-center border border-gray-300 rounded-md p-2 space-x-2">
+        <div className="mt-2 flex flex-wrap items-center border border-line rounded-md p-2 space-x-2">
             <div id="tags-container" className="flex flex-wrap items-center gap-2">
                 {
                     tags?.map((tag,index) => { 
                         return (
-                            <div key={index} className="flex items-center border border-accent focus:outline-hidden bg-accent-soft font-sm text-gray-900 px-2 rounded-sm py-0.5 text-sm">
+                            <div key={index} className="flex items-center border border-accent focus:outline-hidden bg-accent-soft font-sm text-ink px-2 rounded-sm py-0.5 text-sm">
                                 <span>{tag}</span>
                                 <input type="hidden" value={tag} name={name} ></input>
                                 <button type="button" 
                                     onClick={()=>remove(tag)}  
                                     className="ml-2 -ml-px  focus:z-10 " >
-                                    <XMarkIcon aria-hidden="true" className=" -ml-0.5 size-5  text-gray-400 hover:text-gray-900" />
+                                    <XMarkIcon aria-hidden="true" className=" -ml-0.5 size-5  text-muted hover:text-ink" />
                                 </button>
                             </div>
                         )

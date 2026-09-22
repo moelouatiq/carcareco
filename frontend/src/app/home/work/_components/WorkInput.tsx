@@ -55,7 +55,7 @@ export default function WorkInput({
     return (
         <>
             <div className="space-y-12 ">
-                <div className="border-b  border-gray-900/10 pb-12">
+                <div className="border-b  border-line pb-12">
 
                     <div className="grid grid grid-flow-row grid-cols-1  gap-4">
                         {!work && <div>
@@ -77,7 +77,7 @@ export default function WorkInput({
 
                         <div className=" ">
                             <FormLabel name='clientId' label={labels.work.client}>
-                                <span className="ml-4 float-right text-gray-500">
+                                <span className="ml-4 float-right text-muted">
                                     {labels.work.clientUndisclosed}{' '}
                                     <FormSwitch
                                         name='clientUndisclosed'
@@ -106,7 +106,7 @@ export default function WorkInput({
                         </div>
                         <div className='  ' >
                             <FormLabel name='vehicleId' label={labels.work.vehicle}>
-                                {!clientUndisclosed && <span className="ml-2 float-right text-gray-500">
+                                {!clientUndisclosed && <span className="ml-2 float-right text-muted">
                                     {labels.work.allVehicles}{' '}
                                     <FormSwitch
                                         name='onlyClientVehicles'

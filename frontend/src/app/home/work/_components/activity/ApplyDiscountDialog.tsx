@@ -31,7 +31,7 @@ export default function ApplyDiscountsDialog({
            dialogRef.current?.close();
         }}>
          <div className="space-y-12  ">
-         <div className="border-b mt-4  border-gray-900/10 pb-12">
+         <div className="border-b mt-4  border-line pb-12">
           <FormLabel name='name' label={labels.dialogs.percent}></FormLabel>
          <FormInput
                 name='item'

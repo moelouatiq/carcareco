@@ -13,7 +13,7 @@ export default function NoProducts({
     const editUrl = `/home/work/${work.id}/${activityId}/edit/startfresh`;
     return ( <div className="text-center">
                             
-        <h3 className="mt-2 text-sm font-semibold text-gray-900">{labels.work.noProducts}</h3> 
+        <h3 className="mt-2 text-sm font-semibold text-ink">{labels.work.noProducts}</h3> 
        {!work.issuance&& <div className="my-6">
           <Link href={editUrl}
             type="button"

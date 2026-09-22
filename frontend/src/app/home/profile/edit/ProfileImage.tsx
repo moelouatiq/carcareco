@@ -37,7 +37,7 @@ export default function ProfileImage({
                 src={decodeURIComponent(selectedImage)}
                 width={100}
                 height={100}
-                className="size-24 flex-none rounded-lg bg-gray-800 object-cover"
+                className="size-24 flex-none rounded-lg bg-neutral-soft object-cover"
             />
             <div>
                 <input type='hidden' name='profileImageBase64' value={selectedBase64Image}></input>
@@ -47,11 +47,11 @@ export default function ProfileImage({
                     onClick={() => {
                         document.getElementById('imageUpload')?.click();
                     }}
-                    className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50"
+                    className="rounded-md bg-surface px-3 py-2 text-sm font-semibold text-ink ring-1 shadow-xs ring-line ring-inset hover:bg-neutral-soft"
                 >
                     Change avatar
                 </button>
-                <p className="mt-2 text-xs/5 text-gray-400">JPG, GIF or PNG. 5MB max.</p>
+                <p className="mt-2 text-xs/5 text-muted">JPG, GIF or PNG. 5MB max.</p>
             </div>
         </div>
     )

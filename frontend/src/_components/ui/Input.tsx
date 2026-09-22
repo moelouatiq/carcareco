@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { MagnifyingGlassIcon } from '@heroicons/react/16/solid'
 
 export const controlClasses =
-  'block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink ' +
+  'block w-full rounded-md border border-line bg-field px-3 py-2 text-sm text-ink ' +
   'placeholder:text-muted focus:border-accent focus:outline-none disabled:bg-app disabled:text-muted'
 
 export function Label({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {

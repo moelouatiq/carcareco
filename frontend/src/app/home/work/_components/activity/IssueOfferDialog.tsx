@@ -52,7 +52,7 @@ export default function IssueOfferDialog({
                    }  
                 }}> 
                     <div className="space-y-12">
-                        <div className="border-b border-gray-900/10 pb-12"> 
+                        <div className="border-b border-line pb-12"> 
                             <div className="mt-10 grid grid-cols-1 gap-x-2 gap-y-2 grid-cols-6"> 
                                 <div className="col-span-full">
                                 <div className="flex items-end">

@@ -54,7 +54,7 @@ export default function TypeAheadCombobox<T>({
   }
  
   if(!className){
-    className = " block w-full rounded-md bg-white py-1.5 pr-12 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink text-sm/6";
+    className = " block w-full rounded-md bg-field py-1.5 pr-12 pl-3 text-base text-ink outline-1 -outline-offset-1 outline-line placeholder:text-muted focus:outline-2 focus:-outline-offset-2 focus:outline-accent-ink text-sm/6";
   }
 
   
@@ -93,24 +93,24 @@ export default function TypeAheadCombobox<T>({
             }}
           />
           {showLookingGlass && <MagnifyingGlassIcon
-            className="pointer-events-none col-start-1 row-start-1 ml-4 size-5 self-center text-gray-400"
+            className="pointer-events-none col-start-1 row-start-1 ml-4 size-5 self-center text-muted"
             aria-hidden="true"
           />}
 
           {clearable && <XMarkIcon
             aria-hidden="true"
             onClick={() => { }}
-            className="cursor-pointer col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500  size-4"
+            className="cursor-pointer col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-muted  size-4"
           />}
           </div> 
           
           {datasource && datasource.length > 0 && (
-            <ComboboxOptions modal={false}  className={clsx(comboboxOptionsAbsolute?("w-80  sm:w-"+comboboxOptionsWidth):"w-full" ,"absolute z-10 mt-1 max-h-60 overflow-auto rounded-md bg-white py-1 text-base ring-1 shadow-lg ring-black/5 focus:outline-hidden  text-sm")} >
+            <ComboboxOptions modal={false}  className={clsx(comboboxOptionsAbsolute?("w-80  sm:w-"+comboboxOptionsWidth):"w-full" ,"absolute z-10 mt-1 max-h-60 overflow-auto rounded-md bg-field py-1 text-base ring-1 shadow-lg ring-black/5 focus:outline-hidden  text-sm")} >
               {datasource.map((item, index) => (
                 <ComboboxOption
                   key={index}
                   value={item}
-                  className="group relative cursor-default py-2 pr-9 pl-3 text-gray-900 select-none data-focus:bg-accent data-focus:text-white data-focus:outline-hidden"
+                  className="group relative cursor-default py-2 pr-9 pl-3 text-ink select-none data-focus:bg-accent data-focus:text-white data-focus:outline-hidden"
                 >
                   <span className="block truncate group-data-selected:font-semibold">
                     {optionFormatter(item)}

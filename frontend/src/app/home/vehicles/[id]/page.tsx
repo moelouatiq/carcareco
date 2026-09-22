@@ -39,7 +39,7 @@ export default async function Page({
                 description={vehicle.regNr ?? undefined}
                 actions={<DisplayOptionsMenu id={id} pageName='vehicles'></DisplayOptionsMenu>}
             />} narrow={false}>
-            <dl className="divide-y divide-gray-100"> 
+            <dl className="divide-y divide-line"> 
                 <DescriptionItem label={labels.vehicles.makeAndModel} value={[vehicle.producer, vehicle.model].join(' ')}></DescriptionItem>
                 <DescriptionItem label={labels.vehicles.vin} value={vehicle.vin}></DescriptionItem>
                 <DescriptionItem label={labels.vehicles.regNr} value={vehicle.regNr}></DescriptionItem>

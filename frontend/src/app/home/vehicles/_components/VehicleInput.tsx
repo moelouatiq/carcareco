@@ -32,7 +32,7 @@ export default function VehicleInput({
     return (
         <>
             <div className="space-y-12">
-                <div className="border-b border-gray-900/10 pb-12">
+                <div className="border-b border-line pb-12">
                     
                     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                     <div className="sm:col-span-2">
@@ -78,7 +78,7 @@ export default function VehicleInput({
                     </div>
                 </div>
             </div>
-            <div className="border-b border-gray-900/10 pb-12">
+            <div className="border-b border-line pb-12">
                 <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
                     <div className="col-span-full">
