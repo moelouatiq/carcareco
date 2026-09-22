@@ -484,6 +484,113 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
         Assert.Equal(HttpStatusCode.BadRequest, invalidWork.StatusCode);
     }
 
+    /// <summary>
+    /// Proves the dialog's choice survives the whole way to the stored document.
+    /// </summary>
+    /// <remarks>
+    /// The invoice's own HTML is what is read back, because that is rendered from the lines the
+    /// document stored at issue time: if the flag had not reached the domain, there would be
+    /// nothing there to find.
+    /// </remarks>
+    [Fact]
+    public async Task IssuingAnInvoiceWithTheVehicleShownCapturesItOnTheDocument()
+    {
+        var clientId = await CreatePrivateClient("Vehicle", "Shown");
+        var vehicleId = await CreateVehicle(clientId, "SHOWN-01", "VINSHOWN000000001");
+        var workId = await PostWork(clientId, vehicleId, "Radiator replacement");
+
+        using (var issued = await fixture.AuthorizedClient.PutAsJsonAsync(
+            $"/api/work/{workId}/invoice/issue",
+            new { paymentType = 1, dueDays = 14, sendClientEmail = false, clientEmail = "", showVehicleOnInvoice = true }))
+        {
+            Assert.Equal(HttpStatusCode.OK, issued.StatusCode);
+        }
+
+        var document = await ReadInvoiceText(workId);
+
+        Assert.Contains("Renault", document);
+        Assert.Contains("SHOWN-01", document);
+        Assert.Contains("VINSHOWN000000001", document);
+
+        // The block is headed Véhicule and the stored line starts with the same word, so the two
+        // must not end up printed one after the other.
+        Assert.DoesNotContain("Véhicule Véhicule :", document);
+
+        await AssertInvoicePdfRenders(workId);
+    }
+
+    [Fact]
+    public async Task IssuingAnInvoiceWithTheVehicleHiddenLeavesItOffTheDocument()
+    {
+        var clientId = await CreatePrivateClient("Vehicle", "Hidden");
+        var vehicleId = await CreateVehicle(clientId, "HIDDEN-01", "VINHIDDEN00000001");
+        var workId = await PostWork(clientId, vehicleId, "Radiator replacement");
+
+        using (var issued = await fixture.AuthorizedClient.PutAsJsonAsync(
+            $"/api/work/{workId}/invoice/issue",
+            new { paymentType = 1, dueDays = 14, sendClientEmail = false, clientEmail = "", showVehicleOnInvoice = false }))
+        {
+            Assert.Equal(HttpStatusCode.OK, issued.StatusCode);
+        }
+
+        var document = await ReadInvoiceText(workId);
+
+        Assert.DoesNotContain("HIDDEN-01", document);
+        Assert.DoesNotContain("VINHIDDEN00000001", document);
+        Assert.DoesNotContain("Véhicule", document);
+
+        // The rest of the invoice is untouched by the choice.
+        Assert.Contains("Net à payer", document);
+
+        await AssertInvoicePdfRenders(workId);
+    }
+
+    [Fact]
+    public async Task AVehicleWithNoVinLeavesNoEmptyLabelOnTheInvoice()
+    {
+        var clientId = await CreatePrivateClient("Vehicle", "NoVin");
+        var vehicleId = await CreateVehicle(clientId, "NOVIN-01", string.Empty);
+        var workId = await PostWork(clientId, vehicleId, "Radiator replacement");
+
+        using (var issued = await fixture.AuthorizedClient.PutAsJsonAsync(
+            $"/api/work/{workId}/invoice/issue",
+            new { paymentType = 1, dueDays = 14, sendClientEmail = false, clientEmail = "", showVehicleOnInvoice = true }))
+        {
+            Assert.Equal(HttpStatusCode.OK, issued.StatusCode);
+        }
+
+        var document = await ReadInvoiceText(workId);
+
+        Assert.Contains("NOVIN-01", document);
+        // The document stores "VIN : " with nothing behind it; the page must drop that line
+        // rather than print a bare label.
+        Assert.DoesNotMatch(@"VIN\s*:\s*(?![A-Za-z0-9])", document);
+
+        await AssertInvoicePdfRenders(workId);
+    }
+
+    /// <summary>The invoice really renders as a PDF, not only as the HTML behind it.</summary>
+    private async Task AssertInvoicePdfRenders(Guid workId)
+    {
+        using var response = await fixture.AuthorizedClient.GetAsync($"/api/pricings/invoice/{workId}/pdf");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("application/pdf", response.Content.Headers.ContentType?.MediaType);
+
+        var bytes = await response.Content.ReadAsByteArrayAsync();
+        Assert.True(bytes.Length > 1000, $"The PDF came back at {bytes.Length} bytes.");
+        Assert.Equal("%PDF", System.Text.Encoding.ASCII.GetString(bytes, 0, 4));
+    }
+
+    /// <summary>The invoice as text, with Razor's entity encoding undone so accents compare.</summary>
+    private async Task<string> ReadInvoiceText(Guid workId)
+    {
+        using var response = await fixture.AuthorizedClient.GetAsync($"/api/pricings/invoice/{workId}/html");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var html = await response.Content.ReadAsStringAsync();
+        return System.Net.WebUtility.HtmlDecode(html);
+    }
+
     private async Task<Guid> PostGuid(string path, object body)
     {
         using var response = await fixture.AuthorizedClient.PostAsJsonAsync(path, body);

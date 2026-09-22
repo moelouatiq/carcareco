@@ -9,13 +9,15 @@ export async function issueInvoice({
     dueDays,
     paymentType,
     sendClientEmail,
-    clientEmail
+    clientEmail,
+    showVehicleOnInvoice
 }:{
     workId:string,
     dueDays:number,
     paymentType:number,
     sendClientEmail:boolean,
     clientEmail:string, 
+    showVehicleOnInvoice:boolean,
 }) {
 
     const response = await httpPut({
@@ -24,7 +26,10 @@ export async function issueInvoice({
             dueDays,
             paymentType,
             sendClientEmail,
-            clientEmail
+            clientEmail,
+            // Decides what this invoice captures as it is issued; documents already sent are
+            // untouched, because the lines are stored on the document, not read back later.
+            showVehicleOnInvoice
         }
     });
     await response.text();

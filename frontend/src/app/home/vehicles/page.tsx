@@ -55,7 +55,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           dataField: 'ownerName',
           headerText: labels.vehicles.owner,
           dataFormatter: ({ ownerName, ownerId }) => {
-            if (!ownerName) return <p className="font-italic text-gray-400">{labels.vehicles.noOwner}</p>;
+            if (!ownerName) return <p className="font-italic text-muted">{labels.vehicles.noOwner}</p>;
             return (
               <Link prefetch={false} href={'/home/clients/' + ownerId} >
                 <h5 >{ownerName}</h5>

@@ -194,14 +194,14 @@ const TimeoutWarningModal = ({ isOpen, requestLogOffTheApp, requestUsingApp,timo
             onClose={()=>{ }}  className="relative z-10">
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+        className="fixed inset-0 bg-app0/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
       />
 
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
           <DialogPanel
             transition
-            className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+            className="relative transform overflow-hidden rounded-lg bg-surface px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
           >
              
             <div className="sm:flex sm:items-start">
@@ -209,11 +209,11 @@ const TimeoutWarningModal = ({ isOpen, requestLogOffTheApp, requestUsingApp,timo
                 <ExclamationTriangleIcon aria-hidden="true" className="size-6 text-red-600" />
               </div>
               <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
+                <DialogTitle as="h3" className="text-base font-semibold text-ink">
                 Session about to expire ({time.timeSpan.m.toString().padStart(2, "0")}:{time.timeSpan.s.toString().padStart(2, "0")})
                 </DialogTitle>
                 <div className="mt-2">
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted">
                     Do you want to stay logged in? 
                   </p>
                 </div>
@@ -233,7 +233,7 @@ const TimeoutWarningModal = ({ isOpen, requestLogOffTheApp, requestUsingApp,timo
               <button
                 type="button"
                 onClick={requestLogOffTheApp}
-                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                className="mt-3 inline-flex w-full justify-center rounded-md bg-surface px-3 py-2 text-sm font-semibold text-ink ring-1 shadow-xs ring-line ring-inset hover:bg-neutral-soft sm:mt-0 sm:w-auto"
               >
                 No
               </button>

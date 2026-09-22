@@ -8,32 +8,48 @@
   /* The whole interface is built from these. Adding a raw Tailwind colour to a screen means the
      screen has drifted from the palette, so reach for a token first.
 
-     The accent is a mid amber: readable as a surface, not as text. Contrast against white is
-     2.17:1, so it is never used for a label. Text that has to look accented uses accent-ink
-     (5.76:1 on white), and the primary button is the accent behind ink (6.80:1) rather than the
-     white-on-amber that would fail. */
-  --color-app: #faf9f6;
-  --color-surface: #ffffff;
-  --color-sidebar: #fcfbf8;
-  --color-line: #e8e5df;
-  --color-line-strong: #d8d4cc;
+     A workshop screen is looked at all day under shop lighting, so nothing here is white. The
+     surfaces sit a few steps down from it, warm rather than grey, which takes the glare off
+     without making anything dark: this is a light theme, just a quieter one. Every pairing below
+     was measured, and the ones that carry text clear WCAG AA:
 
-  --color-ink: #292824;
-  --color-muted: #73716b;
+       ink / surface 13.06   ink / app 11.92   ink / sidebar 10.96
+       muted / surface 5.55  muted / app 5.07  muted / sidebar 4.66
+       accent-ink / surface 5.10                accent-ink / app 4.66
+
+     The accent is a mid amber: readable as a surface, not as text. Text that has to look accented
+     uses accent-ink, and the primary button is the accent behind ink (6.79:1) rather than the
+     white-on-amber that would fail. accent-ink never labels anything on the sidebar, where it
+     would reach 4.28:1; it appears there only as the focus ring, which is not text and needs 3:1.
+
+     The soft badge backgrounds are a shade below the surface rather than above it. Left near
+     white they would have become the brightest thing on a calmer page, which is the glare this
+     palette exists to remove; each still clears AA against its own ink (4.65 to 7.13). */
+  --color-app: #e9e7e1;
+  --color-surface: #f3f1ec;
+  --color-sidebar: #e1ded6;
+  --color-line: #c4bfb4;
+  --color-line-strong: #aca696;
+
+  --color-ink: #2a2822;
+  --color-muted: #63605a;
+
+  /* A field reads as somewhere to type by sitting a step above its card, not by being white. */
+  --color-field: #f8f7f3;
 
   --color-accent: #e8a317;
   --color-accent-hover: #d6940f;
   --color-accent-ink: #8a5d00;
-  --color-accent-soft: #fbf3e2;
+  --color-accent-soft: #f3e6c8;
 
   --color-success-ink: #2f5d3e;
-  --color-success-soft: #ecf5ee;
+  --color-success-soft: #dfeae1;
   --color-danger-ink: #912018;
-  --color-danger-soft: #fef3f2;
+  --color-danger-soft: #f2e2e0;
   --color-info-ink: #1f4e79;
-  --color-info-soft: #eaf2fa;
+  --color-info-soft: #dfe7ef;
   --color-neutral-ink: #4a4842;
-  --color-neutral-soft: #f2f0ea;
+  --color-neutral-soft: #e6e3db;
 }
 @layer base {
   /* One visible focus treatment everywhere, so keyboard users get the same ring on a link, a

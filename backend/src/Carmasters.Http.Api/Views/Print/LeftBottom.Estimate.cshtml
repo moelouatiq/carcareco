@@ -1,5 +1,6 @@
 ﻿@using Carmasters.Core.Domain
 @model Estimate
-<p class=" text-sm text-gray-500">
-	Devis émis par : @Model.Issuer.Name
-</p>
+@if (Model.Issuer != null && !string.IsNullOrWhiteSpace(Model.Issuer.Name))
+{
+    <p class="doc-line">Devis émis par : @Model.Issuer.Name</p>
+}

@@ -36,11 +36,11 @@ export default function FormSwitch({
             name={name}
             onChange={onChange}
             aria-label={ariaLabel}
-            className="  group relative inline-flex h-4 w-7 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:outline-hidden data-checked:bg-accent"
+            className="  group relative inline-flex h-4 w-7 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-neutral-soft transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:outline-hidden data-checked:bg-accent"
         >
             <span
                 aria-hidden="true"
-                className="pointer-events-none inline-block size-3 transform rounded-full bg-white ring-0 shadow-sm transition duration-200 ease-in-out group-data-checked:translate-x-3"
+                className="pointer-events-none inline-block size-3 transform rounded-full bg-field ring-0 shadow-sm transition duration-200 ease-in-out group-data-checked:translate-x-3"
             />
         </Switch>:
         <Switch
@@ -51,11 +51,11 @@ export default function FormSwitch({
         onChange={onChange}
         onClick={onClick}
         aria-label={ariaLabel}
-        className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:outline-hidden data-checked:bg-accent"
+        className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-neutral-soft transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:outline-hidden data-checked:bg-accent"
     >
         <span
             aria-hidden="true"
-            className="pointer-events-none inline-block size-5 transform rounded-full bg-white ring-0 shadow-sm transition duration-200 ease-in-out group-data-checked:translate-x-5"
+            className="pointer-events-none inline-block size-5 transform rounded-full bg-field ring-0 shadow-sm transition duration-200 ease-in-out group-data-checked:translate-x-5"
         />
     </Switch>
         }</> 

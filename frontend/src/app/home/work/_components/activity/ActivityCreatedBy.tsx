@@ -7,7 +7,7 @@ export  function ActivityCreatedBy({
     activity?: IActivity
 }){
     return ( 
-        <div className=" flex items-center gap-x-2 text-xs/5 text-gray-500">
+        <div className=" flex items-center gap-x-2 text-xs/5 text-muted">
             <p className="whitespace-nowrap">
                 {activity?.startedOn && <LocalDateTime value={activity.startedOn} />}
             </p>

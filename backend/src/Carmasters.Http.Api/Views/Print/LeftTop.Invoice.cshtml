@@ -1,21 +1,21 @@
 ﻿@using Carmasters.Core.Application.Configuration
 @using Carmasters.Core.Application.Model
+@using Carmasters.Core.Application.Printing
 @using Carmasters.Core.Domain
 @using Carmasters.Http.Api
 @model PricingPrintModel
-@{ 
-    var pricing = (Invoice)Model.Pricing ; 
-    var pricingOptions = (PricingOptions) Model.PricingOptions; 
-}  
- 
-<p class="text-sm text-gray-500">
-    Date : @pricing.IssuedOn.ToString("dd.MM.yyyy")
-</p>
-<p class="text-sm text-gray-500">
+@{
+    var pricing = (Invoice)Model.Pricing;
+    var pricingOptions = (PricingOptions)Model.PricingOptions;
+}
+
+<p class="doc-line">
     Règlement : @(pricing.PaymentType == PaymentType.Cash ? "espèces" : "virement bancaire")
-    <br />
-    Échéance : @pricing.IssuedOn.AddDays(pricing.DueDays).ToString("dd.MM.yyyy")
 </p>
-<p class="text-sm text-gray-500">
-    Pénalité de retard : @pricingOptions.Invoice.SurCharge
+<p class="doc-line">
+    Échéance : @PricingDisplay.LongDate(pricing.IssuedOn.AddDays(pricing.DueDays))
 </p>
+@if (!string.IsNullOrWhiteSpace(pricingOptions.Invoice?.SurCharge))
+{
+    <p class="doc-line">Pénalité de retard : @pricingOptions.Invoice.SurCharge</p>
+}

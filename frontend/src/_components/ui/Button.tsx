@@ -8,9 +8,9 @@ export type ButtonSize = 'sm' | 'md'
 // than white on amber, which would sit at 2.17:1.
 const tones: Record<ButtonTone, string> = {
   primary: 'bg-accent text-ink border-accent hover:bg-accent-hover',
-  secondary: 'bg-surface text-ink border-line hover:bg-neutral-soft',
+  secondary: 'bg-field text-ink border-line hover:bg-neutral-soft',
   ghost: 'bg-transparent text-muted border-transparent hover:bg-neutral-soft hover:text-ink',
-  danger: 'bg-surface text-danger-ink border-line hover:bg-danger-soft',
+  danger: 'bg-field text-danger-ink border-line hover:bg-danger-soft',
 }
 
 const sizes: Record<ButtonSize, string> = {

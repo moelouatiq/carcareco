@@ -11,7 +11,7 @@ export default function FormTitle({
 }) {
     return (
         <>
-            <h3 className="text-base/7 font-semibold text-gray-900">{title} 
+            <h3 className="text-base/7 font-semibold text-ink">{title} 
             </h3>
             {description&&<SecondaryText>{description}</SecondaryText>}
             {children} 

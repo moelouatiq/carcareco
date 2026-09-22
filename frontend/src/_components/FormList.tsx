@@ -29,9 +29,9 @@ export default function FormList<T>(
 ){
     
     return (
-        <dd className="mt-0 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+        <dd className="mt-0 text-sm/6 text-ink sm:col-span-2 sm:mt-0">
         {items&&items.length>0&&
-         <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
+         <ul role="list" className="divide-y divide-line rounded-md border border-line">
             {
                 items?.map((item,index) => {  
                     return (

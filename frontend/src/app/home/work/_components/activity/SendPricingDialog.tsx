@@ -41,7 +41,7 @@ export default function SendPricingDialog({
                 await result;
             }}>
             <div className="space-y-12  ">
-                <div className="border-b mt-4  border-gray-900/10 pb-12">
+                <div className="border-b mt-4  border-line pb-12">
                       <FormLabel name='name' label={labels.common.clientEmail}></FormLabel>
                             <div className="mt-2   ">
                                 <FormInput

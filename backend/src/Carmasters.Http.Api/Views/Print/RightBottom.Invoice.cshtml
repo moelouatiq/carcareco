@@ -3,4 +3,8 @@
 @using Carmasters.Core.Domain
 @using Carmasters.Http.Api
 @model PricingOptions
-<p class="text-sm whitespace-pre-line  text-gray-500">@Model.Invoice.Disclaimer</p>
+@* The garage's own tax wording lives in its settings: nothing about VAT is asserted here. *@
+@if (!string.IsNullOrWhiteSpace(Model.Invoice?.Disclaimer))
+{
+    <p class="doc-line" style="white-space: pre-line;">@Model.Invoice.Disclaimer</p>
+}

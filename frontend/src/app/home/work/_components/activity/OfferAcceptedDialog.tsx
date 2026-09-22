@@ -56,9 +56,9 @@ export default function OfferAcceptedDialog({
                 }
             }}>
             <div className="space-y-12">
-                <div className="border-b border-gray-900/10 pb-12">
+                <div className="border-b border-line pb-12">
                     <div className=" pt-8">
-                        <p className="text-sm   text-gray-500">
+                        <p className="text-sm   text-muted">
                             {labels.dialogs.offerAcceptedHelp}
                         </p>
                     </div>

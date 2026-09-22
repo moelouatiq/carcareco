@@ -30,10 +30,10 @@ export default function ServiceHistory({
   const emptyMessage = scope === "client" ? labels.clientEmpty : labels.vehicleEmpty;
 
   return (
-    <section aria-labelledby={`${scope}-service-history-title`} className="border-t border-gray-200 px-1 py-8 sm:px-0">
+    <section aria-labelledby={`${scope}-service-history-title`} className="border-t border-line px-1 py-8 sm:px-0">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 id={`${scope}-service-history-title`} className="text-base font-semibold text-gray-900">
+          <h2 id={`${scope}-service-history-title`} className="text-base font-semibold text-ink">
             {title}
           </h2>
           {history ? <HistorySummary scope={scope} history={history} /> : null}
@@ -42,7 +42,7 @@ export default function ServiceHistory({
 
       {error ? <p role="alert" className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">{labels.error}</p> : null}
       {!error && history?.items.length === 0 ? (
-        <p className="rounded-md bg-gray-50 px-4 py-6 text-center text-sm text-gray-600">{emptyMessage}</p>
+        <p className="rounded-md bg-app px-4 py-6 text-center text-sm text-muted">{emptyMessage}</p>
       ) : null}
       {!error && history && history.items.length > 0 ? (
         <>
@@ -69,8 +69,8 @@ function HistorySummary({ scope, history }: { scope: ServiceHistoryScope; histor
     <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 text-sm sm:flex sm:flex-wrap">
       {summary.map((item) => (
         <div key={item.label}>
-          <dt className="text-gray-500">{item.label}</dt>
-          <dd className="font-semibold text-gray-900">{item.value}</dd>
+          <dt className="text-muted">{item.label}</dt>
+          <dd className="font-semibold text-ink">{item.value}</dd>
         </div>
       ))}
     </dl>
@@ -80,9 +80,9 @@ function HistorySummary({ scope, history }: { scope: ServiceHistoryScope; histor
 function DesktopHistory({ scope, items }: { scope: ServiceHistoryScope; items: IServiceHistoryItem[] }) {
   return (
     <div className="hidden overflow-x-auto md:block">
-      <table className="min-w-full divide-y divide-gray-300 text-sm">
+      <table className="min-w-full divide-y divide-line text-sm">
         <thead>
-          <tr className="text-left text-gray-700">
+          <tr className="text-left text-ink">
             <th className="py-3 pr-4 font-semibold">{labels.date}</th>
             <th className="px-3 py-3 font-semibold">{labels.work}</th>
             <th className="px-3 py-3 font-semibold">{scope === "client" ? labels.vehicle : labels.odometer}</th>
@@ -94,21 +94,21 @@ function DesktopHistory({ scope, items }: { scope: ServiceHistoryScope; items: I
             <th className="py-3 pl-3 font-semibold">{labels.actions}</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-line">
           {items.map((item) => (
             <tr key={item.workId} className="align-top">
-              <td className="py-4 pr-4 whitespace-nowrap text-gray-600"><HistoryDates item={item} /></td>
-              <td className="px-3 py-4 font-medium whitespace-nowrap text-gray-900">#{item.workNumber}</td>
-              <td className="px-3 py-4 text-gray-600">
+              <td className="py-4 pr-4 whitespace-nowrap text-muted"><HistoryDates item={item} /></td>
+              <td className="px-3 py-4 font-medium whitespace-nowrap text-ink">#{item.workNumber}</td>
+              <td className="px-3 py-4 text-muted">
                 {scope === "client" ? vehicleName(item) : formatOdometer(item.odometer)}
               </td>
               <td className="px-3 py-4"><Status status={item.status} /></td>
-              <td className="max-w-64 px-3 py-4 text-gray-600">{workSummary(item)}</td>
-              {scope === "vehicle" ? <td className="max-w-52 px-3 py-4 text-gray-600">{lineSummary(item.parts)}</td> : null}
-              <td className="px-3 py-4 whitespace-nowrap text-gray-600">
+              <td className="max-w-64 px-3 py-4 text-muted">{workSummary(item)}</td>
+              {scope === "vehicle" ? <td className="max-w-52 px-3 py-4 text-muted">{lineSummary(item.parts)}</td> : null}
+              <td className="px-3 py-4 whitespace-nowrap text-muted">
                 {item.hasInvoice && item.totalAmount !== null ? formatMoney(item.totalAmount) : "—"}
               </td>
-              <td className="px-3 py-4 whitespace-nowrap text-gray-600">{invoiceLabel(item)}</td>
+              <td className="px-3 py-4 whitespace-nowrap text-muted">{invoiceLabel(item)}</td>
               <td className="py-4 pl-3"><HistoryActions item={item} compact /></td>
             </tr>
           ))}
@@ -122,11 +122,11 @@ function MobileHistory({ scope, items }: { scope: ServiceHistoryScope; items: IS
   return (
     <div className="space-y-4 md:hidden">
       {items.map((item) => (
-        <article key={item.workId} className="rounded-lg border border-gray-200 p-4 shadow-sm">
+        <article key={item.workId} className="rounded-lg border border-line p-4 shadow-sm">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="font-semibold text-gray-900">#{item.workNumber}</p>
-              <p className="text-sm text-gray-500">{formatDate(item.openedOn)}</p>
+              <p className="font-semibold text-ink">#{item.workNumber}</p>
+              <p className="text-sm text-muted">{formatDate(item.openedOn)}</p>
             </div>
             <Status status={item.status} />
           </div>
@@ -159,8 +159,8 @@ function HistoryDates({ item }: { item: IServiceHistoryItem }) {
 function HistoryDetail({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-gray-500">{label}</dt>
-      <dd className="mt-0.5 text-gray-900">{value}</dd>
+      <dt className="text-muted">{label}</dt>
+      <dd className="mt-0.5 text-ink">{value}</dd>
     </div>
   );
 }
@@ -188,7 +188,7 @@ function HistoryPagination({ history, basePath }: { history: IServiceHistoryPage
         href={`${basePath}?historyOffset=${previousOffset}`}
         prefetch={false}
         aria-disabled={history.offset === 0}
-        className={clsx("rounded-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300", history.offset === 0 ? "pointer-events-none text-gray-400" : "text-gray-700 hover:bg-gray-50")}
+        className={clsx("rounded-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-line", history.offset === 0 ? "pointer-events-none text-muted" : "text-ink hover:bg-neutral-soft")}
       >
         {labels.previous}
       </Link>
@@ -196,7 +196,7 @@ function HistoryPagination({ history, basePath }: { history: IServiceHistoryPage
         href={`${basePath}?historyOffset=${nextOffset}`}
         prefetch={false}
         aria-disabled={!history.hasMore}
-        className={clsx("rounded-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300", history.hasMore ? "text-gray-700 hover:bg-gray-50" : "pointer-events-none text-gray-400")}
+        className={clsx("rounded-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-line", history.hasMore ? "text-ink hover:bg-neutral-soft" : "pointer-events-none text-muted")}
       >
         {labels.next}
       </Link>
@@ -206,7 +206,7 @@ function HistoryPagination({ history, basePath }: { history: IServiceHistoryPage
 
 function Status({ status }: { status: string }) {
   return (
-    <span className="inline-flex rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
+    <span className="inline-flex rounded-full bg-neutral-soft px-2 py-1 text-xs font-medium text-ink">
       {labels.statuses[status] ?? status}
     </span>
   );

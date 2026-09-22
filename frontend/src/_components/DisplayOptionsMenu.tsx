@@ -17,26 +17,26 @@ export default function DisplayOptionsMenu({
     return (
         <Menu as="div" className=" relative inline-block text-left">
         <div>
-            <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50">
+            <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-surface px-3 py-2 text-sm font-semibold text-ink ring-1 shadow-xs ring-line ring-inset hover:bg-neutral-soft">
                 Options
-                <ChevronDownIcon aria-hidden="true" className="-mr-1 size-5 text-gray-400" />
+                <ChevronDownIcon aria-hidden="true" className="-mr-1 size-5 text-muted" />
             </MenuButton>
         </div>
 
         <MenuItems
         modal={false}
             transition
-            className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+            className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-line rounded-md bg-surface ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
         >
             <div className="py-1">
                 <MenuItem >
                     <Link
                         href={`/home/${pageName}/edit/` + id}
-                        className="group flex items-center px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden"
+                        className="group flex items-center px-4 py-2 text-sm text-ink data-focus:bg-neutral-soft data-focus:text-ink data-focus:outline-hidden"
                     >
                         <PencilSquareIcon
                             aria-hidden="true"
-                            className="mr-3 size-5 text-gray-400 group-data-focus:text-gray-500"
+                            className="mr-3 size-5 text-muted group-data-focus:text-muted"
                         />
                         Edit
                     </Link>
@@ -44,9 +44,9 @@ export default function DisplayOptionsMenu({
                 <MenuItem >
                     <Link
                         href={`/home/${pageName}/new`}
-                        className="group flex items-center px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden"
+                        className="group flex items-center px-4 py-2 text-sm text-ink data-focus:bg-neutral-soft data-focus:text-ink data-focus:outline-hidden"
                     >
-                        <PlusCircleIcon aria-hidden="true" className="mr-3 size-5 text-gray-400 group-data-focus:text-gray-500" />
+                        <PlusCircleIcon aria-hidden="true" className="mr-3 size-5 text-muted group-data-focus:text-muted" />
                         Create new
                     </Link>
                 </MenuItem>
@@ -55,8 +55,8 @@ export default function DisplayOptionsMenu({
                 <MenuItem  >
                     <Link
                         href="#"
-                        className="group flex items-center px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden">
-                        <TrashIcon aria-hidden="true" className="mr-3 size-5 text-gray-400 group-data-focus:text-gray-500" />
+                        className="group flex items-center px-4 py-2 text-sm text-ink data-focus:bg-neutral-soft data-focus:text-ink data-focus:outline-hidden">
+                        <TrashIcon aria-hidden="true" className="mr-3 size-5 text-muted group-data-focus:text-muted" />
                         Delete
                     </Link>
                 </MenuItem> 

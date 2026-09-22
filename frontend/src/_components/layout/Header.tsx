@@ -59,7 +59,7 @@ function MobileNavigation({ onTryDemoClick }: MobileNavigationProps) {
       />
       <PopoverPanel
         transition
-        className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white p-4 text-lg tracking-tight text-slate-900 ring-1 shadow-xl ring-slate-900/5 data-closed:scale-95 data-closed:opacity-0 data-enter:duration-150 data-enter:ease-out data-leave:duration-100 data-leave:ease-in"
+        className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-surface p-4 text-lg tracking-tight text-slate-900 ring-1 shadow-xl ring-slate-900/5 data-closed:scale-95 data-closed:opacity-0 data-enter:duration-150 data-enter:ease-out data-leave:duration-100 data-leave:ease-in"
       >
         <hr className="m-2 border-slate-300/40" />
         <Button
@@ -78,7 +78,7 @@ function MobileNavigation({ onTryDemoClick }: MobileNavigationProps) {
         {onTryDemoClick && (
           <button
             onClick={onTryDemoClick}
-            className="mt-2 rounded-md bg-gray-200 px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs hover:bg-gray-300"
+            className="mt-2 rounded-md bg-neutral-soft px-3 py-2 text-sm font-semibold text-ink shadow-xs hover:bg-gray-300"
           >
             Try the demo
           </button>

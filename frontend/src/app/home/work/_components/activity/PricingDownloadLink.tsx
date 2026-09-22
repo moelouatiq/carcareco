@@ -50,10 +50,10 @@ export default function PricingDownloadLink({
     const [isDownloading,setIsDownloading] = useState(false);
     return (
         <div className="flex  ">
-       {!hidePaperClip&&   <PaperClipIcon aria-hidden="true" className="h-6 w-5 text-gray-400 mr-4" />}
+       {!hidePaperClip&&   <PaperClipIcon aria-hidden="true" className="h-6 w-5 text-muted mr-4" />}
         <div className=" flex min-w-0 flex-1 gap-2">
           {!hideLabel&& <span className="truncate text-sm/6 font-bold">{`${name === "Invoice" ? labels.work.invoiceShort : labels.work.estimateShort} n° ${number}`}</span> }
-            <div className=" text-sm/6 text-gray-500">
+            <div className=" text-sm/6 text-muted">
                 <Link href="#"  onClick={async (e)=>{
                    e.preventDefault();
                     setIsDownloading(true);
@@ -69,7 +69,7 @@ export default function PricingDownloadLink({
                     {!isDownloading&&clickableElement} {isDownloading&& downloadingElement}
                 </Link>
             </div>
-            <div className=" text-sm/6 text-gray-500">
+            <div className=" text-sm/6 text-muted">
                <PrintPricingLink id={id} pricingName={name}></PrintPricingLink>
             </div>
         </div>

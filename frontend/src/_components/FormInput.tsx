@@ -56,7 +56,7 @@ export default function FormInput({
                     className={clsx(className,
                         hasError ? "col-start-1 row-start-1 border-danger-ink text-danger-ink placeholder:text-danger-ink/60"
                             : "border-line text-ink placeholder:text-muted focus:border-accent"
-                        , "block w-full rounded-md border bg-surface px-3 py-2 text-sm focus:outline-none")}
+                        , "block w-full rounded-md border bg-field px-3 py-2 text-sm focus:outline-none")}
                 />
                 {hasError && <ExclamationCircleIcon
                     aria-hidden="true"
@@ -96,11 +96,11 @@ export function FormRadio({
         value={value}
         onChange={onChange}
         type="radio"
-        className="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-accent checked:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden"
+        className="relative size-4 appearance-none rounded-full border border-line bg-field before:absolute before:inset-1 before:rounded-full before:bg-field not-checked:before:hidden checked:border-accent checked:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink disabled:border-line disabled:bg-neutral-soft disabled:before:bg-line-strong forced-colors:appearance-auto forced-colors:before:hidden"
       />
       {/* The radios in a group share one name, so htmlFor={name} pointed every label at the same
           non-existent element and left all of them unnamed. Each radio has its own id. */}
-      <label htmlFor={id} className="block text-sm/6 text-nowrap font-medium text-gray-900">
+      <label htmlFor={id} className="block text-sm/6 text-nowrap font-medium text-ink">
       {label}
       </label>
       </>

@@ -1,5 +1,6 @@
 ﻿@using Carmasters.Core.Application.Configuration
 @using Carmasters.Core.Application.Model
+@using Carmasters.Core.Application.Printing
 @using Carmasters.Core.Domain
 @using Carmasters.Http.Api
 @model PricingPrintModel
@@ -7,188 +8,180 @@
     var pricing = (Pricing)Model.Pricing;
     var requisitesOptions = (RequisitesOptions)Model.RequisitesOptions;
     var pricingOptions = (PricingOptions)Model.PricingOptions;
-    var isInvoice = pricing is Carmasters.Core.Domain.Invoice;
+    var invoice = pricing as Carmasters.Core.Domain.Invoice;
+    var isInvoice = invoice != null;
     var hasDiscounts = pricing.Lines.Any(x => x.Discount != 0);
-    // Amounts are rendered with an explicit fr-FR culture: the container runs under
-    // InvariantCulture, which would print "1250.00" instead of "1 250,00".
-    var moneyCulture = System.Globalization.CultureInfo.GetCultureInfo("fr-FR");
-    Func<decimal, string> amount = value => value.ToString("N2", moneyCulture);
-    Func<decimal, string> money = value => amount(value) + " MAD";
-    // Quantities and discounts keep their own precision but share the culture, so a single
-    // document never mixes "2.5" with "291,67".
-    Func<decimal?, string> number = value => value?.ToString("0.####", moneyCulture) ?? string.Empty;
+
+    // The VAT rate is the garage's own tax situation, not a property of the document. At zero
+    // there is nothing to break the total into, and a "TVA 0,00 MAD" line would state a rate the
+    // garage does not charge; what it does say instead is configured in Mentions légales.
+    var vatRate = pricingOptions.Invoice?.VatRate ?? 0;
+    var showVatBreakdown = isInvoice && vatRate > 0;
+
+    // The number is padded for the page only: the domain keeps the int it sequenced, and the
+    // file name keeps its own convention.
+    var documentTitle = isInvoice
+        ? "Facture n° " + PricingDisplay.InvoiceNumber(invoice.Number)
+        : pricing.GetDisplayName();
+
+    // The domain stores these already labelled, as "Véhicule : Renault Express", so the page
+    // prints them as they are. A line that is only its label is dropped.
+    var vehicleLines = new[] { pricing.VehicleLine1, pricing.VehicleLine2, pricing.VehicleLine3, pricing.VehicleLine4 }
+        .Where(PricingDisplay.Says)
+        .ToList();
 }
-  
-<div class="grid grid-cols-2">
-    <div>
-        <h1 class=" text-indigo-500 font-medium text-3xl" id="logo">@requisitesOptions.Name</h1>
-        <p class="text-lg text-gray-500">@requisitesOptions.Phone</p>
+
+<header class="doc-head">
+    <div class="doc-head-party">
+        <p class="doc-issuer">@requisitesOptions.Name</p>
+        @if (!string.IsNullOrWhiteSpace(requisitesOptions.Address))
+        {
+            <p class="doc-line">@requisitesOptions.Address</p>
+        }
+        @if (!string.IsNullOrWhiteSpace(requisitesOptions.Phone))
+        {
+            <p class="doc-line">Téléphone : @requisitesOptions.Phone</p>
+        }
+        @if (!string.IsNullOrWhiteSpace(requisitesOptions.Email))
+        {
+            <p class="doc-line">@requisitesOptions.Email</p>
+        }
     </div>
-    <div class="text-right">
-        <p class="text-2xl font-medium text-gray-500">
-            @(pricing.GetDisplayName())
-        </p>
-    </div>
-</div>
- 
-<div class="grid grid-cols-2 mt-8">
-    <div>
+    <div class="doc-head-document">
+        <p class="doc-title">@documentTitle</p>
+        <p class="doc-line">Date : @PricingDisplay.LongDate(pricing.IssuedOn)</p>
         @{
             await Html.RenderPartialAsync("Print/LeftTop." + pricing.GetType().Name, (object)Model);
         }
     </div>
+</header>
 
-    <div class="text-right">
-        <p class="text-sm text-gray-500">@pricing.PartyName</p>
+<section class="doc-parties">
+    <div class="doc-party">
+        <p class="doc-label">Client</p>
+        <p class="doc-strong">@pricing.PartyName</p>
         @if (!string.IsNullOrWhiteSpace(pricing.PartyCode))
         {
-            <p class="text-sm text-gray-500"> @pricing.PartyCode</p>
-
+            @* Named neutrally: the garage may have entered an ICE, an RC or another identifier,
+               and the document must not assert which. *@
+            <p class="doc-line">Identifiant client : @pricing.PartyCode</p>
         }
         @if (!string.IsNullOrWhiteSpace(pricing.PartyAddress))
         {
-            <p class="text-sm text-gray-500">Adresse : @pricing.PartyAddress</p>
+            <p class="doc-line">@pricing.PartyAddress</p>
         }
     </div>
-</div>
-<table border="1" class="mt-2 min-w-full divide-y divide-gray-300">
+    @if (vehicleLines.Count > 0)
+    {
+        <div class="doc-party">
+            <p class="doc-label">Véhicule</p>
+            @foreach (var line in vehicleLines)
+            {
+                @* The heading above already says Véhicule; the stored line must not say it again. *@
+                <p class="doc-line">@PricingDisplay.WithoutHeadingLabel(line, "Véhicule")</p>
+            }
+        </div>
+    }
+</section>
+
+<table class="doc-table">
     <thead>
         <tr>
-            <th class="pl-0 pr-2 py-1 text-start font-light text-sm font-semibold text-gray-900">Désignation</th>
-            <th class="px-2 py-1 text-end font-light text-sm font-semibold whitespace-nowrap text-gray-900">Quantité</th>
-            <th class="px-2 py-1 text-end font-light text-sm font-semibold whitespace-nowrap text-gray-900">Unité</th>
-            <th class="px-2 py-1 text-end font-light text-sm font-semibold whitespace-nowrap text-gray-900">Prix unitaire</th>
+            <th class="col-text">Désignation</th>
+            <th class="col-num">Quantité</th>
+            <th class="col-num">Unité</th>
+            <th class="col-num">Prix unitaire</th>
             @if (hasDiscounts)
             {
-                <th class="px-2 py-1 text-end font-light text-sm font-semibold whitespace-nowrap text-gray-900">Remise %</th>
+                <th class="col-num">Remise %</th>
             }
-            <th class="pl-2 pr-0 py-1 text-end font-light text-sm font-semibold whitespace-nowrap text-gray-900">Montant</th>
+            <th class="col-num col-last">Montant</th>
         </tr>
     </thead>
-    <tbody class="divide-y divide-gray-200 bg-white">
+    <tbody>
         @foreach (var item in pricing.Lines)
         {
-
             <tr>
-                <td class="w-full text-start pl-0 pr-2 py-1 text-sm text-gray-900">@item.Description</td>
-                <td class="w-15 text-end px-2 py-1 text-sm whitespace-nowrap text-gray-900">@number(item.Quantity)</td>
-                <td class="w-15 text-end px-2 py-1 text-sm whitespace-nowrap text-gray-900">@item.Unit</td>
-                <td class="w-15 text-end px-2 py-1 text-sm whitespace-nowrap text-gray-900">@amount(item.UnitPrice)</td>
+                <td class="col-text">@item.Description</td>
+                <td class="col-num">@PricingDisplay.Number(item.Quantity)</td>
+                <td class="col-num">@item.Unit</td>
+                <td class="col-num">@PricingDisplay.Amount(item.UnitPrice)</td>
                 @if (hasDiscounts)
                 {
-                    <td class="w-15 text-end px-2 py-1 text-sm whitespace-nowrap text-gray-900">@((item.Discount != null && item.Discount != 0) ? $"{number(item.Discount)} %" : String.Empty)</td>
+                    <td class="col-num">@((item.Discount != null && item.Discount != 0) ? PricingDisplay.Number(item.Discount) + " %" : string.Empty)</td>
                 }
-                <td class="w-15 text-end pl-2 pr-0 py-1 text-sm whitespace-nowrap text-gray-900">@amount(item.Total)</td>
+                <td class="col-num col-last">@PricingDisplay.Amount(item.Total)</td>
             </tr>
         }
     </tbody>
-    <tfoot class="border-t-2 border-indigo-600">
-        <tr>
-            <td></td>
-        </tr>
-    </tfoot>
 </table>
-<div class="pricesummary grid grid-cols-2">
-    <div>
-        <div class="grid grid-rows-3 gap-2 pt-2 pl-0">
-            <p class=" pt-2 text-start text-sm font-light text-gray-900 pl-0">
-                @(pricing.VehicleLine1)
-            </p>
-            <p class="pt-2 text-start text-sm font-light text-gray-900 pl-0">
-                @(pricing.VehicleLine2)
-            </p>
-            <p class="pt-2 text-start text-sm font-light text-gray-900 pl-0">
-                @(pricing.VehicleLine3)
-            </p>
-            <p class="pt-2 text-start text-sm font-light text-gray-900 pl-0">
-                @(pricing.VehicleLine4)
-            </p>
-        </div>
-    </div>
-    <div class="text-right">
-        <div class="grid grid-rows-3 gap-2 pt-2 pr-0">
-            <div class="flex flex-row-reverse ">
-                <div class="pt-2 pl-4 text-end text-sm font-light text-gray-500 pl-0 w-35">
-                    @money(pricing.GetTotal(false))
-                </div>
-                <div class="pt-2 pr-3 pl-4 text-right text-sm font-light text-gray-500 pl-0">
-                    Total HT
-                </div>
-            </div>
-            <div class="flex flex-row-reverse ">
-                <div class="pt-2 pl-4 text-end text-sm font-light text-gray-500 pl-0 w-35">
-                    @money(pricing.GetTotal(true) - pricing.GetTotal(false))
-                </div>
-                <div class="pt-2 pr-3 pl-4 text-right text-sm font-light text-gray-500 pl-0">
-                    TVA
-                </div>
-            </div>
-            <div class="flex flex-row-reverse ">
-                <div class="pt-2 pl-4 text-end text-sm font-semibold text-gray-900 pl-0 w-35">
-                    @money(pricing.GetTotal(true))
-                </div>
-                <div class="pt-2 pr-3 pl-4 text-right text-sm font-semibold text-gray-900 t pl-0">
-                    Net à payer
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="grid grid-cols-2 mt-2 ">
+
+<section class="doc-totals">
+    <table class="doc-total-table">
+        @if (showVatBreakdown)
+        {
+            <tr>
+                <td class="doc-total-label">Total HT</td>
+                <td class="doc-total-value">@PricingDisplay.Money(pricing.GetTotal(false))</td>
+            </tr>
+            <tr>
+                <td class="doc-total-label">TVA (@vatRate %)</td>
+                <td class="doc-total-value">@PricingDisplay.Money(pricing.GetTotal(true) - pricing.GetTotal(false))</td>
+            </tr>
+        }
+        <tr class="doc-total-net">
+            <td class="doc-total-label">Net à payer</td>
+            <td class="doc-total-value">@PricingDisplay.Money(pricing.GetTotal(true))</td>
+        </tr>
+    </table>
+</section>
+
+<section class="doc-notes">
     <div>
         @{
             await Html.RenderPartialAsync("Print/LeftBottom." + pricing.GetType().Name, pricing);
         }
-
+        @{
+            await Html.RenderPartialAsync("Print/RightBottom." + pricing.GetType().Name, pricingOptions);
+        }
     </div>
-    <div class="float-right">
-        <div>
-            @{
-                await Html.RenderPartialAsync("Print/RightBottom." + pricing.GetType().Name, pricingOptions);
-            }
+    @if (isInvoice && pricingOptions.Invoice?.SignatureLine == true)
+    {
+        <div class="doc-signature">
+            <p class="doc-label">Signature</p>
+            <div class="doc-signature-space"></div>
         </div>
+    }
+</section>
 
-    </div>
-</div>
-<div class="grid grid-cols-2 ">
+<footer class="doc-foot">
     <div>
-        @if (isInvoice && pricingOptions.Invoice.SignatureLine == true)
+        <span>@requisitesOptions.Name</span>
+        @if (!string.IsNullOrWhiteSpace(requisitesOptions.Address))
         {
-            <p class="text-sm text-gray-500">Signature :</p>
+            <span> · @requisitesOptions.Address</span>
         }
-
-    </div>
-    <div class="float-right">
-        @if (isInvoice && pricingOptions.Invoice.SignatureLine == true)
+        @if (!string.IsNullOrWhiteSpace(requisitesOptions.Phone))
         {
-
-            <p class="text-sm text-gray-500">Signature :</p>
+            <span> · Tél. @requisitesOptions.Phone</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(requisitesOptions.Email))
+        {
+            <span> · @requisitesOptions.Email</span>
         }
     </div>
-</div>
-<footer class="border-t border-gray-200 w-full min-w-full grid grid-cols-2 ">
-    <div class="mt-2">
-        <p class="text-xs">
-            @requisitesOptions.Name
-        </p>
-        <p class="text-xs">
-            @requisitesOptions.Address
-        </p>
-        <p class="text-xs">
-            @requisitesOptions.Email
-        </p>
-    </div>
-    <div class="mt-2 text-right">
-        <div>
-            <p class="text-xs">
-                @requisitesOptions.BankAccount
-            </p>
-            <p class="text-xs">
-                Numéro RC : @requisitesOptions.RegNr
-            </p>
-            <p class="text-xs">
-                Identifiant fiscal : @requisitesOptions.KMKR
-            </p>
-        </div>
+    <div>
+        @if (!string.IsNullOrWhiteSpace(requisitesOptions.RegNr))
+        {
+            <span>Identifiant entreprise : @requisitesOptions.RegNr</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(requisitesOptions.KMKR))
+        {
+            <span>@(string.IsNullOrWhiteSpace(requisitesOptions.RegNr) ? "" : " · ")ICE / Identifiant fiscal : @requisitesOptions.KMKR</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(requisitesOptions.BankAccount))
+        {
+            <span> · @requisitesOptions.BankAccount</span>
+        }
     </div>
 </footer>

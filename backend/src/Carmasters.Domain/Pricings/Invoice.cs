@@ -43,12 +43,21 @@ namespace Carmasters.Core.Domain
             }
         }
 
-        internal static Invoice CreateFor(Work work ,ISequencedNumberProvider numberProvider,int purchaseTax,PaymentType paymentType, short dueDays, Employee issuer)
+        /// <summary>
+        /// Issues the invoice for a finished job, taking its snapshot of client and vehicle.
+        /// </summary>
+        /// <remarks>
+        /// The vehicle is captured here, at issue time, and never read again: a car that is later
+        /// resprayed, re-registered or driven another ten thousand kilometres must not change an
+        /// invoice that was already sent. Passing null when the garage chose not to show it is
+        /// what leaves the lines empty, and null is also what a job with no vehicle gives.
+        /// </remarks>
+        internal static Invoice CreateFor(Work work ,ISequencedNumberProvider numberProvider,int purchaseTax,PaymentType paymentType, short dueDays, Employee issuer, bool showVehicleOnInvoice)
         {
             var invoice = new Invoice(numberProvider.Next(), issuer, DateTime.Now,paymentType, dueDays,null);
             
             invoice.ApplyClientInformation(work.Client);
-            invoice.ApplyVehicleInformation(null);
+            invoice.ApplyVehicleInformation(showVehicleOnInvoice ? work.Vehicle : null);
 
             int counter = 1;
             foreach (var line in work.Jobs.SelectMany((j,i)=>j.Products.Select((p) => invoice.ToLine(purchaseTax,p, Convert.ToInt16(counter)))))

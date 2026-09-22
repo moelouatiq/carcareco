@@ -32,7 +32,7 @@ export default function SearchStatusFilter({
             else radioAll?.click();
           }} >
         </FormSwitch>
-        <label className="block text-sm/6 font-medium text-gray-900">{(issued ? labels.workStatus.completed : labels.workStatus.work)}</label>
+        <label className="block text-sm/6 font-medium text-ink">{(issued ? labels.workStatus.completed : labels.workStatus.work)}</label>
       </div>
       <div className="flex   items-center  gap-x-2 ">
         <FormRadio id="all" label={labels.workStatus.all} name="status" onChange={submitFormOnChange} defaultChecked={(!status || status === 'all')} value="all" ></FormRadio>
