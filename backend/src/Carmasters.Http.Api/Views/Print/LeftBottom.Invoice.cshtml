@@ -1,5 +1,6 @@
 ﻿@using Carmasters.Core.Domain
 @model Invoice
-<p class="text-sm text-gray-500">
-	Facture émise par : @Model.Issuer.Name
-</p>
+@if (Model.Issuer != null && !string.IsNullOrWhiteSpace(Model.Issuer.Name))
+{
+    <p class="doc-line">Facture émise par : @Model.Issuer.Name</p>
+}

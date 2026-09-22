@@ -2,42 +2,218 @@
     size: A4;
     margin: 10mm 10mm 0mm 10mm;
 }
-tfoot td {
-    height: 90px;
+
+/* A printed document stays on white paper whatever the application's own theme is: these go to a
+   printer, a PDF reader and an email attachment, none of which want a tinted background. */
+html {
+    background-color: white;
 }
-.pricesummary {
-    margin-top: -80px;
-}
+
 body {
     width: 210mm;
     height: 297mm;
+    color: #1f2421;
+    font-size: 12px;
+    line-height: 1.45;
+    /* The footer is fixed at the bottom of every printed page, so the flow has to stop above it. */
+    padding-bottom: 26mm;
 }
-html {
-    background-color: white  ;
+
+/* ---- header ------------------------------------------------------------------------------- */
+.doc-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12mm;
+    align-items: start;
+    padding-bottom: 4mm;
+    border-bottom: 1px solid #c9cec7;
 }
+
+.doc-issuer {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 1mm 0;
+}
+
+.doc-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 1mm 0;
+    /* The one place the workshop's amber appears, and only as text. */
+    color: #8a5d00;
+}
+
+.doc-head-document {
+    text-align: right;
+}
+
+.doc-line {
+    margin: 0;
+    color: #4a5048;
+}
+
+.doc-strong {
+    margin: 0;
+    font-weight: 600;
+}
+
+.doc-label {
+    margin: 0 0 1mm 0;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #6b716a;
+}
+
+/* ---- client and vehicle ---------------------------------------------------------------------- */
+.doc-parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12mm;
+    padding: 4mm 0;
+    border-bottom: 1px solid #e3e6e2;
+}
+
+/* ---- lines ----------------------------------------------------------------------------------- */
+.doc-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 5mm;
+}
+
+.doc-table th {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b716a;
+    border-bottom: 1px solid #c9cec7;
+    padding: 0 3mm 1.5mm 0;
+    text-align: right;
+}
+
+.doc-table th.col-text,
+.doc-table td.col-text {
+    text-align: left;
+    width: 100%;
+    padding-left: 0;
+}
+
+.doc-table th.col-last,
+.doc-table td.col-last {
+    padding-right: 0;
+}
+
+.doc-table td {
+    padding: 1.5mm 3mm 1.5mm 0;
+    border-bottom: 1px solid #eceeeb;
+    text-align: right;
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+.doc-table td.col-text {
+    white-space: normal;
+}
+
+/* ---- totals ----------------------------------------------------------------------------------- */
+.doc-totals {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4mm;
+}
+
+.doc-total-table {
+    border-collapse: collapse;
+    min-width: 70mm;
+}
+
+.doc-total-label {
+    padding: 1mm 6mm 1mm 0;
+    text-align: right;
+    color: #4a5048;
+}
+
+.doc-total-value {
+    padding: 1mm 0;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.doc-total-net td,
+tr.doc-total-net .doc-total-label,
+tr.doc-total-net .doc-total-value {
+    font-weight: 600;
+    font-size: 13px;
+    color: #1f2421;
+    border-top: 1px solid #c9cec7;
+    padding-top: 2mm;
+}
+
+/* ---- notes and signature ------------------------------------------------------------------- */
+.doc-notes {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12mm;
+    margin-top: 6mm;
+    align-items: start;
+}
+
+.doc-notes p {
+    margin: 0 0 1.5mm 0;
+    color: #4a5048;
+}
+
+.doc-signature {
+    min-width: 55mm;
+}
+
+.doc-signature-space {
+    height: 22mm;
+    border-bottom: 1px solid #c9cec7;
+}
+
+/* ---- footer ---------------------------------------------------------------------------------- */
+.doc-foot {
+    border-top: 1px solid #c9cec7;
+    padding-top: 2mm;
+    margin-top: 8mm;
+    font-size: 9px;
+    color: #6b716a;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5mm;
+}
+
 @media print {
-    html  {
+    html {
         width: 210mm;
         height: 297mm;
     }
-    footer {
+
+    .doc-foot {
         position: fixed;
         bottom: 0;
-        height: 75px;
-    } 
-    .content-block, tr {
+        left: 0;
+        right: 0;
+        background: white;
+        margin-top: 0;
+    }
+
+    .content-block,
+    tr {
         page-break-inside: avoid;
-    }  
-   
+    }
 }
 
-@media screen{
-    footer {
+@media screen {
+    .doc-foot {
         display: none;
-    } 
+    }
 
-    body {  
+    body {
         padding-top: 20px;
         margin: 0 auto;
-    } 
+    }
 }

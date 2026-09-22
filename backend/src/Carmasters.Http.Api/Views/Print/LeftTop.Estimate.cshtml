@@ -2,9 +2,4 @@
 @using Carmasters.Core.Domain
 @using Carmasters.Http.Api
 @model PricingPrintModel
-@{ 
-    var pricing = (Estimate)Model.Pricing ;  
-}  
-<p class="text-sm text-gray-500">
-    Date : @pricing.IssuedOn.ToString("dd.MM.yyyy")
-</p>
+@* The document header already carries the date; an estimate adds nothing further here. *@
