@@ -133,6 +133,32 @@ public sealed class PricingDisplayTests
     }
 
     [Fact]
+    public void AVehicleLineDoesNotRepeatTheHeadingAboveIt()
+    {
+        // The block is headed "Véhicule" and the stored line starts with the same word, which
+        // would read "Véhicule Véhicule : Renault Express" on the page.
+        Assert.Equal("Renault Express",
+            PricingDisplay.WithoutHeadingLabel("Véhicule : Renault Express", "Véhicule"));
+    }
+
+    [Theory]
+    [InlineData("Immatriculation : 4512-B-06")]
+    [InlineData("Kilométrage : 142500")]
+    [InlineData("VIN : VF1EXPRESS000001")]
+    public void AVehicleLineKeepsALabelNothingAboveItRepeats(string line)
+    {
+        Assert.Equal(line, PricingDisplay.WithoutHeadingLabel(line, "Véhicule"));
+    }
+
+    [Fact]
+    public void ALineStoredWithoutAPrefixIsLeftAlone()
+    {
+        // Documents issued before the domain labelled these lines must not be mangled.
+        Assert.Equal("Renault Express",
+            PricingDisplay.WithoutHeadingLabel("Renault Express", "Véhicule"));
+    }
+
+    [Fact]
     public void AZeroMileageIsAValueAndSurvives()
     {
         // 0 km is a real reading, unlike a missing one.

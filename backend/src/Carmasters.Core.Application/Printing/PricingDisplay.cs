@@ -56,5 +56,24 @@ namespace Carmasters.Core.Application.Printing
             var trimmed = vehicleLine.Trim();
             return !trimmed.EndsWith(":", StringComparison.Ordinal);
         }
+
+        /// <summary>
+        /// Drops a label the surrounding heading already carries.
+        /// </summary>
+        /// <remarks>
+        /// The stored lines label themselves -- "Véhicule : Renault Express" -- and a block headed
+        /// "Véhicule" would then read "Véhicule Véhicule : Renault Express". Only that exact
+        /// prefix goes; "Immatriculation : ..." keeps its own label because nothing above repeats
+        /// it, and an older document stored without a prefix is left alone.
+        /// </remarks>
+        public static string WithoutHeadingLabel(string vehicleLine, string heading)
+        {
+            if (string.IsNullOrWhiteSpace(vehicleLine)) return vehicleLine;
+
+            var prefix = heading + " : ";
+            return vehicleLine.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
+                ? vehicleLine.Substring(prefix.Length).Trim()
+                : vehicleLine;
+        }
     }
 }

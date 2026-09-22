@@ -77,7 +77,8 @@
             <p class="doc-label">Véhicule</p>
             @foreach (var line in vehicleLines)
             {
-                <p class="doc-line">@line</p>
+                @* The heading above already says Véhicule; the stored line must not say it again. *@
+                <p class="doc-line">@PricingDisplay.WithoutHeadingLabel(line, "Véhicule")</p>
             }
         </div>
     }
