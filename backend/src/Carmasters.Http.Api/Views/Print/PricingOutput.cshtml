@@ -12,9 +12,9 @@
     var isInvoice = invoice != null;
     var hasDiscounts = pricing.Lines.Any(x => x.Discount != 0);
 
-    // The VAT rate is the garage's own tax situation, not a property of the document. At zero
-    // there is nothing to break the total into, and a "TVA 0,00 MAD" line would state a rate the
-    // garage does not charge; what it does say instead is configured in Mentions légales.
+    // New documents render the VAT rate captured at issue time; legacy documents receive the
+    // current garage rate from the model's read-only fallback. At zero there is nothing to break
+    // the total into, and the configured legal wording carries the garage's tax situation.
     var vatRate = pricingOptions.Invoice?.VatRate ?? 0;
     var showVatBreakdown = isInvoice && vatRate > 0;
 

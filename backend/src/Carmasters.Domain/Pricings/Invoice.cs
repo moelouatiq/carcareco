@@ -8,7 +8,7 @@ namespace Carmasters.Core.Domain
     public class Invoice : Pricing
     {
         protected Invoice() : base() { }
-        public Invoice(int number,Employee issuer,DateTime issuedOn, PaymentType paymentType, short dueDays, string partyName, bool isPaid = false, bool isCredited = false, DateTime? sentOn = null, DateTime? printedOn = null, string email = null, string partyAddress = null, string partyCode = null, string vehicleLine1 = null, string vehicleLine2 = null, string vehicleLine3 = null, string vehicleLine4 = null, Guid? id = null) : base(    issuer,sentOn, printedOn, email, partyName, partyAddress, partyCode, vehicleLine1, vehicleLine2, vehicleLine3,vehicleLine4, issuedOn,id)
+        public Invoice(int number,Employee issuer,DateTime issuedOn, PaymentType paymentType, short dueDays, string partyName, bool isPaid = false, bool isCredited = false, DateTime? sentOn = null, DateTime? printedOn = null, string email = null, string partyAddress = null, string partyCode = null, string vehicleLine1 = null, string vehicleLine2 = null, string vehicleLine3 = null, string vehicleLine4 = null, Guid? id = null, BillingDocumentSnapshot billingDocumentSnapshot = null) : base(    issuer,sentOn, printedOn, email, partyName, partyAddress, partyCode, vehicleLine1, vehicleLine2, vehicleLine3,vehicleLine4, issuedOn,id, billingDocumentSnapshot)
         {
             this.Number = number;
             this.PaymentType = paymentType;
@@ -44,7 +44,8 @@ namespace Carmasters.Core.Domain
         }
 
         /// <summary>
-        /// Issues the invoice for a finished job, taking its snapshot of client and vehicle.
+        /// Issues the invoice for a finished job, taking its snapshot of client, vehicle and
+        /// tenant billing configuration.
         /// </summary>
         /// <remarks>
         /// The vehicle is captured here, at issue time, and never read again: a car that is later
@@ -52,15 +53,18 @@ namespace Carmasters.Core.Domain
         /// invoice that was already sent. Passing null when the garage chose not to show it is
         /// what leaves the lines empty, and null is also what a job with no vehicle gives.
         /// </remarks>
-        internal static Invoice CreateFor(Work work ,ISequencedNumberProvider numberProvider,int purchaseTax,PaymentType paymentType, short dueDays, Employee issuer, bool showVehicleOnInvoice)
+        internal static Invoice CreateFor(Work work, ISequencedNumberProvider numberProvider, BillingDocumentSnapshot billingDocumentSnapshot, PaymentType paymentType, short dueDays, Employee issuer, bool showVehicleOnInvoice)
         {
-            var invoice = new Invoice(numberProvider.Next(), issuer, DateTime.Now,paymentType, dueDays,null);
+            if (billingDocumentSnapshot == null) throw new ArgumentNullException(nameof(billingDocumentSnapshot));
+
+            var invoice = new Invoice(numberProvider.Next(), issuer, DateTime.Now, paymentType, dueDays, null,
+                billingDocumentSnapshot: billingDocumentSnapshot);
             
             invoice.ApplyClientInformation(work.Client);
             invoice.ApplyVehicleInformation(showVehicleOnInvoice ? work.Vehicle : null);
 
             int counter = 1;
-            foreach (var line in work.Jobs.SelectMany((j,i)=>j.Products.Select((p) => invoice.ToLine(purchaseTax,p, Convert.ToInt16(counter)))))
+            foreach (var line in work.Jobs.SelectMany((j,i)=>j.Products.Select((p) => invoice.ToLine(billingDocumentSnapshot.VatRate,p, Convert.ToInt16(counter)))))
             {
                 invoice.lines.Add(line);
                 counter++;

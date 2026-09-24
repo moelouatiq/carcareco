@@ -484,6 +484,178 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
         Assert.Equal(HttpStatusCode.BadRequest, invalidWork.StatusCode);
     }
 
+    [Fact]
+    public async Task BillingDocumentsKeepTheirIssuedTenantSettingsAfterDatabaseReload()
+    {
+        var originalOptions = await GetJson("/api/options");
+        var suffix = Guid.NewGuid().ToString("N")[..10];
+        var garageA = new
+        {
+            requisites = new
+            {
+                name = $"Garage A {suffix}",
+                phone = "+212600000010",
+                address = "Address A",
+                email = $"garage-a-{suffix}@example.invalid",
+                bankAccount = "Bank A",
+                regNr = "Reg A",
+                kmkr = $"ICE-A-{suffix}",
+            },
+            pricing = new
+            {
+                invoice = new
+                {
+                    vatRate = 0,
+                    surCharge = "Penalty A",
+                    disclaimer = $"Mention A {suffix}",
+                    signatureLine = true,
+                    emailContent = "Invoice mail A",
+                },
+                estimate = new { emailContent = "Estimate mail A" },
+            },
+        };
+        var garageB = new
+        {
+            requisites = new
+            {
+                name = $"Garage B {suffix}",
+                phone = "+212600000020",
+                address = "Address B",
+                email = $"garage-b-{suffix}@example.invalid",
+                bankAccount = "Bank B",
+                regNr = "Reg B",
+                kmkr = $"ICE-B-{suffix}",
+            },
+            pricing = new
+            {
+                invoice = new
+                {
+                    vatRate = 20,
+                    surCharge = "Penalty B",
+                    disclaimer = $"Mention B {suffix}",
+                    signatureLine = false,
+                    emailContent = "Invoice mail B",
+                },
+                estimate = new { emailContent = "Estimate mail B" },
+            },
+        };
+
+        try
+        {
+            await PutOptions(garageA);
+
+            var clientId = await CreatePrivateClient($"Snapshot-{suffix}", "Client");
+            var vehicleId = await CreateVehicle(clientId, $"SNAP-{suffix[..5]}", $"SNAPVIN{suffix}");
+            using var workResponse = await fixture.AuthorizedClient.PostAsJsonAsync("/api/work", new
+            {
+                clientId,
+                description = "Snapshot integration test",
+                vehicleId,
+                assignedTo = Array.Empty<Guid>(),
+                odo = 321,
+                startWithOffer = true,
+            });
+            Assert.Equal(HttpStatusCode.OK, workResponse.StatusCode);
+            var work = await workResponse.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+            var workId = work.GetProperty("workId").GetGuid();
+            var offerId = work.GetProperty("activityId").GetGuid();
+
+            using (var lineResponse = await fixture.AuthorizedClient.PutAsJsonAsync(
+                $"/api/work/offer/{offerId}/productsorservices",
+                new[]
+                {
+                    new { id = Guid.Empty, code = "SNAP", name = "Snapshot line", quantity = 1, unit = "unit", price = 100m, discount = 0 },
+                }))
+            {
+                Assert.Equal(HttpStatusCode.OK, lineResponse.StatusCode);
+            }
+
+            using (var estimateResponse = await fixture.AuthorizedClient.PutAsJsonAsync(
+                $"/api/work/{workId}/estimate/issue/0",
+                new { showVehicleOnPricing = true, sendClientEmail = false, clientEmail = "" }))
+            {
+                Assert.Equal(HttpStatusCode.OK, estimateResponse.StatusCode);
+            }
+
+            using (var acceptResponse = await fixture.AuthorizedClient.PutAsJsonAsync(
+                $"/api/work/{workId}/estimate/0/accepted", "Accepted for snapshot test"))
+            {
+                Assert.Equal(HttpStatusCode.OK, acceptResponse.StatusCode);
+            }
+
+            using (var invoiceResponse = await fixture.AuthorizedClient.PutAsJsonAsync(
+                $"/api/work/{workId}/invoice/issue",
+                new { paymentType = 1, dueDays = 14, sendClientEmail = false, clientEmail = "", showVehicleOnInvoice = true }))
+            {
+                Assert.Equal(HttpStatusCode.OK, invoiceResponse.StatusCode);
+            }
+
+            await PutOptions(garageB);
+
+            // Each request below opens a new unit of work and reloads the document through
+            // NHibernate. Current tenant settings are B, but these two persisted documents must
+            // continue to render the A values captured when they were issued.
+            var invoice = await ReadInvoiceText(workId);
+            var estimate = await ReadEstimateText(offerId);
+
+            Assert.Contains(garageA.requisites.name, invoice);
+            Assert.Contains(garageA.requisites.kmkr, invoice);
+            Assert.Contains(garageA.pricing.invoice.surCharge, invoice);
+            Assert.Contains(garageA.pricing.invoice.disclaimer, invoice);
+            Assert.Contains("Signature", invoice);
+            Assert.Contains("Net à payer", invoice);
+            Assert.DoesNotContain("Total HT", invoice);
+            Assert.DoesNotContain("TVA (", invoice);
+            Assert.Contains($"SNAP-{suffix[..5]}", invoice);
+            Assert.DoesNotContain(garageB.requisites.name, invoice);
+            Assert.DoesNotContain(garageB.requisites.kmkr, invoice);
+            Assert.DoesNotContain(garageB.pricing.invoice.surCharge, invoice);
+            Assert.DoesNotContain(garageB.pricing.invoice.disclaimer, invoice);
+
+            Assert.Contains(garageA.requisites.name, estimate);
+            Assert.Contains(garageA.requisites.kmkr, estimate);
+            Assert.Contains($"SNAP-{suffix[..5]}", estimate);
+            Assert.DoesNotContain(garageB.requisites.name, estimate);
+            Assert.DoesNotContain(garageB.requisites.kmkr, estimate);
+
+            await AssertPdfRenders($"/api/pricings/invoice/{workId}/pdf");
+            await AssertPdfRenders($"/api/pricings/offer/{offerId}/pdf");
+
+            // A document issued after the switch to B proves that the current value is captured,
+            // including the non-zero VAT presentation and the disabled signature.
+            var vat20Work = await PostWorkWithActivity(
+                clientId, vehicleId, "VAT 20 snapshot integration test", 322);
+            using (var linesResponse = await fixture.AuthorizedClient.PutAsJsonAsync(
+                $"/api/work/repairjob/{vat20Work.ActivityId}/productsorservices",
+                new[]
+                {
+                    new { id = Guid.Empty, code = "VAT20", name = "VAT 20 line", quantity = 1, unit = "unit", price = 120m, discount = 0 },
+                }))
+            {
+                Assert.Equal(HttpStatusCode.OK, linesResponse.StatusCode);
+            }
+            using (var issueResponse = await fixture.AuthorizedClient.PutAsJsonAsync(
+                $"/api/work/{vat20Work.WorkId}/invoice/issue",
+                new { paymentType = 1, dueDays = 14, sendClientEmail = false, clientEmail = "", showVehicleOnInvoice = false }))
+            {
+                Assert.Equal(HttpStatusCode.OK, issueResponse.StatusCode);
+            }
+
+            var vat20Invoice = await ReadInvoiceText(vat20Work.WorkId);
+            Assert.Contains(garageB.requisites.name, vat20Invoice);
+            Assert.Contains(garageB.pricing.invoice.disclaimer, vat20Invoice);
+            Assert.Contains("Total HT", vat20Invoice);
+            Assert.Contains("TVA (20 %)", vat20Invoice);
+            Assert.Contains("Net à payer", vat20Invoice);
+            Assert.DoesNotContain("Signature", vat20Invoice);
+            await AssertPdfRenders($"/api/pricings/invoice/{vat20Work.WorkId}/pdf");
+        }
+        finally
+        {
+            await PutOptions(originalOptions);
+        }
+    }
+
     /// <summary>
     /// Proves the dialog's choice survives the whole way to the stored document.
     /// </summary>
@@ -572,7 +744,12 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
     /// <summary>The invoice really renders as a PDF, not only as the HTML behind it.</summary>
     private async Task AssertInvoicePdfRenders(Guid workId)
     {
-        using var response = await fixture.AuthorizedClient.GetAsync($"/api/pricings/invoice/{workId}/pdf");
+        await AssertPdfRenders($"/api/pricings/invoice/{workId}/pdf");
+    }
+
+    private async Task AssertPdfRenders(string path)
+    {
+        using var response = await fixture.AuthorizedClient.GetAsync(path);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("application/pdf", response.Content.Headers.ContentType?.MediaType);
 
@@ -589,6 +766,21 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
 
         var html = await response.Content.ReadAsStringAsync();
         return System.Net.WebUtility.HtmlDecode(html);
+    }
+
+    private async Task<string> ReadEstimateText(Guid offerId)
+    {
+        using var response = await fixture.AuthorizedClient.GetAsync($"/api/pricings/offer/{offerId}/html");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var html = await response.Content.ReadAsStringAsync();
+        return System.Net.WebUtility.HtmlDecode(html);
+    }
+
+    private async Task PutOptions(object options)
+    {
+        using var response = await fixture.AuthorizedClient.PutAsJsonAsync("/api/options", options);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     private async Task<Guid> PostGuid(string path, object body)

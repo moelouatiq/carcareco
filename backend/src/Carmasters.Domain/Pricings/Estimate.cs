@@ -20,7 +20,8 @@ namespace Carmasters.Core.Domain
                         string vehicleLine2 = null,
                         string vehicleLine3 = null,
                         string vehicleLine4 = null,
-                        Guid? id = null) : base( issuer, sentOn, printedOn, email, partyName, partyAddress, partyCode, vehicleLine1, vehicleLine2, vehicleLine3,vehicleLine4, issuedOn,id)
+                        Guid? id = null,
+                        BillingDocumentSnapshot billingDocumentSnapshot = null) : base( issuer, sentOn, printedOn, email, partyName, partyAddress, partyCode, vehicleLine1, vehicleLine2, vehicleLine3,vehicleLine4, issuedOn,id, billingDocumentSnapshot)
         {
             this.Number = number;
         }
@@ -34,8 +35,10 @@ namespace Carmasters.Core.Domain
             return $"Devis n° {Number}";
         }
         public virtual string Number { get; }
-        public virtual Estimate CreateFor(int purchaseTax,Offer offer, Employee issuer)
+        public virtual Estimate CreateFor(BillingDocumentSnapshot billingDocumentSnapshot, Offer offer, Employee issuer)
         {
+            if (billingDocumentSnapshot == null) throw new ArgumentNullException(nameof(billingDocumentSnapshot));
+
             var newSet = offer.Products.ToArray();
             ApplyClientInformation(offer.Work.Client);
             if (offer.IsVehicleLinesOnEstimate)
@@ -44,9 +47,10 @@ namespace Carmasters.Core.Domain
             }
             else ApplyVehicleInformation(null);
             IssuedNowBy(issuer);
+            ApplyBillingDocumentSnapshot(billingDocumentSnapshot);
             SentOn = default;
             Email = default;
-             PricingLine.Synchronize(newSet.Select((x, i) => ToLine(purchaseTax,x, Convert.ToInt16(i + 1))).ToArray(), lines);
+             PricingLine.Synchronize(newSet.Select((x, i) => ToLine(billingDocumentSnapshot.VatRate,x, Convert.ToInt16(i + 1))).ToArray(), lines);
             return this;
         }
 

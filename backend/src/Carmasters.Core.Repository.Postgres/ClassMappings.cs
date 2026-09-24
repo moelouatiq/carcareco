@@ -411,6 +411,17 @@ namespace Carmasters.Core.Persistence.Postgres.Repositories
             Map(x => x.VehicleLine2).Column("vehicleline2").Access.BackingField();
             Map(x => x.VehicleLine3).Column("vehicleline3").Access.BackingField();
             Map(x => x.VehicleLine4).Column("vehicleline4").Access.BackingField();
+            Map(x => x.SnapshotIssuerName).Column("snapshotissuername").Access.BackingField();
+            Map(x => x.SnapshotIssuerAddress).Column("snapshotissueraddress").Access.BackingField();
+            Map(x => x.SnapshotIssuerPhone).Column("snapshotissuerphone").Access.BackingField();
+            Map(x => x.SnapshotIssuerEmail).Column("snapshotissueremail").Access.BackingField();
+            Map(x => x.SnapshotIssuerRegNr).Column("snapshotissuerregnr").Access.BackingField();
+            Map(x => x.SnapshotIssuerKmkr).Column("snapshotissuerkmkr").Access.BackingField();
+            Map(x => x.SnapshotIssuerBankAccount).Column("snapshotissuerbankaccount").Access.BackingField();
+            Map(x => x.SnapshotVatRate).Column("snapshotvatrate").Access.BackingField();
+            Map(x => x.SnapshotSurCharge).Column("snapshotsurcharge").Access.BackingField();
+            Map(x => x.SnapshotDisclaimer).Column("snapshotdisclaimer").Access.BackingField();
+            Map(x => x.SnapshotSignatureLine).Column("snapshotsignatureline").Access.BackingField();
             Map(x => x.IssuedOn).Column("issuedon").Access.BackingField().CustomType<UtcDateType>();//.HasConversion<DateTimeUtcConverter>();
 
            
