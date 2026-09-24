@@ -146,6 +146,12 @@ namespace Carmasters.Http.Api.Controllers
             return pricingOptions.Invoice.VatRate;
         }
 
+        private async Task<BillingDocumentSnapshot> GetBillingDocumentSnapshotAsync()
+        {
+            var options = await tenantConfigService.GetAppOptionsAsync();
+            return BillingDocumentSnapshotFactory.Create(options);
+        }
+
         [HttpPost]
         public OkObjectResult Post([FromBody]PostOrPutWork model)
         {
@@ -570,7 +576,7 @@ from (
             var work = session.Get<Work>(id);
             var issuer = this.Employee();
 
-            work.GenerateInvoice(numberProviderFactory, await GetVatRateaAsync(), model.PaymentType, model.DueDays, issuer, model.ShowVehicleOnInvoice);
+            work.GenerateInvoice(numberProviderFactory, await GetBillingDocumentSnapshotAsync(), model.PaymentType, model.DueDays, issuer, model.ShowVehicleOnInvoice);
 
             session.Save(work.Invoice);
 
@@ -600,7 +606,7 @@ from (
             var offer = work.Offers.Single(x => x.OrderNr == offerNumber);
             var issuer = this.Employee();
               
-            var offerIssued = await work.Issue(offer,pricingSender, await GetVatRateaAsync(), issuer,model.ShowVehicleOnPricing, model.SendClientEmail, model.ClientEmail);
+            var offerIssued = await work.Issue(offer, pricingSender, await GetBillingDocumentSnapshotAsync(), issuer, model.ShowVehicleOnPricing, model.SendClientEmail, model.ClientEmail);
 
             work.Changed();
             session.Update(work);

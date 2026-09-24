@@ -40,7 +40,25 @@ namespace Carmasters.Core.Domain
              this.PartyCode = client?.RegCode;
             return this;
         }
-        protected Pricing( Employee issuer,DateTime? sentOn, DateTime? printedOn, string email, string partyName, string partyAddress, string partyCode, string vehicleLine1, string vehicleLine2, string vehicleLine3,string vehicleLine4, DateTime issuedOn, Guid? id = null)
+        protected Pricing ApplyBillingDocumentSnapshot(BillingDocumentSnapshot snapshot)
+        {
+            if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
+
+            SnapshotIssuerName = snapshot.IssuerName;
+            SnapshotIssuerAddress = snapshot.IssuerAddress;
+            SnapshotIssuerPhone = snapshot.IssuerPhone;
+            SnapshotIssuerEmail = snapshot.IssuerEmail;
+            SnapshotIssuerRegNr = snapshot.IssuerRegNr;
+            SnapshotIssuerKmkr = snapshot.IssuerKmkr;
+            SnapshotIssuerBankAccount = snapshot.IssuerBankAccount;
+            SnapshotVatRate = snapshot.VatRate;
+            SnapshotSurCharge = snapshot.SurCharge;
+            SnapshotDisclaimer = snapshot.Disclaimer;
+            SnapshotSignatureLine = snapshot.SignatureLine;
+            return this;
+        }
+
+        protected Pricing( Employee issuer,DateTime? sentOn, DateTime? printedOn, string email, string partyName, string partyAddress, string partyCode, string vehicleLine1, string vehicleLine2, string vehicleLine3,string vehicleLine4, DateTime issuedOn, Guid? id = null, BillingDocumentSnapshot billingDocumentSnapshot = null)
         {
              
             this.Issuer = issuer;
@@ -56,6 +74,11 @@ namespace Carmasters.Core.Domain
             VehicleLine3 = vehicleLine3;
             VehicleLine4 = vehicleLine4;
             IssuedOn = issuedOn;
+
+            if (billingDocumentSnapshot != null)
+            {
+                ApplyBillingDocumentSnapshot(billingDocumentSnapshot);
+            }
            
         }
 
@@ -114,5 +137,36 @@ namespace Carmasters.Core.Domain
         public virtual string VehicleLine4 { get; protected set; }
         public  virtual DateTime IssuedOn { get; protected set; }
         public  virtual Employee Issuer { get; protected set; }
+
+        // All snapshot columns are nullable by design. Existing invoices and estimates predate
+        // them; null means "legacy document" and is the only case where rendering reads the
+        // tenant's current configuration.
+        public virtual string SnapshotIssuerName { get; protected set; }
+        public virtual string SnapshotIssuerAddress { get; protected set; }
+        public virtual string SnapshotIssuerPhone { get; protected set; }
+        public virtual string SnapshotIssuerEmail { get; protected set; }
+        public virtual string SnapshotIssuerRegNr { get; protected set; }
+        public virtual string SnapshotIssuerKmkr { get; protected set; }
+        public virtual string SnapshotIssuerBankAccount { get; protected set; }
+        public virtual int? SnapshotVatRate { get; protected set; }
+        public virtual string SnapshotSurCharge { get; protected set; }
+        public virtual string SnapshotDisclaimer { get; protected set; }
+        public virtual bool? SnapshotSignatureLine { get; protected set; }
+
+        public virtual BillingDocumentSnapshot DocumentSnapshot =>
+            SnapshotVatRate.HasValue && SnapshotSignatureLine.HasValue
+                ? new BillingDocumentSnapshot(
+                    SnapshotIssuerName,
+                    SnapshotIssuerAddress,
+                    SnapshotIssuerPhone,
+                    SnapshotIssuerEmail,
+                    SnapshotIssuerRegNr,
+                    SnapshotIssuerKmkr,
+                    SnapshotIssuerBankAccount,
+                    SnapshotVatRate.Value,
+                    SnapshotSurCharge,
+                    SnapshotDisclaimer,
+                    SnapshotSignatureLine.Value)
+                : null;
     }
 }

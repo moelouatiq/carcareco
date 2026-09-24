@@ -22,6 +22,10 @@ public sealed class InvoiceVehicleSnapshotTests
 
     private static Employee AnEmployee() => new();
 
+    private static BillingDocumentSnapshot BillingSnapshot() =>
+        new("Garage", "Address", "Phone", "Email", "RegNr", "ICE", "Bank", 0,
+            "Penalty", "Disclaimer", signatureLine: true);
+
     private static Vehicle AVehicle(string? vin = "VF1EXPRESS000001", int? odo = 142500) =>
         new(regNr: "4512-B-06", introducedAt: DateTime.Now, producer: "Renault", model: "Express",
             vin: vin, odo: odo);
@@ -31,7 +35,7 @@ public sealed class InvoiceVehicleSnapshotTests
 
     private static Invoice Issue(Work work, bool showVehicleOnInvoice)
     {
-        work.GenerateInvoice(new FixedNumbers(), purchaseTax: 0, PaymentType.Cash, dueDays: 30,
+        work.GenerateInvoice(new FixedNumbers(), BillingSnapshot(), PaymentType.Cash, dueDays: 30,
                              issuer: AnEmployee(), showVehicleOnInvoice: showVehicleOnInvoice);
         return work.Invoice;
     }
