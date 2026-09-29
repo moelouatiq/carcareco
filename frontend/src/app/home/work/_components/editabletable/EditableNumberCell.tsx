@@ -4,7 +4,7 @@ import { EditableCellHandle, IEditableNumericCellProps, Input } from "./Editable
 
 const EditableNumberCell = React.forwardRef<EditableCellHandle<number|null>, IEditableNumericCellProps<number|null>>((props, ref) => {
     const {
-        defaultValue, placeholder, id, name, isEditing, className, step, isMoney, isPercentage, required
+        defaultValue, placeholder, id, name, isEditing, className, step, isMoney, isPercentage, required, onValueChange
     } = props;
 
     const [internalValue, setInternalValue] = useState(defaultValue);
@@ -14,7 +14,8 @@ const EditableNumberCell = React.forwardRef<EditableCellHandle<number|null>, IEd
             return internalValue;
         },
         setValue(value: number |  null) {
-            return setInternalValue(value);
+            setInternalValue(value);
+            onValueChange?.(value);
         },
     }));
 
@@ -29,7 +30,11 @@ const EditableNumberCell = React.forwardRef<EditableCellHandle<number|null>, IEd
     };
     if (!isEditing) return getFormattedValue();
 
-    return Input(required, id, name, "number", step, placeholder, internalValue, (e) => setInternalValue(+e.currentTarget.value), className);
+    return Input(required, id, name, "number", step, placeholder, internalValue, (e) => {
+        const value = +e.currentTarget.value;
+        setInternalValue(value);
+        onValueChange?.(value);
+    }, className);
 
 });
 EditableNumberCell.displayName = "EditableNumberCell";

@@ -13,6 +13,7 @@ import { IActivities, IOfferIssuance, IProduct, IWorkData } from "../model"
 import OfferAcceptedDialog from "./activity/OfferAcceptedDialog" 
 import SendPricingDialog from "./activity/SendPricingDialog"
 import { labels } from "@/_lib/labels"
+import { createEmptyWorkLine } from "../workLine"
 
 export default function Activity({
     edit,
@@ -40,7 +41,7 @@ export default function Activity({
      const sendOfferRef = React.useRef<BaseDialogHandle>(null);
     const [data, setData] = React.useState<IProduct[]>(() => {
         if (startfresh && activities.current.products.length === 0) {
-            return [{ id: '-1', code: '', discount: null, name: '', price: null, quantity: 1, unit: 'tk' }];
+            return [createEmptyWorkLine('-1')];
         }
 
         return activities.current.products;
@@ -91,15 +92,9 @@ export default function Activity({
         setData(current => {
             const negativeIds = current.filter(item => item.id.startsWith('-')).map(item => Number(item.id));
             const nextId = (negativeIds.length > 0 ? Math.min(...negativeIds) : 0) - 1;
-            const newRows = Array.from({ length: count }, (_, index) => ({
-                id: (nextId - index).toString(),
-                code: '',
-                discount: null,
-                name: '',
-                price: null,
-                quantity: 1,
-                unit: 'tk',
-            }));
+            const newRows = Array.from({ length: count }, (_, index) =>
+                createEmptyWorkLine((nextId - index).toString())
+            );
             return [...current, ...newRows];
         });
       }, []);

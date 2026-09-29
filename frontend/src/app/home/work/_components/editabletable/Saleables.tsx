@@ -42,10 +42,9 @@ export default function Saleables({
                         {edit && <th className={`${headerCell} w-10`}><span className="sr-only">{labels.work.reorderRow}</span></th>}
                         <th scope="col" className={`${headerCell} text-left`}>{labels.common.code}</th>
                         <th scope="col" className={`${headerCell} text-left`}>{labels.common.name}</th>
-                        <th scope="col" className={`${headerCell} text-right`}>{labels.common.price}</th>
                         <th scope="col" className={`${headerCell} text-right`}>{labels.common.quantity}</th>
-                        <th scope="col" className={`${headerCell} text-right`}>{labels.common.unit}</th>
-                        <th scope="col" className={`${headerCell} text-right`}>{labels.common.discount}</th>
+                        <th scope="col" className={`${headerCell} text-right`}>{labels.common.price}</th>
+                        <th scope="col" className={`${headerCell} text-right`}>{labels.common.total}</th>
                         {edit && <th className={`${headerCell} w-10`}><span className="sr-only">{labels.actions.delete}</span></th>}
                     </tr>
                 </thead>
@@ -69,15 +68,15 @@ export default function Saleables({
                 {!edit && priceSummary && <tfoot>
                     {/* The totals come from the record. Nothing is added up in the browser. */}
                     <tr>
-                        <td colSpan={5} className={`${cellPadding} pt-3 text-right text-[13px] text-muted`}>{labels.common.subtotal}</td>
+                        <td colSpan={4} className={`${cellPadding} pt-3 text-right text-[13px] text-muted`}>{labels.common.subtotal}</td>
                         <td className={`${cellPadding} pt-3 text-right text-[13px] text-muted whitespace-nowrap`}>{formatMoney(priceSummary.totalWithoutVat)}</td>
                     </tr>
                     <tr>
-                        <td colSpan={5} className={`${cellPadding} text-right text-[13px] text-muted`}>{labels.common.tax}</td>
+                        <td colSpan={4} className={`${cellPadding} text-right text-[13px] text-muted`}>{labels.common.tax}</td>
                         <td className={`${cellPadding} text-right text-[13px] text-muted whitespace-nowrap`}>{formatMoney(priceSummary.totalWithVat - priceSummary.totalWithoutVat)}</td>
                     </tr>
                     <tr>
-                        <td colSpan={5} className={`${cellPadding} border-t border-line text-right text-sm font-semibold text-ink`}>{labels.common.total}</td>
+                        <td colSpan={4} className={`${cellPadding} border-t border-line text-right text-sm font-semibold text-ink`}>{labels.common.total}</td>
                         <td className={`${cellPadding} border-t border-line text-right text-sm font-semibold text-ink whitespace-nowrap`}>{formatMoney(priceSummary.totalWithVat)}</td>
                     </tr>
                 </tfoot>}

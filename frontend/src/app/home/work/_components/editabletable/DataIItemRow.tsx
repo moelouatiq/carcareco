@@ -1,5 +1,4 @@
-import React  from "react";
-import {   useImperativeHandle } from "react";
+import React, { useImperativeHandle, useState } from "react";
 import { EditableCellHandle, EditableTextCell } from "./EditableCell";
 import { EditableNumberCell } from "./EditableNumberCell";
 import Link from "next/link";
@@ -9,6 +8,8 @@ import { IProduct } from "../../model";
 import { Bars3Icon } from "@heroicons/react/20/solid";
 import { EditableCodeCell } from "./EditableCodeCell";
 import { labels } from "@/_lib/labels";
+import { formatMoney } from "@/_lib/money";
+import { calculateWorkLineTotal, DEFAULT_WORK_LINE_DISCOUNT, DEFAULT_WORK_LINE_UNIT } from "../../workLine";
 
 // Shared with the header in Saleables so both halves of the table sit on one horizontal grid.
 export const cellPadding = "px-3 py-2.5";
@@ -46,9 +47,11 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
     const codeRef = React.useRef<EditableCellHandle<string>>(null);
     const nameRef = React.useRef<EditableCellHandle<string>>(null);
     const priceRef = React.useRef<EditableCellHandle<number>>(null);
-    const unitRef = React.useRef<EditableCellHandle<string>>(null);
     const quantityRef = React.useRef<EditableCellHandle<number>>(null);
-    const discountRef = React.useRef<EditableCellHandle<number>>(null);
+    const [price, setPrice] = useState(item.price);
+    const [quantity, setQuantity] = useState(item.quantity);
+    const [discount, setDiscount] = useState(item.discount ?? DEFAULT_WORK_LINE_DISCOUNT);
+    const unit = item.unit || DEFAULT_WORK_LINE_UNIT;
 
     useImperativeHandle(ref, () => ({
         
@@ -58,13 +61,13 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
                 code: codeRef.current?.getValue()??'',
                 name: nameRef.current?.getValue()??'',
                 price: priceRef.current?.getValue()??null,
-                unit: unitRef.current?.getValue()??'',
+                unit,
                 quantity: quantityRef.current?.getValue()??null,
-                discount: discountRef.current?.getValue()??null,
+                discount,
             };
         },
         applyDiscount(value: number) {
-            discountRef.current?.setValue(value);
+            setDiscount(value);
         }
     }));
  
@@ -87,6 +90,8 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
         {isEditing && <>
             <td className={clsx(tdStyle, "w-10")}>
             <input type="hidden" value={item.id} name="id"/>
+            <input type="hidden" value={unit} name="unit" readOnly />
+            <input type="hidden" value={discount} name="discount" readOnly />
             {/* The row is dragged by its handle, so the handle needs a name of its own. */}
             <button
                 type="button"
@@ -98,7 +103,7 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
         </td>
         </>}
        
-        <td className={clsx("min-w-50 w-50",tdStyle)} >
+        <td className={clsx("w-28 min-w-28 sm:w-40 sm:min-w-40",tdStyle)} >
           
             <EditableCodeCell //todo auto complete 
                 placeholder={labels.common.codePlaceholder}
@@ -113,7 +118,7 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
             >
             </EditableCodeCell>
         </td>
-        <td className={clsx("min-w-50",tdStyle)}  > 
+        <td className={clsx("w-full min-w-44 sm:min-w-64",tdStyle)}  >
                 <EditableTextCell
                     id={item.id}
                     name='name'
@@ -126,19 +131,6 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
                 >
                 </EditableTextCell> 
         </td>
-        <td className={clsx("w-20 text-end",tdStyle)}  >
-        <EditableNumberCell
-                    id={item.id}
-                    name='price'
-                        placeholder=""
-                        defaultValue={item.price}
-                        isMoney={true}
-                        required={true}
-                         step="any"
-                        className={clsx("w-20",pricePropsClass)}
-                        ref={priceRef}
-                        isEditing={isEditing}></EditableNumberCell>
-        </td>
         <td className={clsx("w-15  text-end",tdStyle)}  >
         <EditableNumberCell   
                         placeholder=""
@@ -147,30 +139,28 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
                         name='quantity'
                         step="any"
                         defaultValue={item.quantity}
+                        onValueChange={setQuantity}
                         className={clsx("w-15",pricePropsClass)}
                         isEditing={isEditing}>
                     </EditableNumberCell> 
             </td>
-            <td className={clsx("w-15  text-end",tdStyle)}  >
-            <EditableTextCell  
+        <td className={clsx("w-20 text-end",tdStyle)}  >
+        <EditableNumberCell
                     id={item.id}
-                    name='unit'
-                        placeholder={labels.common.noValue}
-                        ref={unitRef}
-                        className={clsx("w-15",pricePropsClass)}
-                        defaultValue={item.unit} isEditing={isEditing}></EditableTextCell>
-            </td>
-            <td className={clsx("w-15  text-end",tdStyle)}  >
-                 <EditableNumberCell 
-                    id={item.id}
-                    name='discount'
-                        defaultValue={item.discount}
-                        step="5"
-                        className={clsx("w-15",pricePropsClass)}
-                        ref={discountRef}
-                         placeholder="" isPercentage={true} isEditing={isEditing}>
-                    </EditableNumberCell>
-            </td>
+                    name='price'
+                        placeholder=""
+                        defaultValue={item.price}
+                        isMoney={true}
+                        required={true}
+                        step="any"
+                        onValueChange={setPrice}
+                        className={clsx("w-20",pricePropsClass)}
+                        ref={priceRef}
+                        isEditing={isEditing}></EditableNumberCell>
+        </td>
+        <td className={clsx("w-28 text-end font-medium text-ink",tdStyle)}>
+            {formatMoney(calculateWorkLineTotal(quantity, price, discount))}
+        </td>
       
         {isEditing && <td className={clsx(tdStyle, "w-10 text-right")}>
             <Link color="link" href="#"
