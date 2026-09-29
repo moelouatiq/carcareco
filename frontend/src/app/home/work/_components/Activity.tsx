@@ -2,7 +2,6 @@
 
 import { IButtonOption } from "@/_components/ButtonGroup"
 import { ActionBar } from "@/_components/ui/ActionBar"
-import ApplyDiscountsDialog from "./activity/ApplyDiscountDialog"
 import IssueOfferDialog from "./activity/IssueOfferDialog"
 import ActivityNotes from "./activity/Notes"
 import Saleables from "./editabletable/Saleables"
@@ -35,7 +34,6 @@ export default function Activity({
         });
     };
 
-    const applyDiscountsRef = React.useRef<BaseDialogHandle>(null);
     const issueOfferRef = React.useRef<BaseDialogHandle>(null);
     const offerAcceptedRef = React.useRef<BaseDialogHandle>(null);
      const sendOfferRef = React.useRef<BaseDialogHandle>(null);
@@ -57,7 +55,6 @@ export default function Activity({
         } },
         { name: labels.actions.cancel, href: pathCancel },
         { name: labels.actions.save, isPrimary: true },
-        { name: labels.work.applyDiscount, inMenu: true, onClick: () => applyDiscountsRef.current?.open() },
         { name: labels.work.addRows, inMenu: true, onClick: () =>{
             addEmptyRow(5);
             scrollToBottom();
@@ -106,7 +103,6 @@ export default function Activity({
     return (
         <div>
             {activityIsOffer&&<OfferAcceptedDialog  dialogRef={offerAcceptedRef} work={work}  activities={activities}></OfferAcceptedDialog>}
-            <ApplyDiscountsDialog dialogRef={applyDiscountsRef} tableRef={tableRef} ></ApplyDiscountsDialog>
             {activityIsOffer&& <IssueOfferDialog dialogRef={issueOfferRef} work={work}   activities={activities} ></IssueOfferDialog>}
             {activityIsOffer&&issuance&& <SendPricingDialog work={work} offerId={issuance.id}  dialogRef={sendOfferRef}></SendPricingDialog>}
             <ActivityNotes notes={activities.current.notes} edit={edit} ></ActivityNotes>

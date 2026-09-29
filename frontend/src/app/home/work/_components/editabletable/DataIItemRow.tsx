@@ -15,9 +15,7 @@ import { calculateWorkLineTotal, DEFAULT_WORK_LINE_DISCOUNT, DEFAULT_WORK_LINE_U
 export const cellPadding = "px-3 py-2.5";
 
 export type DataItemRowHandle<T> = {
-    
-    getValue: () => T; 
-    applyDiscount(value: number): void
+    getValue: () => T;
 };
 
 interface IRemoveItemHandle {
@@ -50,7 +48,7 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
     const quantityRef = React.useRef<EditableCellHandle<number>>(null);
     const [price, setPrice] = useState(item.price);
     const [quantity, setQuantity] = useState(item.quantity);
-    const [discount, setDiscount] = useState(item.discount ?? DEFAULT_WORK_LINE_DISCOUNT);
+    const discount = item.discount ?? DEFAULT_WORK_LINE_DISCOUNT;
     const unit = item.unit || DEFAULT_WORK_LINE_UNIT;
 
     useImperativeHandle(ref, () => ({
@@ -65,9 +63,6 @@ const DataItemRow = React.forwardRef<DataItemRowHandle<IProduct>, IDataItemRowPr
                 quantity: quantityRef.current?.getValue()??null,
                 discount,
             };
-        },
-        applyDiscount(value: number) {
-            setDiscount(value);
         }
     }));
  
