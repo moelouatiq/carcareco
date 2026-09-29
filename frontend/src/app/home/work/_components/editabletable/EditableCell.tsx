@@ -34,6 +34,7 @@ export interface IEditableBaseCellProps<Type extends string | number  | readonly
  export interface IEditableNumericCellProps<Type extends   number | null> extends IEditableBaseCellProps<Type> { 
     isMoney?:boolean | undefined, 
     isPercentage?:boolean| undefined,
+    onValueChange?: (value: Type) => void,
     step: string 
  };
 

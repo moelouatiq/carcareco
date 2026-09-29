@@ -3,8 +3,7 @@
 import { httpPut  } from "@/_lib/server/query-api";
 import {  pushToast } from "@/_lib/server/pushToast";
 import { redirect } from "next/navigation"; 
-import { IProduct } from "../model";
-import { NIL as NIL_UUID } from 'uuid';
+import { productsFromFormData } from "./productsFromFormData";
 
 export async function createOrUpdateProducts(formData: FormData) {
        
@@ -16,28 +15,7 @@ export async function createOrUpdateProducts(formData: FormData) {
     const redirectUrl = `/home/work/${workId}/${activityId}` ;
     const apiUrl = `work/${activityName}/${activityId}/productsorservices`;
     
-    const ids = formData.getAll('id');
-    const codes = formData.getAll('part[code]');
-    const names = formData.getAll('name');
-    const prices = formData.getAll('price');
-    const quantities = formData.getAll('quantity');
-    const units = formData.getAll('unit');
-    const discount = formData.getAll('discount');
-    const body = ids.map((id,index)=>{
-        if(id.toString().startsWith('-')){
-            //unsaved value
-            id =NIL_UUID;
-        }
-        return {
-            id:id,
-            code:codes[index],
-            name:names[index],
-            price:+prices[index],
-            quantity:+quantities[index],
-            unit:units[index],
-            discount:+discount[index],
-        } as IProduct
-    })
+    const body = productsFromFormData(formData);
 
      //isVehicelLinesOnPricing
     // const notes = formData.get('notes');

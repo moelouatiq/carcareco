@@ -95,8 +95,6 @@ export const labels = {
     sendClientEmail: "Envoyer un e-mail au client",
   },
   dialogs: {
-    applyDiscount: "Appliquer une remise",
-    percent: "Pourcentage",
     deleteInvoice: "Supprimer une facture",
     issueInvoice: "Terminer l’intervention et émettre une facture",
     dueDays: "Délai de paiement (jours)",
@@ -304,7 +302,6 @@ export const labels = {
     removeRow: "Retirer la ligne",
     notesPlaceholder: "Ajouter des notes…",
     addRows: "Ajouter cinq lignes",
-    applyDiscount: "Appliquer une remise",
     startEntry: "Commencer la saisie",
     // Section titles on the record.
     identity: "Identité",
