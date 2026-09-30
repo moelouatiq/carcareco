@@ -70,9 +70,15 @@ export default function Nav({
 
     return (
         <>
-            <div className="flex h-14 shrink-0 items-center gap-x-2.5 px-1">
-                <Image alt="" width="40" height="40" className="size-7 w-auto" src="/logo.png" />
-                <span className="truncate text-sm font-semibold text-ink">{labels.app.name}</span>
+            <div className="flex h-20 shrink-0 items-center px-1">
+                <Image
+                    src="/othman-benhicham-logo.webp"
+                    alt="Othman Benhicham — Mécanique & Diagnostic Auto"
+                    width={1200}
+                    height={400}
+                    sizes="210px"
+                    className="h-auto w-full max-w-[210px] object-contain"
+                />
             </div>
 
             <nav className="flex flex-1 flex-col pb-3" aria-label={labels.nav.primary}>

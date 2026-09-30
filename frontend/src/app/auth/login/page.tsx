@@ -21,7 +21,15 @@ export default function LoginPage() {
         <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
-              <Image alt="B-dec" width="50" height="50" className="h-10 w-auto" src="/logo.png" ></Image>
+              <Image
+                src="/othman-benhicham-logo.webp"
+                alt="Othman Benhicham — Mécanique & Diagnostic Auto"
+                width={1200}
+                height={400}
+                sizes="(max-width: 640px) 260px, 280px"
+                priority
+                className="h-auto w-full max-w-[280px] object-contain"
+              />
 
               <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-ink">{labels.auth.signInTitle}</h2>
               {/* <p className="mt-2 text-sm/6 text-muted">

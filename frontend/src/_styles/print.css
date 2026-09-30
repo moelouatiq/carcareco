@@ -29,6 +29,14 @@ body {
     border-bottom: 1px solid #c9cec7;
 }
 
+.doc-logo {
+    display: block;
+    width: 60mm;
+    max-width: 100%;
+    height: auto;
+    margin: 0 0 2mm 0;
+}
+
 .doc-issuer {
     font-size: 17px;
     font-weight: 600;

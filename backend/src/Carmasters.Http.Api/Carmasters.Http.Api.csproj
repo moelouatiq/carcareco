@@ -18,6 +18,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="wwwroot\**" />
+		<EmbeddedResource Include="Branding\othman-benhicham-logo-print.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Remove="appsettings.Secrets.json" />

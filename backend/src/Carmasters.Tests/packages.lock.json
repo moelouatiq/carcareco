@@ -115,6 +115,11 @@
         "resolved": "18.9.0",
         "contentHash": "MtegCIKGuG0r/LCdIjoR1HgzCGIUBhR3aNdbtQpts5vMXQuqBDZ2Jsd2uFKoHFM2XrQV6ZrDf3F5oLi3SLTp8w=="
       },
+      "Microsoft.Extensions.ApiDescription.Server": {
+        "type": "Transitive",
+        "resolved": "6.0.5",
+        "contentHash": "Ckb5EDBUNJdFWyajfXzUIMRkhf52fHZOQuuZg/oiu8y7zDCVwD0iHhew6MnThjHmevanpxL3f5ci2TtHQEN6bw=="
+      },
       "Microsoft.Extensions.Configuration.Abstractions": {
         "type": "Transitive",
         "resolved": "9.0.2",
@@ -144,6 +149,11 @@
         "resolved": "9.0.2",
         "contentHash": "MNe7GSTBf3jQx5vYrXF0NZvn6l7hUKF6J54ENfAgCO8y6xjN1XUmKKWG464LP2ye6QqDiA1dkaWEZBYnhoZzjg=="
       },
+      "Microsoft.Extensions.DependencyModel": {
+        "type": "Transitive",
+        "resolved": "8.0.2",
+        "contentHash": "mUBDZZRgZrSyFOsJ2qJJ9fXfqd/kXJwf3AiDoqLD9m6TjY5OO/vLNOb9fb4juC0487eq4hcGN/M2Rh/CKS7QYw=="
+      },
       "Microsoft.Extensions.Logging": {
         "type": "Transitive",
         "resolved": "8.0.0",
@@ -156,10 +166,10 @@
       },
       "Microsoft.Extensions.Logging.Abstractions": {
         "type": "Transitive",
-        "resolved": "9.0.0",
-        "contentHash": "g0UfujELzlLbHoVG8kPKVBaW470Ewi+jnptGS9KUi6jcb+k2StujtK3m26DFSGGwQ/+bVgZfsWqNzlP6YOejvw==",
+        "resolved": "9.0.2",
+        "contentHash": "dV9s2Lamc8jSaqhl2BQSPn/AryDIH2sSbQUyLitLXV0ROmsb+SROnn2cH939JFbsNrnf3mIM3GNRKT7P0ldwLg==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.0"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.2"
         }
       },
       "Microsoft.Extensions.Options": {
@@ -336,8 +346,8 @@
       },
       "NHibernate": {
         "type": "Transitive",
-        "resolved": "5.4.9",
-        "contentHash": "H78ypzh1T+D2BJDQRd/IYIICplspq/s8x5YhnkXFlcIhmAH0RHIMjjqiJCXSwC+gOqBKRMsmtVvkaCXZHqd76w==",
+        "resolved": "5.5.2",
+        "contentHash": "qTFlQDp7eDW96u2vNwpaa28uWz5eSKT/73P7RfUob3Aj2Zop7xnMZyAm7wlJmf5eX3DVn8W7SwM5QrXfkvVR/w==",
         "dependencies": {
           "Antlr3.Runtime": "[3.5.1, 4.0.0)",
           "Iesi.Collections": "[4.0.4, 5.0.0)",
@@ -506,10 +516,30 @@
         "resolved": "4.3.0",
         "contentHash": "VB5cn/7OzUfzdnC8tqAIMQciVLiq2epm2NrAm1E9OjNRyG4lVhfR61SMcLizejzQP8R8Uf/0l5qOIbUEi+RdEg=="
       },
+      "Scrutor": {
+        "type": "Transitive",
+        "resolved": "6.0.1",
+        "contentHash": "5xKT6ND5GqnFzwSaYozHCJe75GFL8sPy4yw/iRFqeBFGlmqPNFpOg1T9Q0Gl2h76Cklt0ZTg6Ypkri5iUBKXsA==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.1",
+          "Microsoft.Extensions.DependencyModel": "8.0.2"
+        }
+      },
       "SixLabors.Fonts": {
         "type": "Transitive",
         "resolved": "1.0.0",
         "contentHash": "LFQsCZlV0xlUyXAOMUo5kkSl+8zAQXXbbdwWchtk0B4o7zotZhQsQOcJUELGHdfPfm/xDAsz6hONAuV25bJaAg=="
+      },
+      "Swashbuckle.AspNetCore": {
+        "type": "Transitive",
+        "resolved": "7.2.0",
+        "contentHash": "vJv19UpWm6OOgnS9QLDnWARNVasXUfj8SFvlG7UVALm4nBnfwRnEky7C0veSDqMUmBeMPC6Ec3d6G1ts/J04Uw==",
+        "dependencies": {
+          "Microsoft.Extensions.ApiDescription.Server": "6.0.5",
+          "Swashbuckle.AspNetCore.Swagger": "7.2.0",
+          "Swashbuckle.AspNetCore.SwaggerGen": "7.2.0",
+          "Swashbuckle.AspNetCore.SwaggerUI": "7.2.0"
+        }
       },
       "Swashbuckle.AspNetCore.Swagger": {
         "type": "Transitive",
@@ -526,6 +556,11 @@
         "dependencies": {
           "Swashbuckle.AspNetCore.Swagger": "7.2.0"
         }
+      },
+      "Swashbuckle.AspNetCore.SwaggerUI": {
+        "type": "Transitive",
+        "resolved": "7.2.0",
+        "contentHash": "hgrXeKzyp5OGN8qVvL7A+vhmU7mDJTfGpiMBRL66IcfLOyna8UTLtn3cC3CghamXpRDufcc9ciklTszUGEQK0w=="
       },
       "System.AppContext": {
         "type": "Transitive",
@@ -1402,6 +1437,33 @@
       },
       "carmasters.core.domain": {
         "type": "Project"
+      },
+      "carmasters.core.persistence.postgres": {
+        "type": "Project",
+        "dependencies": {
+          "Carmasters.Core.Application": "[1.0.0, )",
+          "Carmasters.Core.Domain": "[1.0.0, )",
+          "Carmasters.Http.Api.Model": "[1.0.0, )",
+          "FluentNHibernate": "[3.4.0, )",
+          "Microsoft.Extensions.Configuration.Abstractions": "[9.0.2, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[9.0.2, )",
+          "NHibernate": "[5.5.2, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "carmasters.http.api": {
+        "type": "Project",
+        "dependencies": {
+          "BCrypt.Net-Next": "[4.0.3, )",
+          "Carmasters.Core.Persistence.Postgres": "[1.0.0, )",
+          "Carmasters.Http.Api.Model": "[1.0.0, )",
+          "Dapper": "[2.1.66, )",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "[9.0.2, )",
+          "Npgsql": "[9.0.2, )",
+          "PuppeteerSharp": "[20.1.0, )",
+          "Scrutor": "[6.0.1, )",
+          "Swashbuckle.AspNetCore": "[7.2.0, )"
+        }
       },
       "carmasters.http.api.model": {
         "type": "Project",

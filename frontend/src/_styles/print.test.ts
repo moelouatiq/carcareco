@@ -16,7 +16,7 @@ describe('browser print styles', () => {
     expect(frontendCss).toBe(backendCss)
   })
 
-  it.each(['.doc-head', '.doc-parties', '.doc-table', '.doc-totals', '.doc-notes', '.doc-foot'])(
+  it.each(['.doc-head', '.doc-logo', '.doc-parties', '.doc-table', '.doc-totals', '.doc-notes', '.doc-foot'])(
     'style the structural selector %s',
     selector => {
       expect(frontendCss).toContain(selector)

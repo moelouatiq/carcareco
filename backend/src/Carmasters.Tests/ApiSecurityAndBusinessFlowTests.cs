@@ -150,6 +150,7 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
         }
 
         var estimateHtml = await ReadEstimateText(offerId);
+        AssertDocumentBranding(estimateHtml);
         AssertPricingTableColumns(estimateHtml, hasDiscounts: false);
 
         // The estimate PDF must follow the same French convention as the invoice, driven by the
@@ -214,6 +215,11 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
         {
             Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
             var invoiceHtml = await htmlResponse.Content.ReadAsStringAsync();
+            var visibleInvoiceHtml = Regex.Replace(
+                invoiceHtml,
+                "data:image/[a-z0-9.+-]+;base64,[^\"]+",
+                string.Empty,
+                RegexOptions.IgnoreCase);
             Assert.DoesNotContain("render error", invoiceHtml, StringComparison.OrdinalIgnoreCase);
             Assert.Contains("Diagnostic labour", invoiceHtml);
             // Rendered by the Print/LeftTop.Invoice partial, which the template picks by runtime
@@ -231,10 +237,11 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
             Assert.Contains("MAD", invoiceHtml);
             Assert.Contains("250,00", invoiceHtml);
             Assert.DoesNotContain("250.00", invoiceHtml);
-            Assert.DoesNotContain("EUR", invoiceHtml);
-            Assert.DoesNotContain("€", invoiceHtml);
-            Assert.DoesNotContain("&#x20AC", invoiceHtml, StringComparison.OrdinalIgnoreCase);
-            Assert.DoesNotContain("&euro;", invoiceHtml, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("EUR", visibleInvoiceHtml);
+            Assert.DoesNotContain("€", visibleInvoiceHtml);
+            Assert.DoesNotContain("&#x20AC", visibleInvoiceHtml, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("&euro;", visibleInvoiceHtml, StringComparison.OrdinalIgnoreCase);
+            AssertDocumentBranding(System.Net.WebUtility.HtmlDecode(invoiceHtml));
             AssertPricingTableColumns(System.Net.WebUtility.HtmlDecode(invoiceHtml), hasDiscounts: false);
         }
 
@@ -608,6 +615,9 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
             AssertPricingTableColumns(estimate, hasDiscounts: true);
 
             Assert.Contains(garageA.requisites.name, invoice);
+            Assert.Contains(garageA.requisites.address, invoice);
+            Assert.Contains(garageA.requisites.phone, invoice);
+            Assert.Contains(garageA.requisites.email, invoice);
             Assert.Contains(garageA.requisites.kmkr, invoice);
             Assert.Contains(garageA.pricing.invoice.surCharge, invoice);
             Assert.Contains(garageA.pricing.invoice.disclaimer, invoice);
@@ -622,6 +632,9 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
             Assert.DoesNotContain(garageB.pricing.invoice.disclaimer, invoice);
 
             Assert.Contains(garageA.requisites.name, estimate);
+            Assert.Contains(garageA.requisites.address, estimate);
+            Assert.Contains(garageA.requisites.phone, estimate);
+            Assert.Contains(garageA.requisites.email, estimate);
             Assert.Contains(garageA.requisites.kmkr, estimate);
             Assert.Contains($"SNAP-{suffix[..5]}", estimate);
             Assert.DoesNotContain(garageB.requisites.name, estimate);
@@ -826,6 +839,19 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
             Assert.Equal(expectedColumnCount, cells.Length);
             Assert.DoesNotContain(cells, value => value.Equals("tk", StringComparison.OrdinalIgnoreCase));
         }
+    }
+
+    private static void AssertDocumentBranding(string html)
+    {
+        Assert.Contains("class=\"doc-logo\"", html);
+
+        var logo = Regex.Match(
+            html,
+            "<img[^>]*class=\"doc-logo\"[^>]*src=\"(?<source>data:image/png;base64,[^\"]+)\"[^>]*>",
+            RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+        Assert.True(logo.Success, "The billing document does not contain its embedded PNG logo.");
+        Assert.StartsWith("data:image/png;base64,", logo.Groups["source"].Value, StringComparison.Ordinal);
     }
 
     private static string[] ExtractHtmlCells(string html, string tagName) =>

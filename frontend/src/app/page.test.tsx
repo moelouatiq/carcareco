@@ -37,6 +37,9 @@ describe('the login destination', () => {
   it('still renders the themed sign-in form', () => {
     const html = renderToStaticMarkup(<LoginPage />)
 
+    expect(html).toContain('othman-benhicham-logo.webp')
+    expect(html).toContain('Othman Benhicham — Mécanique &amp; Diagnostic Auto')
+    expect(html).not.toContain('logo.png')
     expect(html).toContain('<form')
     expect(html).toContain('name="username"')
     expect(html).toContain('name="password"')

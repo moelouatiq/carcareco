@@ -9,11 +9,10 @@ import '@/_styles/tailwind.css'
 
 export const metadata: Metadata = {
   title: {
-    template: '%s', // - B-dec
-    default: 'Repair and maintenance',
+    template: '%s',
+    default: 'Othman Benhicham — Mécanique & Diagnostic Auto',
   },
-  description:
-    'Streamline your car repair business with our all-in-one web app. Track work progress, create jobs, manage services and products, generate offers, issue invoices, and organize your cars and clients effortlessly. Designed to help you save time, boost productivity, and grow your business—your workshop deserves more than just tools; it deserves a partner in success.',
+  description: "Gestion d'atelier, mécanique automobile et diagnostic véhicule — Othman Benhicham.",
 }
 
 const inter = Inter({
