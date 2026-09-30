@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using Xunit;
 
 namespace Carmasters.Tests;
@@ -134,7 +135,7 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
             $"/api/work/offer/{offerId}/productsorservices",
             new[]
             {
-                new { id = Guid.Empty, code = "LAB", name = "Diagnostic labour", quantity = 1, unit = "hour", price = 250m, discount = 0 },
+                new { id = Guid.Empty, code = "LAB", name = "Diagnostic labour", quantity = 1, unit = "tk", price = 250m, discount = 0 },
             }))
         {
             Assert.Equal(HttpStatusCode.OK, productResponse.StatusCode);
@@ -147,6 +148,9 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
             Assert.Equal(HttpStatusCode.OK, issueOfferResponse.StatusCode);
             Assert.NotEqual(Guid.Empty, await issueOfferResponse.Content.ReadFromJsonAsync<Guid>(JsonOptions));
         }
+
+        var estimateHtml = await ReadEstimateText(offerId);
+        AssertPricingTableColumns(estimateHtml, hasDiscounts: false);
 
         // The estimate PDF must follow the same French convention as the invoice, driven by the
         // estimate's own business number -- not by the offer or work GUID in the route.
@@ -185,6 +189,7 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
             Assert.Equal(HttpStatusCode.OK, repairProductsResponse.StatusCode);
             var products = await repairProductsResponse.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
             Assert.Equal(1, products.GetArrayLength());
+            Assert.Equal("tk", products[0].GetProperty("unit").GetString());
         }
 
         using (var invoiceResponse = await fixture.AuthorizedClient.PutAsJsonAsync(
@@ -230,6 +235,7 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
             Assert.DoesNotContain("€", invoiceHtml);
             Assert.DoesNotContain("&#x20AC", invoiceHtml, StringComparison.OrdinalIgnoreCase);
             Assert.DoesNotContain("&euro;", invoiceHtml, StringComparison.OrdinalIgnoreCase);
+            AssertPricingTableColumns(System.Net.WebUtility.HtmlDecode(invoiceHtml), hasDiscounts: false);
         }
 
         using var pdfResponse = await fixture.AuthorizedClient.GetAsync($"/api/pricings/invoice/{workId}/pdf");
@@ -564,7 +570,7 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
                 $"/api/work/offer/{offerId}/productsorservices",
                 new[]
                 {
-                    new { id = Guid.Empty, code = "SNAP", name = "Snapshot line", quantity = 1, unit = "unit", price = 100m, discount = 0 },
+                    new { id = Guid.Empty, code = "SNAP", name = "Snapshot line", quantity = 1, unit = "tk", price = 100m, discount = 10 },
                 }))
             {
                 Assert.Equal(HttpStatusCode.OK, lineResponse.StatusCode);
@@ -597,6 +603,9 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
             // continue to render the A values captured when they were issued.
             var invoice = await ReadInvoiceText(workId);
             var estimate = await ReadEstimateText(offerId);
+
+            AssertPricingTableColumns(invoice, hasDiscounts: true);
+            AssertPricingTableColumns(estimate, hasDiscounts: true);
 
             Assert.Contains(garageA.requisites.name, invoice);
             Assert.Contains(garageA.requisites.kmkr, invoice);
@@ -776,6 +785,57 @@ public sealed class ApiSecurityAndBusinessFlowTests(ApiFixture fixture)
         var html = await response.Content.ReadAsStringAsync();
         return System.Net.WebUtility.HtmlDecode(html);
     }
+
+    private static void AssertPricingTableColumns(string html, bool hasDiscounts)
+    {
+        var table = Regex.Match(
+            html,
+            "<table[^>]*class=\"[^\"]*\\bdoc-table\\b[^\"]*\"[^>]*>(?<content>.*?)</table>",
+            RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        Assert.True(table.Success, "The rendered document does not contain its pricing table.");
+
+        var tableContent = table.Groups["content"].Value;
+        var headers = ExtractHtmlCells(tableContent, "th");
+        var expectedColumnCount = hasDiscounts ? 5 : 4;
+
+        Assert.Equal(expectedColumnCount, headers.Length);
+        Assert.Contains("signation", headers[0], StringComparison.OrdinalIgnoreCase);
+        Assert.StartsWith("Quantit", headers[1], StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("Prix unitaire", headers[2]);
+        Assert.Equal(hasDiscounts ? "Remise %" : "Montant", headers[3]);
+        if (hasDiscounts)
+        {
+            Assert.Equal("Montant", headers[4]);
+        }
+        Assert.DoesNotContain(headers, header => header.StartsWith("Unit", StringComparison.OrdinalIgnoreCase));
+
+        var body = Regex.Match(
+            tableContent,
+            "<tbody[^>]*>(?<content>.*?)</tbody>",
+            RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        Assert.True(body.Success, "The rendered pricing table does not contain a body.");
+
+        var rows = Regex.Matches(
+            body.Groups["content"].Value,
+            "<tr[^>]*>(?<content>.*?)</tr>",
+            RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        Assert.NotEmpty(rows);
+        foreach (Match row in rows)
+        {
+            var cells = ExtractHtmlCells(row.Groups["content"].Value, "td");
+            Assert.Equal(expectedColumnCount, cells.Length);
+            Assert.DoesNotContain(cells, value => value.Equals("tk", StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    private static string[] ExtractHtmlCells(string html, string tagName) =>
+        Regex.Matches(
+                html,
+                $"<{tagName}\\b[^>]*>(?<content>.*?)</{tagName}>",
+                RegexOptions.IgnoreCase | RegexOptions.Singleline)
+            .Select(match => System.Net.WebUtility.HtmlDecode(
+                Regex.Replace(match.Groups["content"].Value, "<[^>]+>", string.Empty)).Trim())
+            .ToArray();
 
     private async Task PutOptions(object options)
     {

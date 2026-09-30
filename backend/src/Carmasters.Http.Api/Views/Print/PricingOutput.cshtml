@@ -89,7 +89,6 @@
         <tr>
             <th class="col-text">Désignation</th>
             <th class="col-num">Quantité</th>
-            <th class="col-num">Unité</th>
             <th class="col-num">Prix unitaire</th>
             @if (hasDiscounts)
             {
@@ -104,7 +103,6 @@
             <tr>
                 <td class="col-text">@item.Description</td>
                 <td class="col-num">@PricingDisplay.Number(item.Quantity)</td>
-                <td class="col-num">@item.Unit</td>
                 <td class="col-num">@PricingDisplay.Amount(item.UnitPrice)</td>
                 @if (hasDiscounts)
                 {
