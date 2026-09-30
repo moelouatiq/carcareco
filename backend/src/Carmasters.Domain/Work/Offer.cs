@@ -61,13 +61,13 @@ namespace Carmasters.Core.Domain
         }
 
 
-        protected internal virtual void Issue(int purchaseTax, Employee issuer, bool showVehicleOnPricing)
+        protected internal virtual void Issue(BillingDocumentSnapshot billingDocumentSnapshot, Employee issuer, bool showVehicleOnPricing)
         {
             this.DisplayVehicleOnEstimate(showVehicleOnPricing);
 
             var number = $"{this.Work.Number}-{this.OrderNr}";
             With(new Estimate(number)
-                .CreateFor(purchaseTax, this, issuer));
+                .CreateFor(billingDocumentSnapshot, this, issuer));
         }
 
         protected internal virtual async Task SendEstimate(IPricingSender sender, string clientEmail)

@@ -86,8 +86,37 @@ namespace Carmasters.Core.Application.Services
 
         protected async Task<PricingPrintModel> CreatePricingModelAsync(Pricing pricing)
         {
-            var requisites = await tenantConfigService.GetRequisitesAsync();
-            var pricingOptions = await tenantConfigService.GetPricingAsync();
+            var snapshot = pricing.DocumentSnapshot;
+            RequisitesOptions requisites;
+            PricingOptions pricingOptions;
+
+            if (snapshot == null)
+            {
+                // Documents created before snapshot columns existed keep their historical
+                // behaviour. This fallback is deliberately read-only and is never persisted.
+                requisites = await tenantConfigService.GetRequisitesAsync();
+                pricingOptions = await tenantConfigService.GetPricingAsync();
+            }
+            else
+            {
+                requisites = new RequisitesOptions(
+                    snapshot.IssuerName,
+                    snapshot.IssuerPhone,
+                    snapshot.IssuerAddress,
+                    snapshot.IssuerEmail,
+                    snapshot.IssuerBankAccount,
+                    snapshot.IssuerRegNr,
+                    snapshot.IssuerKmkr);
+
+                pricingOptions = new PricingOptions(
+                    new InvoiceOptions(
+                        snapshot.VatRate,
+                        snapshot.SurCharge,
+                        snapshot.Disclaimer,
+                        snapshot.SignatureLine,
+                        EmailContent: null),
+                    new EstimateOptions(EmailContent: null));
+            }
 
             var model = new PricingPrintModel
             {

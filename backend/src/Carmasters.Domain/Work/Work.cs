@@ -31,7 +31,7 @@ namespace Carmasters.Core.Domain
             this.Number = number;
         }
       
-        public virtual async Task<Offer> Issue(Offer offer, IPricingSender sender, int purchaseTax, Employee issuer, bool showVehicleOnPricing, bool sendClientEmail, string clientEmail)
+        public virtual async Task<Offer> Issue(Offer offer, IPricingSender sender, BillingDocumentSnapshot billingDocumentSnapshot, Employee issuer, bool showVehicleOnPricing, bool sendClientEmail, string clientEmail)
         {
             if (sendClientEmail && string.IsNullOrWhiteSpace(clientEmail))
             {
@@ -44,7 +44,7 @@ namespace Carmasters.Core.Domain
                 this.offers.Add(offer); 
             }
 
-            offer.Issue(purchaseTax, issuer, showVehicleOnPricing);
+            offer.Issue(billingDocumentSnapshot, issuer, showVehicleOnPricing);
 
             if (sendClientEmail)
             {
@@ -103,12 +103,12 @@ namespace Carmasters.Core.Domain
             } 
         }
          
-        public virtual void GenerateInvoice(ISequnceNumberProviderFactory numberProvider, int purchaseTax, PaymentType paymentType, short dueDays, Employee issuer, bool showVehicleOnInvoice)
+        public virtual void GenerateInvoice(ISequnceNumberProviderFactory numberProvider, BillingDocumentSnapshot billingDocumentSnapshot, PaymentType paymentType, short dueDays, Employee issuer, bool showVehicleOnInvoice)
         {
             var number = numberProvider.
                 GetNumberProvider<Invoice>();
 
-            this.Invoice = Invoice.CreateFor(this,  number,purchaseTax, paymentType, dueDays, issuer, showVehicleOnInvoice); 
+            this.Invoice = Invoice.CreateFor(this, number, billingDocumentSnapshot, paymentType, dueDays, issuer, showVehicleOnInvoice);
         }
   
         public virtual void WithNotes(string description)
