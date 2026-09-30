@@ -2,6 +2,7 @@
 import {  useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, TransitionChild } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"; 
+import Image from 'next/image';
 import Nav from './Nav';
 import ProfileMenu from './ProfileMenu';
 import { labels } from "@/_lib/labels";
@@ -55,7 +56,16 @@ export default function NavDialog({
             <span className="sr-only">{labels.nav.openSidebar}</span>
             <Bars3Icon aria-hidden="true" className="size-6" />
           </button>
-          <div className="flex-1 truncate text-sm font-semibold text-ink">{labels.app.name}</div>
+          <div className="flex flex-1 items-center">
+            <Image
+              src="/othman-benhicham-logo.webp"
+              alt="Othman Benhicham — Mécanique & Diagnostic Auto"
+              width={1200}
+              height={400}
+              sizes="160px"
+              className="h-auto w-full max-w-[160px] object-contain"
+            />
+          </div>
          
              {/* Profile dropdown */}
              <ProfileMenu fullName={fullName} imageUrl={imageUrl}  onSmallScreen={true}></ProfileMenu> 

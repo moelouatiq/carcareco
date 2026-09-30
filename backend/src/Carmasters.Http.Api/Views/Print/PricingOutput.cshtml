@@ -3,6 +3,7 @@
 @using Carmasters.Core.Application.Printing
 @using Carmasters.Core.Domain
 @using Carmasters.Http.Api
+@using Carmasters.Http.Api.Branding
 @model PricingPrintModel
 @{
     var pricing = (Pricing)Model.Pricing;
@@ -33,6 +34,11 @@
 
 <header class="doc-head">
     <div class="doc-head-party">
+        <img
+            class="doc-logo"
+            src="@BrandAssets.LogoDataUri"
+            alt="Othman Benhicham — Mécanique & Diagnostic Auto"
+        />
         <p class="doc-issuer">@requisitesOptions.Name</p>
         @if (!string.IsNullOrWhiteSpace(requisitesOptions.Address))
         {
